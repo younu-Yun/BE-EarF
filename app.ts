@@ -33,6 +33,10 @@ app.use(cors(corsOptions));
 
 app.use("/api", apiRouter);
 
+app.get("/", (req: Request, res: Response) => {
+  res.send("this is EarF HOME PAGE");
+});
+
 // catch 404 and forward to error handler
 app.use((req: Request, res: Response, next: NextFunction) => {
   next(createError(404));
@@ -43,10 +47,6 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
-});
-
-app.get("/", (req: Request, res: Response) => {
-  res.send("this is EarF HOME PAGE");
 });
 
 const port = process.env.PORT as string;
