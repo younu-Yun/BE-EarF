@@ -20,7 +20,7 @@ const CommunityQuestionSchema = new Schema<ICommunityQuestionDocument>(
     author: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      // required: true,
     },
     title: {
       type: String,

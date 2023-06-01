@@ -14,6 +14,7 @@ const questionService = {
       await question.save();
       return question;
     } catch (error) {
+      console.log(error);
       throw new Error("커뮤니티 질문 생성에 실패하였습니다.");
     }
   },
