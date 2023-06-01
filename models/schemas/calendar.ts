@@ -2,7 +2,6 @@ import { Schema, Document, Model, model } from 'mongoose';
 
 interface ICalendar extends Document {
   tag: String[];
-  tagColors: { [tag: string]: string };
   imageUrl?: String;
   title: String;
   content: String;

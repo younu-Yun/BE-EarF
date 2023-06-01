@@ -5,8 +5,7 @@ const diaryService = {
   //Diary 생성
   async createDiary(date: Date, title: string, content: string) {
     try {
-      const calendar = new Calendar({ date, title, content });
-      await calendar.save();
+      const calendar = await Calendar.create({ date, title, content });
       return calendar;
     } catch (error) {
       throw new Error('다이어리 생성에 실패했습니다.');
@@ -36,9 +35,6 @@ const diaryService = {
   async readDiary(id: string) {
     try {
       const calendar = await Calendar.findOne({ _id: id });
-      if (!calendar) {
-        throw new Error('다이어리를 찾을 수 없습니다.');
-      }
       return calendar;
     } catch (error) {
       throw new Error('다이어리를 불러올 수 없습니다.');

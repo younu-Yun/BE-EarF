@@ -6,7 +6,7 @@ const diaryController = {
     try {
       const { date, title, content } = req.body;
       const diary = await diaryService.createDiary(date, title, content);
-      res.status(201).json(diary);
+      res.status(200).json(diary);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
