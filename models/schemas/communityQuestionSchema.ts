@@ -1,57 +1,48 @@
-import mongoose, { Document, Schema } from "mongoose";
+import { Schema, Document, model, Types } from "mongoose";
 
-// Mongoose 및 관련 타입 가져오기
+// 인터페이스 정의
 
 interface ICommunityQuestion {
-  author: Schema.Types.ObjectId;
-  title: string;
-  content: string;
-  createdAt: Date;
-  updatedAt: Date;
-  likes: Schema.Types.ObjectId[];
+  author: Types.ObjectId; // 작성자 ObjectId 참조.
+  title: string; // 제목
+  content: string; // 내용
+  createdAt: Date; // 작성일
+  updatedAt: Date; // 수정일
+  likes: Types.ObjectId[]; // 좋아요를 누른 사용자의 ObjectId 배열
 }
 
-// CommunityQuestion에 대한 필수 필드 및 타입을 정의하는 인터페이스
+interface ICommunityQuestionDocument extends ICommunityQuestion, Document {}
 
-interface CommunityQuestionDocument extends ICommunityQuestion, Document {}
+// 스키마 정의
 
-// Mongoose Document를 확장하여 CommunityQuestionDocument 인터페이스 정의
-
-const CommunityQuestionSchema = new Schema<CommunityQuestionDocument>({
-  author: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  title: {
-    type: String,
-    required: true,
-  },
-  content: {
-    type: String,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    required: true,
-  },
-  updatedAt: {
-    type: Date,
-    required: true,
-  },
-  likes: [
-    {
+const CommunityQuestionSchema = new Schema<ICommunityQuestionDocument>(
+  {
+    author: {
       type: Schema.Types.ObjectId,
       ref: "User",
+      required: true,
     },
-  ],
-});
+    title: {
+      type: String,
+      required: true,
+    },
+    content: {
+      type: String,
+      required: true,
+    },
+    likes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+  },
+  { timestamps: true },
+);
 
-// CommunityQuestion의 Mongoose 스키마 정의
+// 모델 생성 및 내보내기
 
-export default mongoose.model<CommunityQuestionDocument>(
+export default model<ICommunityQuestionDocument>(
   "CommunityQuestion",
   CommunityQuestionSchema,
 );
-
-// "CommunityQuestion" 모델 생성 및 내보내기
