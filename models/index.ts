@@ -1,4 +1,4 @@
-import User from "./schemas/user.js";
-import Badge from "./schemas/badge.js";
+import User, { IUser } from "./schemas/user";
+import Badge from "./schemas/badge";
 
-export { User, Badge };
+export { User, Badge, IUser };

@@ -1,17 +1,17 @@
-import { Schema, Document } from "mongoose";
+import { Schema, Document, model } from "mongoose";
 
-interface IUser extends Document {
-  id: string;
-  password: string;
-  name: string;
-  email: string;
-  phoneNumber: string;
-  profileImage: string;
-  badges: [];
-  postNum: number;
-  tumblerNum: number;
-  transportNum: number;
-  basketNum: number;
+export interface IUser extends Document {
+  id?: string;
+  password?: string;
+  name?: string;
+  email?: string;
+  phoneNumber?: string;
+  profileImage?: string;
+  badges?: [];
+  postNum?: number;
+  tumblerNum?: number;
+  transportNum?: number;
+  basketNum?: number;
 }
 
 const UserSchema: Schema<IUser> = new Schema<IUser>(
@@ -73,4 +73,4 @@ const UserSchema: Schema<IUser> = new Schema<IUser>(
   { timestamps: true } // 최초작성, 3회 이상 연속작성
 );
 
-export default UserSchema;
+export default model<IUser>("User", UserSchema);
