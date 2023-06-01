@@ -3,7 +3,7 @@ import diaryController from '../controller/diaryController';
 const diaryRouter = Router();
 
 //calendar diary 등록
-diaryRouter.post('/:id', diaryController.createDiary);
+diaryRouter.post('/', diaryController.createDiary);
 
 //calendar diary 조회
 diaryRouter.get('/:id', diaryController.readDiary);
