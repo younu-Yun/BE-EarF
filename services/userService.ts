@@ -1,11 +1,15 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { hashPassword } from "../utils/hashPassword";
 import { User, IUser } from "../models";
-
-const saltRounds = 10;
-const jwtSecret = process.env.JWT_TOKEN || "default_secret_key";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyAccessToken,
+  verifyRefreshToken,
+} from "../utils/jwt";
 
 export default class UserService {
+  // 유저 회원가입
   public registerUser = async (
     id: string,
     password: string,
@@ -14,7 +18,8 @@ export default class UserService {
     phoneNumber: string
   ): Promise<IUser> => {
     try {
-      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      // 대부분의 유효성 검사는 프론트에서 받아올때 한다고 함.
+      const hashedPassword = await hashPassword(password);
 
       const user: IUser = new User({
         id,
@@ -26,37 +31,90 @@ export default class UserService {
 
       return await user.save();
     } catch (error) {
-      console.log(error);
-      throw new Error("해당 ID는 이미 존재하는 ID입니다.");
+      throw new Error(
+        "필수 기재 정보가 입력되지 않았습니다. 빠진 부분을 입력 후 진행해주세요!"
+      );
     }
   };
 
-  public loginUser = async (id: string, password: string): Promise<string> => {
+  // 유저 로그인
+  public loginUser = async (
+    id: string,
+    password: string
+  ): Promise<{ accessToken: string; refreshToken: string }> => {
+    const user: IUser | null = await User.findOne({ id }).select("+password");
+
+    if (!user || !user.password) {
+      throw new Error(
+        "등록되지 않은 아이디이거나 아이디 또는 비밀번호를 잘못 입력했습니다."
+      );
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      throw new Error(
+        "등록되지 않은 아이디이거나 아이디 또는 비밀번호를 잘못 입력했습니다."
+      );
+    }
+
     try {
-      const user: IUser | null = await User.findOne({
-        id,
-        password: { $exists: true },
-      }).select("+password");
-      if (!user) {
-        throw new Error("User not found");
-      }
-
-      if (!user.password) {
-        throw new Error("Password not set");
-      }
-
-      const passwordMatch = await bcrypt.compare(password, user.password);
-      if (!passwordMatch) {
-        throw new Error("Incorrect password");
-      }
-
-      const token = jwt.sign({ userId: user._id }, jwtSecret!, {
-        expiresIn: "1h",
-      });
-      return token;
+      const accessToken = generateAccessToken(user._id);
+      const refreshToken = generateRefreshToken(user._id);
+      user.refreshToken = refreshToken;
+      await user.save();
+      return { accessToken, refreshToken };
     } catch (error) {
-      console.log(error);
-      throw new Error("Failed to login");
+      throw new Error(
+        "일시적인 오류로 로그인을 할 수 없습니다. 잠시 후 다시 이용해 주세요."
+      );
     }
   };
+
+  // 리프레시 토큰 갱신
+  public refreshTokens = async (
+    refreshToken: string
+  ): Promise<{ accessToken: string; refreshToken: string }> => {
+    try {
+      const decoded = verifyRefreshToken(refreshToken);
+      const userId = decoded.sub;
+
+      const accessToken = generateAccessToken(userId);
+      const newRefreshToken = generateRefreshToken(userId);
+
+      return { accessToken, refreshToken: newRefreshToken };
+    } catch (error) {
+      throw new Error(
+        "리프레시 토큰을 갱신할 수 없습니다. 다시 로그인해주세요."
+      );
+    }
+  };
+
+  // ID로 유저 가져오기
+  static async getUserById(id: string): Promise<IUser | null> {
+    return User.findById({ _id: id });
+  }
+
+  // 모든 유저 가져오기
+  static async getAllUsers(): Promise<IUser[]> {
+    return User.find();
+  }
+
+  // ID로 유저 업데이트하기
+  static async updateUserById(
+    id: string,
+    updatedData: Partial<IUser>
+  ): Promise<IUser | null> {
+    const updatedUser = await User.findByIdAndUpdate(
+      { _id: id },
+      {
+        name: updatedData.name,
+        email: updatedData.email,
+        phoneNumber: updatedData.phoneNumber,
+        profileImage: updatedData.profileImage,
+      },
+      { new: true }
+    );
+
+    return updatedUser;
+  }
 }
