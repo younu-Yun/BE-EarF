@@ -3,12 +3,12 @@ import { Schema, Document, model, Types } from "mongoose";
 // 인터페이스 정의
 
 interface ICommunityQuestion {
-  author: Types.ObjectId; // 작성자 ObjectId 참조.
+  userId: Types.ObjectId; // 작성자 ObjectId 참조.
   title: string; // 제목
   content: string; // 내용
   createdAt: Date; // 작성일
   updatedAt: Date; // 수정일
-  likes: Types.ObjectId[]; // 좋아요를 누른 사용자의 ObjectId 배열
+  likeIds: Types.ObjectId[]; // 좋아요를 누른 사용자의 ObjectId 배열
 }
 
 interface ICommunityQuestionDocument extends ICommunityQuestion, Document {}
@@ -17,7 +17,7 @@ interface ICommunityQuestionDocument extends ICommunityQuestion, Document {}
 
 const CommunityQuestionSchema = new Schema<ICommunityQuestionDocument>(
   {
-    author: {
+    userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
       // required: true,
@@ -30,7 +30,7 @@ const CommunityQuestionSchema = new Schema<ICommunityQuestionDocument>(
       type: String,
       required: true,
     },
-    likes: [
+    likeIds: [
       {
         type: Schema.Types.ObjectId,
         ref: "User",

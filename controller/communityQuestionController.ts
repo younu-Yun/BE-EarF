@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import questionService from "../services/communityQusetionService";
+import questionService from "../services/communityQuestionService";
 
 const questionController = {
   /**
@@ -9,9 +9,9 @@ const questionController = {
    */
   async createQuestion(req: Request, res: Response) {
     try {
-      const { author, title, content } = req.body;
+      const { userId, title, content } = req.body;
       const question = await questionService.createQuestion(
-        author,
+        userId,
         title,
         content,
       );
@@ -33,6 +33,7 @@ const questionController = {
       const question = await questionService.updateQuestion(id, title, content);
       res.json(question);
     } catch (error: any) {
+      console.log(error);
       res.status(500).json({ error: error.message });
     }
   },

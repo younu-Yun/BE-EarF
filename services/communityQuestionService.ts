@@ -3,13 +3,13 @@ import CommunityQuestion from "../models/schemas/communityQuestionSchema";
 
 const questionService = {
   // 커뮤니티 질문 생성
-  async createQuestion(author: Types.ObjectId, title: string, content: string) {
+  async createQuestion(userId: Types.ObjectId, title: string, content: string) {
     try {
       const question = new CommunityQuestion({
-        author,
+        userId,
         title,
         content,
-        likes: [],
+        likeIds: [],
       });
       await question.save();
       return question;
@@ -74,13 +74,13 @@ const questionService = {
         throw new Error("질문을 찾을 수 없습니다.");
       }
 
-      const likeIndex = question.likes.findIndex(id => id.equals(userId));
+      const likeIndex = question.likeIds.findIndex(id => id.equals(userId));
       if (likeIndex === -1) {
         // 좋아요 누르기: 사용자 ID를 'likes' 배열에 추가
-        question.likes.push(userId);
+        question.likeIds.push(userId);
       } else {
         // 좋아요 취소: 사용자 ID를 'likes' 배열에서 제거
-        question.likes.splice(likeIndex, 1);
+        question.likeIds.splice(likeIndex, 1);
       }
 
       await question.save();
