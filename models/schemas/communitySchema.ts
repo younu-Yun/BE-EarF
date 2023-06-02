@@ -9,6 +9,7 @@ interface ICommunityQuestion {
   createdAt: Date; // 작성일
   updatedAt: Date; // 수정일
   likeIds: Types.ObjectId[]; // 좋아요를 누른 사용자의 ObjectId 배열
+  commentIds: Types.ObjectId[]; //댓글
 }
 
 interface ICommunityQuestionDocument extends ICommunityQuestion, Document {}
@@ -34,6 +35,12 @@ const CommunityQuestionSchema = new Schema<ICommunityQuestionDocument>(
       {
         type: Schema.Types.ObjectId,
         ref: "User",
+      },
+    ],
+    commentIds: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "CommunityComment",
       },
     ],
   },

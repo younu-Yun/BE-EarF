@@ -29,6 +29,7 @@ const questionService = {
       );
       return question;
     } catch (error) {
+      console.log(error);
       throw new Error("커뮤니티 질문 수정에 실패하였습니다.");
     }
   },
