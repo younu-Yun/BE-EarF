@@ -1,7 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import createError from "http-errors";
 import cors from "cors";
 // Routers
 import apiRouter from "./routers";
@@ -49,7 +48,7 @@ const url = process.env.URL as string;
 app.listen(port, () => {
   console.log(`
     #############################################
-        🛡️ Server listening on {${url}:${port} 🛡️
+        🛡️ Server listening on ${url}:${port} 🛡️
     #############################################    
     `);
 });
