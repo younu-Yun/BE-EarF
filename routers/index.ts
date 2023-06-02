@@ -11,7 +11,7 @@ router.get("/", (req: Request, res: Response, next: NextFunction) => {
 });
 // ↓↓↓↓↓ 추가적인 router를 고유 endpoint로 설정하세요 ↓↓↓↓↓ EX) router.use("/user", userRouter);
 
-router.use('/calendar', diaryRouter);
+router.use('/diary', diaryRouter);
 router.use('/todo', todoRouter);
 
 export default router;

@@ -4,8 +4,8 @@ import diaryService from '../services/diaryService';
 const diaryController = {
   async createDiary(req: Request, res: Response) {
     try {
-      const { date, title, content } = req.body;
-      const diary = await diaryService.createDiary(date, title, content);
+      const { userId, tag, imageUrl, title, content } = req.body;
+      const diary = await diaryService.createDiary(userId, tag, imageUrl, title, content);
       res.status(200).json(diary);
     } catch (error: any) {
       res.status(500).json({ error: error.message });

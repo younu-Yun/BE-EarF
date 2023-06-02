@@ -13,7 +13,8 @@ const todoController = {
   },
   async updateTodo(req: Request, res: Response) {
     try {
-      const { id, todo } = req.body;
+      const { id } = req.params;
+      const { todo } = req.body;
       const todoList = await todoService.updateTodo(id, todo);
       res.status(200).json(todoList);
     } catch (error: any) {

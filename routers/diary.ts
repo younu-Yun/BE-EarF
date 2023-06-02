@@ -9,7 +9,7 @@ diaryRouter.post('/', diaryController.createDiary);
 diaryRouter.get('/:id', diaryController.readDiary);
 
 //calendar diary 수정
-diaryRouter.put('/:id', diaryController.updateDiary);
+diaryRouter.patch('/:id', diaryController.updateDiary);
 
 //calendar diary 삭제
 diaryRouter.delete('/:id', diaryController.deleteDiary);
