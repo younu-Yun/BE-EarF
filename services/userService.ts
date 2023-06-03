@@ -4,7 +4,6 @@ import { User, IUser } from "../models";
 import {
   generateAccessToken,
   generateRefreshToken,
-  verifyAccessToken,
   verifyRefreshToken,
 } from "../utils/jwt";
 
@@ -18,7 +17,6 @@ export default class UserService {
     phoneNumber: string
   ): Promise<IUser> => {
     try {
-      // 대부분의 유효성 검사는 프론트에서 받아올때 한다고 함.
       const hashedPassword = await hashPassword(password);
 
       const user: IUser = new User({
@@ -76,7 +74,7 @@ export default class UserService {
   ): Promise<{ accessToken: string; refreshToken: string }> => {
     try {
       const decoded = verifyRefreshToken(refreshToken);
-      const userId = decoded.sub;
+      const userId = decoded._id;
 
       const accessToken = generateAccessToken(userId);
       const newRefreshToken = generateRefreshToken(userId);
@@ -90,22 +88,22 @@ export default class UserService {
   };
 
   // ID로 유저 가져오기
-  static async getUserById(id: string): Promise<IUser | null> {
-    return User.findById({ _id: id });
-  }
+  public static getUserById = async (id: string): Promise<IUser | null> => {
+    return User.findById(id);
+  };
 
   // 모든 유저 가져오기
-  static async getAllUsers(): Promise<IUser[]> {
+  public static getAllUsers = async (): Promise<IUser[]> => {
     return User.find();
-  }
+  };
 
   // ID로 유저 업데이트하기
-  static async updateUserById(
+  public static updateUserById = async (
     id: string,
     updatedData: Partial<IUser>
-  ): Promise<IUser | null> {
+  ): Promise<IUser | null> => {
     const updatedUser = await User.findByIdAndUpdate(
-      { _id: id },
+      id,
       {
         name: updatedData.name,
         email: updatedData.email,
@@ -116,5 +114,5 @@ export default class UserService {
     );
 
     return updatedUser;
-  }
+  };
 }

@@ -6,11 +6,11 @@ const router = express.Router();
 const userController = new UserController();
 
 // 모든 유저 가져오기 API
-router.get("/", authenticateToken, UserController.getAllUsers);
+router.get("/", authenticateToken, userController.getAllUsers);
 // ID로 유저 가져오기 API
-router.get("/:id", authenticateToken, UserController.getUserById);
+router.get("/:id", authenticateToken, userController.getUserById);
 // ID로 유저 업데이트하기 API
-router.patch("/:id", authenticateToken, UserController.updateUserById);
+router.patch("/:id", authenticateToken, userController.updateUserById);
 // 유저 회원가입 API
 router.post("/register", userController.registerUser);
 // 유저 로그인 API
