@@ -1,0 +1,27 @@
+import { Schema, Document, Model, model } from 'mongoose';
+
+interface ITodo extends Document {
+  userId: Schema.Types.ObjectId;
+  todo: String[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const todoSchema: Schema<ITodo> = new Schema<ITodo>(
+  {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    todo: {
+      type: [String],
+      required: true,
+    },
+  },
+  { timestamps: true }
+)
+
+const Todo: Model<ITodo> = model<ITodo>('Todo', todoSchema);
+
+export { ITodo, Todo };
