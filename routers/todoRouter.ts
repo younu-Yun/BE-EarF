@@ -6,10 +6,10 @@ const todoRouter = Router();
 todoRouter.post('/', todoController.createTodo);
 
 //todo-list 조회
-todoRouter.get('/:id', todoController.readTodo);
+todoRouter.get('/:id', todoController.getTodo);
 
-//todo-list 수정
-todoRouter.patch('/:id', todoController.updateTodo);
+//todo-list 완료 여부
+todoRouter.patch('/:id', todoController.completeTodo);
 
 //todo-list 삭제
 todoRouter.delete('/:id', todoController.deleteTodo);

@@ -3,6 +3,7 @@ import { Schema, Document, Model, model } from 'mongoose';
 interface ITodo extends Document {
   userId: Schema.Types.ObjectId;
   todo: String[];
+  completed: Boolean[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -18,6 +19,10 @@ const todoSchema: Schema<ITodo> = new Schema<ITodo>(
       type: [String],
       required: true,
     },
+    completed: {
+      type: [Boolean],
+      required: true,
+    }
   },
   { timestamps: true }
 )

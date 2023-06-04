@@ -23,6 +23,7 @@ const diarySchema: Schema<IDiary> = new Schema<IDiary>(
     },
     imageUrl: {
       type: String,
+      required: false,
     },
     title: {
       type: String,
