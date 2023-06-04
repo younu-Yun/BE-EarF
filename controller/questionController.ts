@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import questionService from "../services/communityQuestionService";
+import questionService from "../services/questionService";
 
 const questionController = {
   /**
@@ -16,8 +16,12 @@ const questionController = {
         content,
       );
       res.status(201).json(question);
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "알 수 없는 오류가 발생했습니다." });
+      }
     }
   },
 
@@ -30,11 +34,15 @@ const questionController = {
     try {
       const { id } = req.params;
       const { title, content } = req.body;
+      console.log(req.body);
       const question = await questionService.updateQuestion(id, title, content);
       res.json(question);
-    } catch (error: any) {
-      console.log(error);
-      res.status(500).json({ error: error.message });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "알 수 없는 오류가 발생했습니다." });
+      }
     }
   },
 
@@ -48,8 +56,12 @@ const questionController = {
       const { id } = req.params;
       const question = await questionService.deleteQuestion(id);
       res.json(question);
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "알 수 없는 오류가 발생했습니다." });
+      }
     }
   },
 
@@ -63,8 +75,12 @@ const questionController = {
       const { id } = req.params;
       const question = await questionService.readQuestion(id);
       res.json(question);
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "알 수 없는 오류가 발생했습니다." });
+      }
     }
   },
 
@@ -77,8 +93,12 @@ const questionController = {
     try {
       const questions = await questionService.readAllQuestions();
       res.json(questions);
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "알 수 없는 오류가 발생했습니다." });
+      }
     }
   },
 
@@ -93,8 +113,12 @@ const questionController = {
       const { userId } = req.body;
       const question = await questionService.likeQuestion(questionId, userId);
       res.json(question);
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "알 수 없는 오류가 발생했습니다." });
+      }
     }
   },
 };

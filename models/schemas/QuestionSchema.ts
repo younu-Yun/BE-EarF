@@ -2,21 +2,19 @@ import { Schema, Document, model, Types } from "mongoose";
 
 // 인터페이스 정의
 
-interface ICommunityQuestion {
+interface IQuestion {
   userId: Types.ObjectId; // 작성자 ObjectId 참조.
   title: string; // 제목
   content: string; // 내용
-  createdAt: Date; // 작성일
-  updatedAt: Date; // 수정일
   likeIds: Types.ObjectId[]; // 좋아요를 누른 사용자의 ObjectId 배열
   commentIds: Types.ObjectId[]; //댓글
 }
 
-interface ICommunityQuestionDocument extends ICommunityQuestion, Document {}
+interface IQuestionDocument extends IQuestion, Document {}
 
 // 스키마 정의
 
-const CommunityQuestionSchema = new Schema<ICommunityQuestionDocument>(
+const QuestionSchema = new Schema<IQuestionDocument>(
   {
     userId: {
       type: Schema.Types.ObjectId,
@@ -40,7 +38,7 @@ const CommunityQuestionSchema = new Schema<ICommunityQuestionDocument>(
     commentIds: [
       {
         type: Schema.Types.ObjectId,
-        ref: "CommunityComment",
+        ref: "Comment",
       },
     ],
   },
@@ -49,7 +47,4 @@ const CommunityQuestionSchema = new Schema<ICommunityQuestionDocument>(
 
 // 모델 생성 및 내보내기
 
-export default model<ICommunityQuestionDocument>(
-  "CommunityQuestion",
-  CommunityQuestionSchema,
-);
+export default model<IQuestionDocument>("Question", QuestionSchema);

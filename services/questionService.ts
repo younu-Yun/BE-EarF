@@ -1,11 +1,11 @@
 import { Types } from "mongoose";
-import CommunityQuestion from "../models/schemas/communityQuestionSchema";
+import Question from "../models/schemas/QuestionSchema";
 
 const questionService = {
   // 커뮤니티 질문 생성
   async createQuestion(userId: Types.ObjectId, title: string, content: string) {
     try {
-      const question = new CommunityQuestion({
+      const question = new Question({
         userId,
         title,
         content,
@@ -22,14 +22,17 @@ const questionService = {
   // 커뮤니티 질문 수정
   async updateQuestion(id: string, title: string, content: string) {
     try {
-      const question = await CommunityQuestion.findOneAndUpdate(
-        { _id: id },
-        { title, content },
-        { new: true },
+      const question = await Question.findByIdAndUpdate(
+        id,
+        { title: title, content: content },
+        { new: true, useFindAndModify: false },
       );
+      if (!question) {
+        throw new Error("커뮤니티 질문을 찾을 수 없습니다.");
+      }
       return question;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw new Error("커뮤니티 질문 수정에 실패하였습니다.");
     }
   },
@@ -37,7 +40,7 @@ const questionService = {
   // 커뮤니티 질문 삭제
   async deleteQuestion(id: string) {
     try {
-      const question = await CommunityQuestion.findOneAndDelete({ _id: id });
+      const question = await Question.findOneAndDelete({ _id: id });
       return question;
     } catch (error) {
       throw new Error("커뮤니티 질문 삭제에 실패하였습니다.");
@@ -47,7 +50,7 @@ const questionService = {
   // 커뮤니티 질문 조회
   async readQuestion(id: string) {
     try {
-      const question = await CommunityQuestion.findOne({ _id: id });
+      const question = await Question.findOne({ _id: id });
       if (!question) {
         throw new Error("커뮤니티 질문을 찾을 수 없습니다.");
       }
@@ -60,7 +63,7 @@ const questionService = {
   // 모든 커뮤니티 질문 조회
   async readAllQuestions() {
     try {
-      const questions = await CommunityQuestion.find();
+      const questions = await Question.find();
       return questions;
     } catch (error) {
       throw new Error("커뮤니티 질문을 모두 불러오는데 실패하였습니다.");
@@ -70,7 +73,7 @@ const questionService = {
   // 좋아요 누르기 / 취소하기
   async likeQuestion(questionId: string, userId: Types.ObjectId) {
     try {
-      const question = await CommunityQuestion.findById(questionId);
+      const question = await Question.findById(questionId);
       if (!question) {
         throw new Error("질문을 찾을 수 없습니다.");
       }

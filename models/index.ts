@@ -1,3 +1,3 @@
-import User, { IUser } from "./schemas/user";
+// import User, { IUser } from "./schemas/user";
 
-export { User, IUser };
+// export { User, IUser };
