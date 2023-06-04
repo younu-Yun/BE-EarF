@@ -1,9 +1,13 @@
-import { Types } from "mongoose";
-import Question from "../models/schemas/QuestionSchema";
+import { Schema, Document, model } from "mongoose";
+import Question from "../models/schemas/question";
 
 const questionService = {
   // 커뮤니티 질문 생성
-  async createQuestion(userId: Types.ObjectId, title: string, content: string) {
+  async createQuestion(
+    userId: Schema.Types.ObjectId,
+    title: string,
+    content: string,
+  ) {
     try {
       const question = new Question({
         userId,
@@ -71,14 +75,16 @@ const questionService = {
   },
 
   // 좋아요 누르기 / 취소하기
-  async likeQuestion(questionId: string, userId: Types.ObjectId) {
+  async likeQuestion(questionId: string, userId: Schema.Types.ObjectId) {
     try {
       const question = await Question.findById(questionId);
       if (!question) {
         throw new Error("질문을 찾을 수 없습니다.");
       }
 
-      const likeIndex = question.likeIds.findIndex(id => id.equals(userId));
+      const likeIndex = question.likeIds.findIndex(
+        id => id.toString() === userId.toString(),
+      );
       if (likeIndex === -1) {
         // 좋아요 누르기: 사용자 ID를 'likes' 배열에 추가
         question.likeIds.push(userId);

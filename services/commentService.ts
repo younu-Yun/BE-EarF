@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import Comment from "../models/schemas/CommentSchema";
+import Comment from "../models/schemas/comment";
 
 const CommentService = {
   // 커뮤니티 댓글 생성
