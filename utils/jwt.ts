@@ -2,8 +2,8 @@ import jwt, { Secret } from "jsonwebtoken";
 import { User } from "../models";
 
 const jwtSecret: Secret = process.env.JWT_SECRET || "default_secret_key";
-const accessTokenExpiration = "1h";
-const refreshTokenExpiration = "7d";
+const accessTokenExpiration = process.env.ATE;
+const refreshTokenExpiration = process.env.RTE;
 
 export const generateAccessToken = (id: string): string => {
   const token = jwt.sign({ _id: id }, jwtSecret, {
