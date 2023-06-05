@@ -11,11 +11,11 @@ const todoController = {
       res.status(500).json({ error: error.message });
     }
   },
-  async completeTodo(req: Request, res: Response) {
+  async completeStatusUpdateTodo(req: Request, res: Response) {
     try {
       const { id } = req.params;
       const { todoIndex, completed } = req.body;
-      const updatedTodoList = await todoService.completeTodo(id, todoIndex, completed);
+      const updatedTodoList = await todoService.completeStatusUpdateTodo(id, todoIndex, completed);
       res.status(200).json(updatedTodoList);
     } catch (error: any) {
       res.status(500).json({ error: error.message });

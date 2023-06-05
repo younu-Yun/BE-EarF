@@ -2,10 +2,19 @@ import { Request, Response } from 'express';
 import diaryService from '../services/diaryService';
 
 const diaryController = {
+  // async getAllDiariesByMonth(req: Request, res: Response) {
+  //   try {
+      
+  //     res.status(200).json();
+  //   } catch (error: any) {
+  //     res.status(500).json({ error: error.message });
+  //   }
+  // },
   async createDiary(req: Request, res: Response) {
     try {
-      const { userId, tag, imageUrl, title, content } = req.body;
-      const createDiary = await diaryService.createDiary(userId, tag, imageUrl, title, content);
+      const { date, userId, tag, imageUrl, title, content, shareStatus } = req.body;
+      //const userId = req.user.id;
+      const createDiary = await diaryService.createDiary(date, userId, tag, imageUrl, title, content, shareStatus);
       res.status(200).json(createDiary);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -13,9 +22,9 @@ const diaryController = {
   },
   async updateDiary(req: Request, res: Response) {
     try {
-      const { id } = req.params;
-      const { title, content } = req.body;
-      const updatedDiary = await diaryService.updateDiary(id, title, content);
+      const { date, userId, tag, imageUrl, title, content, shareStatus } = req.body;
+      //const userId = req.user.id;
+      const updatedDiary = await diaryService.updateDiary(date, userId, tag, imageUrl, title, content, shareStatus);
       res.json(updatedDiary);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -23,8 +32,9 @@ const diaryController = {
   },
   async deleteDiary(req: Request, res: Response) {
     try {
-      const { id } = req.params;
-      const deletedDiary = await diaryService.deleteDiary(id);
+      const { userId, date } = req.body;
+      //const userId = req.user.id;
+      const deletedDiary = await diaryService.deleteDiary(userId, date);
       res.json(deletedDiary);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -32,8 +42,9 @@ const diaryController = {
   },
   async getDiary(req: Request, res: Response) {
     try {
-      const { id } = req.params;
-      const getDiary = await diaryService.getDiary(id);
+      const { userId, date } = req.body;
+      //const userId = req.user.id;
+      const getDiary = await diaryService.getDiary(userId, date);
       res.json(getDiary);
     } catch (error: any) {
       res.status(500).json({ error: error.message });

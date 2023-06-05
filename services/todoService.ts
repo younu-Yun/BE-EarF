@@ -19,7 +19,7 @@ const todoService = {
     }
   },
   //todo 완료
-  async completeTodo(id: string, todoIndex: number, completed: boolean) {
+  async completeStatusUpdateTodo(id: string, todoIndex: number, completed: boolean) {
     try {
       const completeStatusUpdatedTodoList = await Todo.findById(id);
       if (completeStatusUpdatedTodoList) {

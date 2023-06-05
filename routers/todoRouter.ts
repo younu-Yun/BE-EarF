@@ -3,15 +3,15 @@ import todoController from '../controller/todoController';
 const todoRouter = Router();
 
 //todo-list 등록
-todoRouter.post('/', todoController.createTodo);
+todoRouter.post('/:date', todoController.createTodo);
 
 //todo-list 조회
-todoRouter.get('/:id', todoController.getTodo);
+todoRouter.get('/:date', todoController.getTodo);
 
 //todo-list 완료 여부
-todoRouter.patch('/:id', todoController.completeTodo);
+todoRouter.patch('/:date', todoController.completeStatusUpdateTodo);
 
 //todo-list 삭제
-todoRouter.delete('/:id', todoController.deleteTodo);
+todoRouter.delete('/:date', todoController.deleteTodo);
 
 export default todoRouter;

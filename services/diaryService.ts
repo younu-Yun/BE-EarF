@@ -1,11 +1,27 @@
 import { Diary } from '../models/schemas/diary';
 
-interface CreateDiary {(
-  userId: string,
-  tag: string[],
-  imageUrl: string | undefined,
-  title: string,
-  content: string): any; //any타입 수정
+interface CreateDiary {
+  (
+    date: Date,
+    userId: string,
+    tag: string[],
+    imageUrl: string | undefined,
+    title: string,
+    content: string,
+    shareStatus: boolean
+  ): Promise<any>;
+}
+
+interface UpdateDiary {
+  (
+    date: Date,
+    userId: string,
+    tag: string[],
+    imageUrl: string | undefined,
+    title: string,
+    content: string,
+    shareStatus: boolean
+  ): Promise<any>;
 }
 
 const Error_Message = {
@@ -15,46 +31,75 @@ const Error_Message = {
   getDiaryError: '다이어리를 불러오는 데에 실패했습니다.',
 };
 
-const createDiary: CreateDiary = async (userId, tag, imageUrl, title, content) => {
+const createDiary: CreateDiary = async (
+  date,
+  userId,
+  tag,
+  imageUrl,
+  title,
+  content,
+  shareStatus
+) => {
   try {
-    const diary = await Diary.create({ userId, tag, imageUrl, title, content });
+    const diary = await Diary.create({
+      date,
+      userId,
+      tag,
+      imageUrl,
+      title,
+      content,
+      shareStatus,
+    });
     return diary;
   } catch (error) {
     throw new Error(Error_Message.createDiaryError);
   }
 };
 
+const updateDiary: UpdateDiary = async (
+  date,
+  userId,
+  tag,
+  imageUrl,
+  title,
+  content,
+  shareStatus
+) => {
+  try {
+    const diary = await Diary.findOneAndUpdate(
+      { date, userId },
+      { tag, imageUrl, title, content, shareStatus },
+      { new: true }
+    );
+    return diary;
+  } catch (error) {
+    throw new Error(Error_Message.updateDiaryError);
+  }
+};
+
 const diaryService = {
-  //calendar 날짜별 태그 노출??
-  //Diary 생성
+  //diary 생성
   createDiary,
-  //Diary 수정
-  async updateDiary(id: string, title: string, content: string) {
+  //diary 수정
+  updateDiary,
+  //diary 삭제
+  async deleteDiary(userId: string, date: Date) {
     try {
-      const updatedDiary = await Diary.findByIdAndUpdate({ _id: id }, { title, content }, { new: true });
-      return updatedDiary;
-    } catch (error) {
-      throw new Error(Error_Message.updateDiaryError);
-    }
-  },
-  //Diary 삭제
-  async deleteDiary(id: string) {
-    try {
-      const deletedDiary = await Diary.findOneAndDelete({ _id: id });
+      const deletedDiary = await Diary.findOneAndDelete({ userId, date });
       return deletedDiary;
     } catch (error) {
       throw new Error(Error_Message.deleteDiaryError);
     }
   },
-  //Diary 조회
-  async getDiary(id: string) {
+  //diary 조회
+  async getDiary(userId: string, date: Date) {
     try {
-      const getDiary = await Diary.findById({ _id: id });
+      const getDiary = await Diary.findOne({ userId, date });
       return getDiary;
     } catch (error) {
       throw new Error(Error_Message.getDiaryError);
     }
   },
-}
+};
 
 export default diaryService;
