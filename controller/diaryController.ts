@@ -2,17 +2,27 @@ import { Request, Response } from 'express';
 import diaryService from '../services/diaryService';
 
 const diaryController = {
-  // async getAllDiariesByMonth(req: Request, res: Response) {
-  //   try {
-      
-  //     res.status(200).json();
-  //   } catch (error: any) {
-  //     res.status(500).json({ error: error.message });
-  //   }
-  // },
+  async getAllDiariesByMonth(req: Request, res: Response) {
+    try {
+      const { userId, startDate, endDate } = req.body;
+      //const userId = req.user.id;
+      const diaries = await diaryService.getAllDiariesByMonth(userId, startDate, endDate);
+      res.status(200).json(diaries);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  },
   async createDiary(req: Request, res: Response) {
     try {
-      const { date, userId, tag, imageUrl, title, content, shareStatus } = req.body;
+      const {
+        date,
+        userId,
+        tag,
+        imageUrl,
+        title,
+        content,
+        shareStatus
+      } = req.body;
       //const userId = req.user.id;
       const createDiary = await diaryService.createDiary(date, userId, tag, imageUrl, title, content, shareStatus);
       res.status(200).json(createDiary);
@@ -22,7 +32,15 @@ const diaryController = {
   },
   async updateDiary(req: Request, res: Response) {
     try {
-      const { date, userId, tag, imageUrl, title, content, shareStatus } = req.body;
+      const {
+        date,
+        userId,
+        tag,
+        imageUrl,
+        title,
+        content,
+        shareStatus
+      } = req.body;
       //const userId = req.user.id;
       const updatedDiary = await diaryService.updateDiary(date, userId, tag, imageUrl, title, content, shareStatus);
       res.json(updatedDiary);

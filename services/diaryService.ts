@@ -41,7 +41,7 @@ const createDiary: CreateDiary = async (
   shareStatus
 ) => {
   try {
-    const diary = await Diary.create({
+    const createDiary = await Diary.create({
       date,
       userId,
       tag,
@@ -50,7 +50,7 @@ const createDiary: CreateDiary = async (
       content,
       shareStatus,
     });
-    return diary;
+    return createDiary;
   } catch (error) {
     throw new Error(Error_Message.createDiaryError);
   }
@@ -66,18 +66,35 @@ const updateDiary: UpdateDiary = async (
   shareStatus
 ) => {
   try {
-    const diary = await Diary.findOneAndUpdate(
+    const updatedDiary = await Diary.findOneAndUpdate(
       { date, userId },
       { tag, imageUrl, title, content, shareStatus },
       { new: true }
     );
-    return diary;
+    return updatedDiary;
   } catch (error) {
     throw new Error(Error_Message.updateDiaryError);
   }
 };
 
 const diaryService = {
+  async getAllDiariesByMonth(userId: string, startDate: Date, endDate: Date) {
+    try {
+      const allDiariesByMonth = await Diary.find({
+        userId,
+        date: { $gte: new Date(startDate), $lte: new Date(endDate) }
+      }).select('tag');
+      
+      const tags: string[] = [];
+
+      allDiariesByMonth.forEach((diary) => {
+        tags.push(...diary.tag);
+      });
+      return tags;
+    } catch (error) {
+      throw new Error(Error_Message.getDiaryError);
+    }
+  },
   //diary 생성
   createDiary,
   //diary 수정
