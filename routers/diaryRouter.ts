@@ -6,7 +6,7 @@ const diaryRouter = Router();
 diaryRouter.post('/', diaryController.createDiary);
 
 //calendar diary 조회
-diaryRouter.get('/:id', diaryController.readDiary);
+diaryRouter.get('/:id', diaryController.getDiary);
 
 //calendar diary 수정
 diaryRouter.patch('/:id', diaryController.updateDiary);
