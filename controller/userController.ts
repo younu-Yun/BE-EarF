@@ -78,7 +78,7 @@ export default class UserController {
   public getUserById: RequestHandler = async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      const user = await UserService.getUserById(id);
+      const user = await this.userService.getUserById(id);
       res.json(user);
     } catch (error) {
       res.status(500).json({ error: "유저정보를 불러오는데 실패하였습니다." });
@@ -88,7 +88,7 @@ export default class UserController {
   // 모든 유저 가져오기
   public getAllUsers: RequestHandler = async (req: Request, res: Response) => {
     try {
-      const users = await UserService.getAllUsers();
+      const users = await this.userService.getAllUsers();
       res.json(users);
     } catch (error) {
       res
@@ -104,10 +104,23 @@ export default class UserController {
   ) => {
     try {
       const { id } = req.params;
-      const updatedUser = await UserService.updateUserById(id, req.body);
+      const updatedUser = await this.userService.updateUserById(id, req.body);
       res.json(updatedUser);
     } catch (error) {
       res.status(500).json({ error: "유저정보를 수정하는데 실패하였습니다." });
+    }
+  };
+
+  public getIdByEmailAndName = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
+    try {
+      const { email, name } = req.body;
+      const userId = await this.userService.getIdByEmailAndName(email, name);
+      res.json({ id: userId });
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
     }
   };
 }

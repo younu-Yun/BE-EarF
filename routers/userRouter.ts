@@ -19,5 +19,7 @@ router.post("/login", userController.loginUser);
 router.post("/refresh", authenticateToken, userController.refreshTokens);
 // 유저 로그아웃 API
 router.post("/logout", authenticateToken, userController.logoutUser);
+// Email, Name으로 유저 id찾기 API
+router.post("/loginid", authenticateToken, userController.getIdByEmailAndName);
 
 export default router;

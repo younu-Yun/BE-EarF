@@ -88,17 +88,17 @@ export default class UserService {
   };
 
   // ID로 유저 가져오기
-  public static getUserById = async (id: string): Promise<IUser | null> => {
+  public getUserById = async (id: string): Promise<IUser | null> => {
     return User.findById(id);
   };
 
   // 모든 유저 가져오기
-  public static getAllUsers = async (): Promise<IUser[]> => {
+  public getAllUsers = async (): Promise<IUser[]> => {
     return User.find();
   };
 
   // ID로 유저 업데이트하기
-  public static updateUserById = async (
+  public updateUserById = async (
     id: string,
     updatedData: Partial<IUser>
   ): Promise<IUser | null> => {
@@ -114,5 +114,21 @@ export default class UserService {
     );
 
     return updatedUser;
+  };
+
+  // Email, Name으로 유저 id찾기
+  public getIdByEmailAndName = async (
+    email: string,
+    name: string
+  ): Promise<string | undefined> => {
+    try {
+      const user: IUser | null = await User.findOne({ email, name });
+      if (!user) {
+        throw new Error("유저를 찾을 수 없습니다.");
+      }
+      return user.id;
+    } catch (error) {
+      throw new Error("이메일과 이름으로 유저 ID를 가져오는데 실패했습니다.");
+    }
   };
 }
