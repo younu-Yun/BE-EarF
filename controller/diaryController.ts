@@ -4,10 +4,15 @@ import diaryService from '../services/diaryService';
 const diaryController = {
   async getAllDiariesByMonth(req: Request, res: Response) {
     try {
-      const { userId, startDate, endDate } = req.body;
+      const { userId } = req.body;
+      const { startDate, endDate } = req.query;
       //const userId = req.user.id;
-      const diaries = await diaryService.getAllDiariesByMonth(userId, startDate, endDate);
-      res.status(200).json(diaries);
+      const allDiariesByMonth = await diaryService.getAllDiariesByMonth(
+        userId,
+        new Date(startDate as string),
+        new Date(endDate as string)
+      );
+      res.status(200).json(allDiariesByMonth);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }

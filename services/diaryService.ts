@@ -90,7 +90,13 @@ const diaryService = {
       allDiariesByMonth.forEach((diary) => {
         tags.push(...diary.tag);
       });
-      return tags;
+
+      const tagsCount: {[key: string]: number} 
+        = tags.reduce((accumulator: { [key: string]: number }, currentValue: string) => {
+        accumulator[currentValue] = (accumulator[currentValue] || 0) + 1;
+        return accumulator;
+      }, {});
+      return tagsCount;
     } catch (error) {
       throw new Error(Error_Message.getDiaryError);
     }

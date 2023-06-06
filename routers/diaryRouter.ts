@@ -3,7 +3,7 @@ import diaryController from '../controller/diaryController';
 const diaryRouter = Router();
 
 //calendar diary 전체 조회
-diaryRouter.get('/', diaryController.getAllDiariesByMonth);
+diaryRouter.get('/month', diaryController.getAllDiariesByMonth);
 //calendar diary 등록
 diaryRouter.post('/', diaryController.createDiary);
 //calendar diary 조회
