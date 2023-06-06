@@ -3,6 +3,7 @@ import Comment from "../models/schemas/comment";
 
 const CommentService = {
   // 커뮤니티 댓글 생성
+  // 커뮤니티 댓글 생성
   async createComment(
     postId: Types.ObjectId,
     userId: Types.ObjectId,
@@ -15,7 +16,7 @@ const CommentService = {
         comment,
       });
       await newComment.save();
-      return newComment;
+      return newComment._id; // 새로운 댓글의 ID를 반환
     } catch (error) {
       console.error(error);
       throw new Error("커뮤니티 댓글 생성에 실패하였습니다.");

@@ -1,4 +1,4 @@
-import { Schema, Document, model } from "mongoose";
+import { Schema } from "mongoose";
 import Question from "../models/schemas/question";
 
 const questionService = {
@@ -99,6 +99,27 @@ const questionService = {
       throw new Error("좋아요 기능 처리에 실패하였습니다.");
     }
   },
+
+  // // 커뮤니티 질문에 댓글 ID 추가
+  // async addCommentToQuestion(
+  //   questionId: string,
+  //   commentId: Schema.Types.ObjectId,
+  // ) {
+  //   try {
+  //     const question = await Question.findById(questionId);
+  //     if (!question) {
+  //       throw new Error("질문을 찾을 수 없습니다.");
+  //     }
+
+  //     // 댓글 ID를 'commentIds' 배열에 추가
+  //     question.commentIds.push(commentId);
+
+  //     await question.save();
+  //     return question;
+  //   } catch (error) {
+  //     throw new Error("질문에 댓글을 추가하는 데 실패하였습니다.");
+  //   }
+  // },
 };
 
 export default questionService;

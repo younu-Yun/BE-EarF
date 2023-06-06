@@ -1,16 +1,12 @@
-import { Schema, Document, model, Types } from "mongoose";
-
-// 인터페이스 정의
+import { Schema, model, Document } from "mongoose";
 
 interface IQuestion extends Document {
-  userId: Schema.Types.ObjectId; // 작성자 ObjectId 참조.
-  title: string; // 제목
-  content: string; // 내용
-  likeIds: Schema.Types.ObjectId[]; // 좋아요를 누른 사용자의 ObjectId 배열
-  commentIds: Schema.Types.ObjectId[]; //댓글
+  userId: Schema.Types.ObjectId;
+  title: string;
+  content: string;
+  likeIds: Schema.Types.ObjectId[];
+  commentIds: { type: Schema.Types.ObjectId; ref: "Comment" }[];
 }
-
-// 스키마 정의
 
 const QuestionSchema = new Schema<IQuestion>(
   {
@@ -33,16 +29,17 @@ const QuestionSchema = new Schema<IQuestion>(
         ref: "User",
       },
     ],
-    commentIds: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Comment",
-      },
-    ],
+    commentIds: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "Comment",
+        },
+      ],
+      default: [],
+    },
   },
   { timestamps: true },
 );
-
-// 모델 생성 및 내보내기
 
 export default model<IQuestion>("Question", QuestionSchema);

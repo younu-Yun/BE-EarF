@@ -1,3 +1,4 @@
+import { Schema } from "mongoose";
 import { Request, Response } from "express";
 import questionService from "../services/questionService";
 
@@ -121,6 +122,29 @@ const questionController = {
       }
     }
   },
+
+  /**
+   * 특정 질문에 댓글 추가.
+   * 요청 URL의 매개변수에서 질문 ID를 추출하고, 요청 본문에서 댓글 ID를 추출하여 questionService.addCommentToQuestion을 호출.
+   * 댓글이 추가된 질문을 클라이언트에게 JSON 형식으로 응답.
+   */
+  // async addCommentToQuestion(req: Request, res: Response) {
+  //   try {
+  //     const { questionId } = req.params;
+  //     const { commentId } = req.body;
+  //     const question = await questionService.addCommentToQuestion(
+  //       questionId,
+  //       new Schema.Types.ObjectId(commentId),
+  //     );
+  //     res.json(question);
+  //   } catch (error: unknown) {
+  //     if (error instanceof Error) {
+  //       res.status(500).json({ error: error.message });
+  //     } else {
+  //       res.status(500).json({ error: "알 수 없는 오류가 발생했습니다." });
+  //     }
+  //   }
+  // },
 };
 
 export default questionController;
