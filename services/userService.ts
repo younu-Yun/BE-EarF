@@ -62,6 +62,7 @@ export default class UserService {
       await user.save();
       return { accessToken, refreshToken };
     } catch (error) {
+      console.log(error);
       throw new Error(
         "일시적인 오류로 로그인을 할 수 없습니다. 잠시 후 다시 이용해 주세요."
       );
