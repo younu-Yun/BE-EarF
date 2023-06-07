@@ -4,9 +4,11 @@ import diaryService from '../services/diaryService';
 const diaryController = {
   async getAllDiariesByMonth(req: Request, res: Response) {
     try {
+      const { userId } = req.body;
       const { startDate, endDate } = req.query;
       //const userId = req.user.id;
       const allDiariesByMonth = await diaryService.getAllDiariesByMonth(
+        userId,
         new Date(startDate as string),
         new Date(endDate as string)
       );
@@ -18,15 +20,23 @@ const diaryController = {
   async createDiary(req: Request, res: Response) {
     try {
       const {
-        date,
+        userId,
         tag,
         imageUrl,
         title,
         content,
         shareStatus
       } = req.body;
+      const { date } = req.params;
       //const userId = req.user.id;
-      const createDiary = await diaryService.createDiary(date, tag, imageUrl, title, content, shareStatus);
+      const createDiary = await diaryService.createDiary(
+        userId,
+        new Date(date as string),
+        tag,
+        imageUrl,
+        title,
+        content,
+        shareStatus);
       res.status(200).json(createDiary);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -35,15 +45,23 @@ const diaryController = {
   async updateDiary(req: Request, res: Response) {
     try {
       const {
-        date,
+        userId,
         tag,
         imageUrl,
         title,
         content,
         shareStatus
       } = req.body;
+      const { date } = req.params;
       //const userId = req.user.id;
-      const updatedDiary = await diaryService.updateDiary(date, tag, imageUrl, title, content, shareStatus);
+      const updatedDiary = await diaryService.updateDiary(
+        userId,
+        new Date(date as string),
+        tag,
+        imageUrl,
+        title,
+        content,
+        shareStatus);
       res.json(updatedDiary);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -51,9 +69,10 @@ const diaryController = {
   },
   async deleteDiary(req: Request, res: Response) {
     try {
-      const { date } = req.body;
+      const { userId } = req.body;
+      const { date } = req.params;
       //const userId = req.user.id;
-      const deletedDiary = await diaryService.deleteDiary(date);
+      const deletedDiary = await diaryService.deleteDiary(userId, new Date(date as string));
       res.json(deletedDiary);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -61,9 +80,10 @@ const diaryController = {
   },
   async getDiary(req: Request, res: Response) {
     try {
-      const { date } = req.body;
+      const { userId } = req.body;
+      const { date } = req.params;
       //const userId = req.user.id;
-      const getDiary = await diaryService.getDiary(date);
+      const getDiary = await diaryService.getDiary(userId, new Date(date as string));
       res.json(getDiary);
     } catch (error: any) {
       res.status(500).json({ error: error.message });

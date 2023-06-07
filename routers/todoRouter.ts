@@ -4,12 +4,12 @@ import { authenticateToken } from "../middlewares/authmiddleware";
 
 const todoRouter = Router();
 //todo-list 등록
-todoRouter.post('/', authenticateToken, todoController.createTodo);
+todoRouter.post('/:date',  todoController.createTodo);
 //todo-list 조회
-todoRouter.get('/:date', authenticateToken, todoController.getTodo);
+todoRouter.get('/:date',  todoController.getTodo);
 //todo-list 완료 여부
-todoRouter.patch('/:date', authenticateToken, todoController.completeStatusUpdateTodo);
+todoRouter.patch('/:date/:todoIndex',  todoController.completeStatusUpdateTodo);
 //todo-list 삭제
-todoRouter.delete('/:date', authenticateToken, todoController.deleteTodo);
+todoRouter.delete('/:date/:todoIndex',  todoController.deleteTodo);
 
 export default todoRouter;

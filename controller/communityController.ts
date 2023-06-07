@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import questionService from "../services/communityQuestionService";
+import questionService from "../services/communityService";
 
 const questionController = {
   /**

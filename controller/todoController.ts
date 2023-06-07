@@ -4,8 +4,13 @@ import todoService from '../services/todoService';
 const todoController = {
   async createTodo(req: Request, res: Response) {
     try {
-      const { date, todo, completed } = req.body;
-      const createTodoList = await todoService.createTodo(date, todo, completed);
+      const { userId, todo, completed } = req.body;
+      const { date } = req.params;
+      const createTodoList = await todoService.createTodo(
+        userId,
+        new Date(date as string),
+        todo,
+        completed);
       res.status(200).json(createTodoList);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -13,8 +18,9 @@ const todoController = {
   },
   async completeStatusUpdateTodo(req: Request, res: Response) {
     try {
-      const { date, todoIndex } = req.body;
-      const updatedTodoList = await todoService.completeStatusUpdateTodo(date, todoIndex);
+      const { userId, todoIndex } = req.body;
+      const { date } = req.params;
+      const updatedTodoList = await todoService.completeStatusUpdateTodo(userId, new Date(date as string), todoIndex);
       res.status(200).json(updatedTodoList);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -22,9 +28,9 @@ const todoController = {
   },
   async deleteTodo(req: Request, res: Response) {
     try {
-      const { date } = req.body;
-      const { todoIndex } = req.params;
-      const deletedTodoList = await todoService.deleteTodo(date, Number(todoIndex));
+      const { userId } = req.body;
+      const { date, todoIndex } = req.params;
+      const deletedTodoList = await todoService.deleteTodo(userId, new Date(date as string), Number(todoIndex));
       res.status(200).json(deletedTodoList);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -32,8 +38,9 @@ const todoController = {
   },
   async getTodo(req: Request, res: Response) {
     try {
-      const { date } = req.body;
-      const getTodoList = await todoService.getTodo(new Date(date));
+      const { userId } = req.body;
+      const { date } = req.params;
+      const getTodoList = await todoService.getTodo(userId, new Date(date as string));
       res.status(200).json(getTodoList);
     } catch (error: any) {
       res.status(500).json({ error: error.message });

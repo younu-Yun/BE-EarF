@@ -2,6 +2,7 @@ import { Diary } from '../models/schemas/diary';
 
 interface CreateDiary {
   (
+    userId: string,
     date: Date,
     tag: string[],
     imageUrl: string | undefined,
@@ -13,6 +14,7 @@ interface CreateDiary {
 
 interface UpdateDiary {
   (
+    userId: string,
     date: Date,
     tag: string[],
     imageUrl: string | undefined,
@@ -30,6 +32,7 @@ const Error_Message = {
 };
 
 const createDiary: CreateDiary = async (
+  userId,
   date,
   tag,
   imageUrl,
@@ -39,6 +42,7 @@ const createDiary: CreateDiary = async (
 ) => {
   try {
     const createDiary = await Diary.create({
+      userId,
       date,
       tag,
       imageUrl,
@@ -53,6 +57,7 @@ const createDiary: CreateDiary = async (
 };
 
 const updateDiary: UpdateDiary = async (
+  userId,
   date,
   tag,
   imageUrl,
@@ -62,7 +67,7 @@ const updateDiary: UpdateDiary = async (
 ) => {
   try {
     const updatedDiary = await Diary.findOneAndUpdate(
-      { date },
+      { userId, date },
       { tag, imageUrl, title, content, shareStatus },
       { new: true }
     );
@@ -74,23 +79,31 @@ const updateDiary: UpdateDiary = async (
 
 const diaryService = {
   //월간 diary 태그 조회
-  async getAllDiariesByMonth(startDate: Date, endDate: Date) {
+  async getAllDiariesByMonth(userId: string, startDate: Date, endDate: Date) {
     try {
       const allDiariesByMonth = await Diary.find({
+        userId,
         date: { $gte: new Date(startDate), $lte: new Date(endDate) }
       }).select('tag');
       
       const tags: string[] = [];
 
       allDiariesByMonth.forEach((diary) => {
-        tags.push(...diary.tag);
+        diary.tag.forEach((tag) => {
+          const allTags = tag.split(',').map((t) => t.trim());
+          tags.push(...allTags);
+        });
       });
 
-      const tagsCount: {[key: string]: number} 
-        = tags.reduce((accumulator: { [key: string]: number }, currentValue: string) => {
-        accumulator[currentValue] = (accumulator[currentValue] || 0) + 1;
-        return accumulator;
-      }, {});
+      const tagsCount: { [key: string]: number } = {};
+
+      tags.forEach((tag) => {
+        if (tagsCount[tag]) {
+          tagsCount[tag] += 1;
+        } else {
+          tagsCount[tag] = 1;
+        }
+      });
       return tagsCount;
     } catch (error) {
       throw new Error(Error_Message.getDiaryError);
@@ -101,18 +114,18 @@ const diaryService = {
   //diary 수정
   updateDiary,
   //diary 삭제
-  async deleteDiary(date: Date) {
+  async deleteDiary(userId: string, date: Date) {
     try {
-      const deletedDiary = await Diary.findOneAndDelete({ date });
+      const deletedDiary = await Diary.findOneAndDelete({ userId, date });
       return deletedDiary;
     } catch (error) {
       throw new Error(Error_Message.deleteDiaryError);
     }
   },
   //diary 조회
-  async getDiary(date: Date) {
+  async getDiary(userId: string, date: Date) {
     try {
-      const getDiary = await Diary.findOne({ date });
+      const getDiary = await Diary.findOne({ userId, date });
       return getDiary;
     } catch (error) {
       throw new Error(Error_Message.getDiaryError);

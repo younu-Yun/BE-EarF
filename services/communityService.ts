@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import CommunityQuestion from "../models/schemas/communityQuestionSchema";
+import CommunityQuestion from "../models/schemas/communitySchema";
 
 const questionService = {
   // 커뮤니티 질문 생성

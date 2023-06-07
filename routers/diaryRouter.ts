@@ -6,7 +6,7 @@ const diaryRouter = Router();
 //calendar diary 전체 조회
 diaryRouter.get('/month', authenticateToken, diaryController.getAllDiariesByMonth);
 //calendar diary 등록
-diaryRouter.post('/', authenticateToken, diaryController.createDiary);
+diaryRouter.post('/:date', authenticateToken, diaryController.createDiary);
 //calendar diary 조회
 diaryRouter.get('/:date', authenticateToken, diaryController.getDiary);
 //calendar diary 수정
