@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { authenticateToken } from "../middlewares/authmiddleware";
 import questionController from "../controller/questionController";
 
 const questionRouter = Router();
