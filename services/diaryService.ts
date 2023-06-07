@@ -3,7 +3,6 @@ import { Diary } from '../models/schemas/diary';
 interface CreateDiary {
   (
     date: Date,
-    userId: string,
     tag: string[],
     imageUrl: string | undefined,
     title: string,
@@ -15,7 +14,6 @@ interface CreateDiary {
 interface UpdateDiary {
   (
     date: Date,
-    userId: string,
     tag: string[],
     imageUrl: string | undefined,
     title: string,
@@ -33,7 +31,6 @@ const Error_Message = {
 
 const createDiary: CreateDiary = async (
   date,
-  userId,
   tag,
   imageUrl,
   title,
@@ -43,7 +40,6 @@ const createDiary: CreateDiary = async (
   try {
     const createDiary = await Diary.create({
       date,
-      userId,
       tag,
       imageUrl,
       title,
@@ -58,7 +54,6 @@ const createDiary: CreateDiary = async (
 
 const updateDiary: UpdateDiary = async (
   date,
-  userId,
   tag,
   imageUrl,
   title,
@@ -67,7 +62,7 @@ const updateDiary: UpdateDiary = async (
 ) => {
   try {
     const updatedDiary = await Diary.findOneAndUpdate(
-      { date, userId },
+      { date },
       { tag, imageUrl, title, content, shareStatus },
       { new: true }
     );
@@ -78,10 +73,10 @@ const updateDiary: UpdateDiary = async (
 };
 
 const diaryService = {
-  async getAllDiariesByMonth(userId: string, startDate: Date, endDate: Date) {
+  //월간 diary 태그 조회
+  async getAllDiariesByMonth(startDate: Date, endDate: Date) {
     try {
       const allDiariesByMonth = await Diary.find({
-        userId,
         date: { $gte: new Date(startDate), $lte: new Date(endDate) }
       }).select('tag');
       
@@ -106,18 +101,18 @@ const diaryService = {
   //diary 수정
   updateDiary,
   //diary 삭제
-  async deleteDiary(userId: string, date: Date) {
+  async deleteDiary(date: Date) {
     try {
-      const deletedDiary = await Diary.findOneAndDelete({ userId, date });
+      const deletedDiary = await Diary.findOneAndDelete({ date });
       return deletedDiary;
     } catch (error) {
       throw new Error(Error_Message.deleteDiaryError);
     }
   },
   //diary 조회
-  async getDiary(userId: string, date: Date) {
+  async getDiary(date: Date) {
     try {
-      const getDiary = await Diary.findOne({ userId, date });
+      const getDiary = await Diary.findOne({ date });
       return getDiary;
     } catch (error) {
       throw new Error(Error_Message.getDiaryError);

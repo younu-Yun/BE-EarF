@@ -8,22 +8,21 @@ const Error_Message = {
 };
 
 const todoService = {
-  //todo 생성
-  async createTodo(date: Date, todo: string[]) {
+  //todo 추가
+  async createTodo(date: Date, todoList: string[], completed: boolean[]) {
     try {
-      const completed = new Array(todo.length).fill(false);
-      const addedTodoList = await Todo.create({ date, todo, completed });
-      return addedTodoList;
+      const createTodoList = await Todo.create({ date, todoList, completed });
+      return createTodoList;
     } catch (error) {
       throw new Error(Error_Message.createTodoError);
     }
   },
   //todo 완료
-  async completeStatusUpdateTodo(id: string, todoIndex: number, completed: boolean) {
+  async completeStatusUpdateTodo(date: Date, todoIndex: number) {
     try {
-      const completeStatusUpdatedTodoList = await Todo.findById(id);
+      const completeStatusUpdatedTodoList = await Todo.findOne({ date });
       if (completeStatusUpdatedTodoList) {
-        completeStatusUpdatedTodoList.completed[todoIndex] = completed;
+        completeStatusUpdatedTodoList.completed[todoIndex] = true;
         await completeStatusUpdatedTodoList.save();
       }
       return completeStatusUpdatedTodoList;
@@ -32,11 +31,11 @@ const todoService = {
     }
   },
   //todo 삭제
-  async deleteTodo(id: string, todoIndex: number) {
+  async deleteTodo(date: Date, todoIndex: number) {
     try {
-      const deletedTodoList = await Todo.findById(id);
+      const deletedTodoList = await Todo.findOne({ date });
       if (deletedTodoList) {
-        deletedTodoList.todo.splice(todoIndex, 1);
+        deletedTodoList.todoList.splice(todoIndex, 1);
         deletedTodoList.completed.splice(todoIndex, 1);
         await deletedTodoList.save();
       }

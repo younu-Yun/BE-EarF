@@ -3,7 +3,6 @@ import todoController from '../controller/todoController';
 import { authenticateToken } from "../middlewares/authmiddleware";
 
 const todoRouter = Router();
-
 //todo-list 등록
 todoRouter.post('/', authenticateToken, todoController.createTodo);
 //todo-list 조회
