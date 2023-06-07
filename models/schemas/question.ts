@@ -1,19 +1,27 @@
 import { Schema, model, Document } from "mongoose";
 
 interface IQuestion extends Document {
-  userId: Schema.Types.ObjectId;
+  userId: string;
+  userName: string;
+  imageUrl: string;
   title: string;
   content: string;
   likeIds: Schema.Types.ObjectId[];
-  commentIds: { type: Schema.Types.ObjectId; ref: "Comment" }[];
 }
 
 const QuestionSchema = new Schema<IQuestion>(
   {
     userId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      // required: true,
+      type: String,
+      required: true,
+    },
+    userName: {
+      type: String,
+      required: true,
+    },
+    imageUrl: {
+      type: String,
+      required: true,
     },
     title: {
       type: String,
@@ -29,15 +37,6 @@ const QuestionSchema = new Schema<IQuestion>(
         ref: "User",
       },
     ],
-    commentIds: {
-      type: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: "Comment",
-        },
-      ],
-      default: [],
-    },
   },
   { timestamps: true },
 );

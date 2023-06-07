@@ -2,13 +2,13 @@ import { Request, Response, NextFunction } from "express";
 import { verifyAccessToken } from "../utils/jwt";
 
 interface CustomRequest extends Request {
-  _id?: string;
+  id?: string;
 }
 
 export const authenticateToken = (
   req: CustomRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(" ")[1];
@@ -19,7 +19,7 @@ export const authenticateToken = (
 
   try {
     const payload = verifyAccessToken(token);
-    req._id = payload._id;
+    req.id = payload._id;
     next();
   } catch (error) {
     return res.status(403).json({ message: "유효하지 않은 토큰입니다." });

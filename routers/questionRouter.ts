@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { authenticateToken } from "../middlewares/authmiddleware";
 import questionController from "../controller/questionController";
 
 const questionRouter = Router();
@@ -19,9 +20,15 @@ questionRouter.patch("/questions/:id", questionController.updateQuestion);
 questionRouter.delete("/questions/:id", questionController.deleteQuestion);
 
 // 특정 질문에 좋아요 추가 혹은 취소
-questionRouter.post(
+questionRouter.patch(
   "/questions/:questionId/like",
   questionController.likeQuestion,
+);
+
+// 특정 질문에 댓글 추가
+questionRouter.patch(
+  "/questions/:questionId/comments",
+  questionController.addCommentToQuestion,
 );
 
 export default questionRouter;
