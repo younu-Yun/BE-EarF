@@ -1,18 +1,18 @@
 import { Schema, Document, model } from "mongoose";
 
 export interface IUser extends Document {
-  id?: string;
-  password?: string;
-  name?: string;
-  email?: string;
-  phoneNumber?: string;
-  profileImage?: string;
-  badges?: [];
-  postNum?: number;
-  tumblerNum?: number;
-  transportNum?: number;
-  basketNum?: number;
-  refreshToken?: string;
+  id: string;
+  password: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  profileImage: string;
+  badges: [];
+  postNum: number;
+  tumblerNum: number;
+  transportNum: number;
+  basketNum: number;
+  refreshToken: string;
 }
 
 export interface IBadge extends Document {

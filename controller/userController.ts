@@ -1,6 +1,7 @@
 import { Request, RequestHandler, Response } from "express";
 import UserService from "../services/userService";
-import { verifyRefreshToken, deleteRefreshToken } from "../utils/jwt";
+import { setUserToken } from "../utils/jwt";
+import { IUser, User } from "../models";
 
 export default class UserController {
   private userService: UserService;
@@ -46,33 +47,18 @@ export default class UserController {
     }
   };
 
-  // 리프레시 토큰 갱신
-  public refreshTokens: RequestHandler = async (
-    req: Request,
-    res: Response
-  ) => {
-    try {
-      const { refreshToken } = req.body;
-      const { accessToken, refreshToken: newRefreshToken } =
-        await this.userService.refreshTokens(refreshToken);
-      res.status(200).json({ accessToken, refreshToken: newRefreshToken });
-    } catch (error) {
-      res.status(401).json({ error: (error as Error).message });
-    }
-  };
-
-  // 유저 로그아웃
-  public logoutUser: RequestHandler = async (req: Request, res: Response) => {
-    try {
-      const { refreshToken } = req.body;
-      const decoded = verifyRefreshToken(refreshToken);
-      const id = decoded._id;
-      await deleteRefreshToken(id);
-      res.status(200).json({ message: "로그아웃되었습니다." });
-    } catch (error) {
-      res.status(500).json({ error: (error as Error).message });
-    }
-  };
+  // // 유저 로그아웃
+  // public logoutUser: RequestHandler = async (req: Request, res: Response) => {
+  //   try {
+  //     const { refreshToken } = req.body;
+  //     const decoded = verifyRefreshToken(refreshToken);
+  //     const id = decoded._id;
+  //     await deleteRefreshToken(id);
+  //     res.status(200).json({ message: "로그아웃되었습니다." });
+  //   } catch (error) {
+  //     res.status(500).json({ error: (error as Error).message });
+  //   }
+  // };
 
   // ID로 유저 가져오기
   public getUserById: RequestHandler = async (req: Request, res: Response) => {
@@ -111,14 +97,28 @@ export default class UserController {
     }
   };
 
-  public getIdByEmailAndName = async (
-    req: Request,
-    res: Response
-  ): Promise<void> => {
+  public getIdByEmailAndName = async (req: Request, res: Response) => {
     try {
       const { email, name } = req.body;
       const userId = await this.userService.getIdByEmailAndName(email, name);
       res.json({ id: userId });
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
+  };
+
+  public createAccessToken = async (req: Request, res: Response) => {
+    try {
+      const { id } = req.user as IUser;
+      const userForToken: IUser | null = await this.userService.getUserForToken(
+        id
+      );
+      if (userForToken) {
+        const accessToken = setUserToken(userForToken, true);
+        res.json({ accessToken });
+      } else {
+        res.status(404).json({ error: "유저를 찾을 수 없습니다." });
+      }
     } catch (error) {
       res.status(500).json({ error: (error as Error).message });
     }

@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+import nodemailer, { SentMessageInfo } from "nodemailer";
 import mjml2html from "mjml";
 
 const transport = nodemailer.createTransport({
@@ -103,7 +103,7 @@ const setMailOption = (
       html: html,
     };
 
-    transport.sendMail(message, (err, info) => {
+    transport.sendMail(message, (err, info: SentMessageInfo) => {
       if (err) {
         reject(err);
         return;

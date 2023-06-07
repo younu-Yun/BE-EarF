@@ -1,54 +1,45 @@
-import jwt, { Secret } from "jsonwebtoken";
-import { User } from "../models";
+import { Secret, SignOptions, sign } from "jsonwebtoken";
+import { User, IUser } from "../models/index";
+import dotenv from "dotenv";
+dotenv.config();
 
-const jwtSecret: Secret = process.env.JWT_SECRET || "default_secret_key";
-const accessTokenExpiration = "1h";
-const refreshTokenExpiration = "7d";
+export const setUserToken = async (
+  user: IUser,
+  isOnlyAccess: boolean
+): Promise<{ accessToken: string; refreshToken?: string }> => {
+  const accessPayload = {
+    _id: user._id,
+    id: user.id,
+    name: user.name,
+    email: user.email,
+  };
+  const accessOptions = { algorithm: "HS256", expiresIn: "1h" };
+  const accessToken = sign(
+    accessPayload,
+    process.env.JWTACCESS as Secret,
+    accessOptions as SignOptions
+  );
 
-export const generateAccessToken = (id: string): string => {
-  const token = jwt.sign({ _id: id }, jwtSecret, {
-    expiresIn: accessTokenExpiration,
-  });
-  return token;
-};
+  if (!isOnlyAccess) {
+    const refreshPayload = {
+      id: user.id,
+    };
+    const refreshOptions = { algorithm: "HS256", expiresIn: "7d" };
+    const refreshToken = sign(
+      refreshPayload,
+      process.env.JWTREFRESH as Secret,
+      refreshOptions as SignOptions
+    );
 
-export const generateRefreshToken = (id: string): string => {
-  const token = jwt.sign({ _id: id }, jwtSecret, {
-    expiresIn: refreshTokenExpiration,
-  });
-  return token;
-};
+    await User.updateOne(
+      { id: refreshPayload.id },
+      {
+        refreshToken: refreshToken,
+      }
+    );
 
-export const verifyAccessToken = (token: string): any => {
-  try {
-    const payload = jwt.verify(token, jwtSecret);
-    return payload;
-  } catch (error) {
-    throw new Error("유효하지 않은 액세스 토큰입니다.");
-  }
-};
-
-export const verifyRefreshToken = (token: string): any => {
-  try {
-    const payload = jwt.verify(token, jwtSecret);
-    return payload;
-  } catch (error) {
-    throw new Error("유효하지 않은 리프레시 토큰입니다.");
-  }
-};
-
-export const deleteRefreshToken = async (id: string): Promise<void> => {
-  try {
-    const user = await User.findById(id);
-
-    if (!user) {
-      throw new Error("사용자를 찾을 수 없습니다.");
-    }
-
-    user.refreshToken = "";
-    await user.save();
-  } catch (error) {
-    console.log(error);
-    throw new Error("리프레시 토큰을 삭제할 수 없습니다.");
+    return { accessToken, refreshToken };
+  } else {
+    return { accessToken };
   }
 };

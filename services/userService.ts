@@ -1,11 +1,7 @@
 import bcrypt from "bcrypt";
 import { hashPassword } from "../utils/hashPassword";
 import { User, IUser } from "../models";
-import {
-  generateAccessToken,
-  generateRefreshToken,
-  verifyRefreshToken,
-} from "../utils/jwt";
+import { setUserToken } from "../utils/jwt";
 
 export default class UserService {
   // 유저 회원가입
@@ -39,7 +35,7 @@ export default class UserService {
   public loginUser = async (
     id: string,
     password: string
-  ): Promise<{ accessToken: string; refreshToken: string }> => {
+  ): Promise<{ accessToken: string; refreshToken?: string }> => {
     const user: IUser | null = await User.findOne({ id }).select("+password");
 
     if (!user || !user.password) {
@@ -56,34 +52,11 @@ export default class UserService {
     }
 
     try {
-      const accessToken = generateAccessToken(user._id);
-      const refreshToken = generateRefreshToken(user._id);
-      user.refreshToken = refreshToken;
-      await user.save();
+      const { accessToken, refreshToken } = await setUserToken(user, false); // setUserToken 함수 호출 시 await 키워드 추가
       return { accessToken, refreshToken };
     } catch (error) {
-      console.log(error);
       throw new Error(
         "일시적인 오류로 로그인을 할 수 없습니다. 잠시 후 다시 이용해 주세요."
-      );
-    }
-  };
-
-  // 리프레시 토큰 갱신
-  public refreshTokens = async (
-    refreshToken: string
-  ): Promise<{ accessToken: string; refreshToken: string }> => {
-    try {
-      const decoded = verifyRefreshToken(refreshToken);
-      const userId = decoded._id;
-
-      const accessToken = generateAccessToken(userId);
-      const newRefreshToken = generateRefreshToken(userId);
-
-      return { accessToken, refreshToken: newRefreshToken };
-    } catch (error) {
-      throw new Error(
-        "리프레시 토큰을 갱신할 수 없습니다. 다시 로그인해주세요."
       );
     }
   };
@@ -130,6 +103,33 @@ export default class UserService {
       return user.id;
     } catch (error) {
       throw new Error("이메일과 이름으로 유저 ID를 가져오는데 실패했습니다.");
+    }
+  };
+
+  // 토큰생성
+  public getUserForToken = async (id: string): Promise<IUser | null> => {
+    try {
+      const user = await User.findOne(
+        { _id: id },
+        {
+          _id: 1,
+          id: 1,
+          name: 1,
+          email: 1,
+        }
+      );
+      return user;
+    } catch (error) {
+      throw new Error("유저의 토큰을 생성하는데 실패했습니다.");
+    }
+  };
+
+  public getUserRefreshToken = async (id: string): Promise<IUser | null> => {
+    try {
+      const user = await User.findOne({ _id: id }, "refreshToken");
+      return user;
+    } catch (error) {
+      throw new Error("유저의 refresh토큰을 발견하는데 실패했습니다.");
     }
   };
 }
