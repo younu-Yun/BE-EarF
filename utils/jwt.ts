@@ -40,6 +40,7 @@ export const setUserToken = async (
 
     return { accessToken, refreshToken };
   } else {
+    console.log("혹시 여기까지 오니?");
     return { accessToken };
   }
 };

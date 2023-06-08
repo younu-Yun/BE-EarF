@@ -109,13 +109,14 @@ export default class UserController {
 
   public createAccessToken = async (req: Request, res: Response) => {
     try {
-      const { id } = req.user as IUser;
+      console.log("이쪽에 왔으면 access토큰을 줘야지??");
+      const { _id } = req.user as IUser;
       const userForToken: IUser | null = await this.userService.getUserForToken(
-        id
+        _id
       );
       if (userForToken) {
-        const accessToken = setUserToken(userForToken, true);
-        res.json({ accessToken });
+        const accessToken = await setUserToken(userForToken, true);
+        res.send(accessToken);
       } else {
         res.status(404).json({ error: "유저를 찾을 수 없습니다." });
       }

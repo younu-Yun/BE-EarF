@@ -118,15 +118,17 @@ export default class UserService {
           email: 1,
         }
       );
+      console.log(user);
       return user;
     } catch (error) {
+      console.log(error);
       throw new Error("유저의 토큰을 생성하는데 실패했습니다.");
     }
   };
 
   public getUserRefreshToken = async (id: string): Promise<IUser | null> => {
     try {
-      const user = await User.findOne({ _id: id }, "refreshToken");
+      const user = await User.findOne({ id }, "refreshToken");
       return user;
     } catch (error) {
       throw new Error("유저의 refresh토큰을 발견하는데 실패했습니다.");

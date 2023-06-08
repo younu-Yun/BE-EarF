@@ -14,10 +14,6 @@ router.get("/:id", authAccess, userController.getUserById);
 router.patch("/:id", authAccess, userController.updateUserById);
 // 유저 회원가입 API
 router.post("/register", userController.registerUser);
-// refresh토큰으로 access토큰 갱신 API
-router.get("/login", authRefresh, userController.createAccessToken);
-// 유저 로그인 API
-router.post("/login", userController.loginUser);
 // Email, Name으로 유저 id찾기 API
 router.post("/loginid", authAccess, userController.getIdByEmailAndName);
 

@@ -1,10 +1,14 @@
-import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
+import {
+  Strategy as JwtStrategy,
+  ExtractJwt,
+  StrategyOptions,
+} from "passport-jwt";
 import { User } from "../../models/index";
 import dotenv from "dotenv";
 dotenv.config();
 
-const jwtOptions = {
-  secretOrKey: process.env.JWTREFRESH,
+const jwtOptions: StrategyOptions = {
+  secretOrKey: process.env.JWTREFRESH as string,
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 };
 
