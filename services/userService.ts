@@ -134,4 +134,22 @@ export default class UserService {
       throw new Error("유저의 refresh토큰을 발견하는데 실패했습니다.");
     }
   };
+
+  public invalidateTokens = async (id: string) => {
+    try {
+      // Access 토큰과 Refresh 토큰 모두 무효화
+      await User.updateOne(
+        { id },
+        {
+          $unset: {
+            accessToken: 1,
+            refreshToken: 1,
+          },
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      throw new Error("토큰 무효화에 실패했습니다.");
+    }
+  };
 }

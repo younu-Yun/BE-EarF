@@ -47,18 +47,21 @@ export default class UserController {
     }
   };
 
-  // // 유저 로그아웃
-  // public logoutUser: RequestHandler = async (req: Request, res: Response) => {
-  //   try {
-  //     const { refreshToken } = req.body;
-  //     const decoded = verifyRefreshToken(refreshToken);
-  //     const id = decoded._id;
-  //     await deleteRefreshToken(id);
-  //     res.status(200).json({ message: "로그아웃되었습니다." });
-  //   } catch (error) {
-  //     res.status(500).json({ error: (error as Error).message });
-  //   }
-  // };
+  // 유저 로그아웃
+  public logoutUser = async (req: Request, res: Response) => {
+    try {
+      const { id } = req.user as IUser;
+      console.log(id); // 현재 로그인된 사용자의 이메일
+      if (id) {
+        await this.userService.invalidateTokens(id);
+        res.status(200).json({ message: "로그아웃되었습니다." });
+      } else {
+        res.status(400).json({ error: "사용자를 식별할 수 없습니다." });
+      }
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
+  };
 
   // ID로 유저 가져오기
   public getUserById: RequestHandler = async (req: Request, res: Response) => {

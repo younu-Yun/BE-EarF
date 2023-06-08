@@ -1,7 +1,6 @@
 import express from "express";
 import UserController from "../controller/userController";
 import authAccess from "../middlewares/authAccess";
-import authRefresh from "../middlewares/authRefresh";
 
 const router = express.Router();
 const userController = new UserController();

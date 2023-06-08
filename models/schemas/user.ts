@@ -8,6 +8,7 @@ export interface IUser extends Document {
   phoneNumber: string;
   profileImage: string;
   badges: [];
+  checkedBadge: string;
   postNum: number;
   tumblerNum: number;
   transportNum: number;
@@ -66,6 +67,10 @@ const UserSchema: Schema<IUser> = new Schema<IUser>(
     },
     badges: [badgeSchema],
     // 뱃지뿐만 아니라 캘린더에 현재까지 유저의 총 태그갯수를 조회하는 api가 필요할 것 같아서 남겨두려고 함.
+    checkedBadge: {
+      type: String,
+      default: "신규",
+    },
     postNum: {
       // 3회 이상 연속작성, 커뮤니티 포스팅 10회
       type: Number,
