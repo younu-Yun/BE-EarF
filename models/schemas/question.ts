@@ -7,6 +7,7 @@ interface IQuestion extends Document {
   title: string;
   content: string;
   likeIds: Schema.Types.ObjectId[];
+  commentIds: Schema.Types.ObjectId[];
 }
 
 const QuestionSchema = new Schema<IQuestion>(
@@ -35,6 +36,13 @@ const QuestionSchema = new Schema<IQuestion>(
       {
         type: Schema.Types.ObjectId,
         ref: "User",
+      },
+    ],
+    // 댓글 참조하는 배열
+    commentIds: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Comment",
       },
     ],
   },

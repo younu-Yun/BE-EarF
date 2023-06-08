@@ -1,12 +1,12 @@
 import { Schema, Document, model, Types } from "mongoose";
 
-interface ICommunityComment extends Document {
+interface IComment extends Document {
   postId: Schema.Types.ObjectId; // 게시글 ObjectId 참조.
   userId: Schema.Types.ObjectId; // 댓글 작성자 ObjectId 참조.
   comment: string;
 }
 
-const CommunityCommentSchema = new Schema<ICommunityComment>(
+const CommentSchema = new Schema<IComment>(
   {
     postId: {
       type: Schema.Types.ObjectId,
@@ -26,7 +26,4 @@ const CommunityCommentSchema = new Schema<ICommunityComment>(
   { timestamps: true },
 );
 
-export default model<ICommunityComment>(
-  "CommunityComment",
-  CommunityCommentSchema,
-);
+export default model<IComment>("Comment", CommentSchema);

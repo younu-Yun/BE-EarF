@@ -18,6 +18,7 @@ const questionService = {
         title,
         content,
         likeIds: [],
+        commentIds: [],
       });
       await question.save();
       return question;
@@ -69,12 +70,12 @@ const questionService = {
   },
 
   // 모든 커뮤니티 질문 조회 (정렬 방식 추가)
-  async readAllQuestions(order: string) {
+  async readAllQuestions(sort: string) {
     try {
       let questions;
-      if (order === "latest") {
+      if (sort === "latest") {
         questions = await Question.find().sort({ updatedAt: -1 }); // 최신순
-      } else if (order === "oldest") {
+      } else if (sort === "oldest") {
         questions = await Question.find().sort({ updatedAt: 1 }); // 오래된 순
       } else {
         throw new Error("정렬 방식이 잘못되었습니다."); // 잘못된 정렬 방식

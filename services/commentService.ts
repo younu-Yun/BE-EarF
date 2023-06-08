@@ -1,8 +1,8 @@
 import { Types } from "mongoose";
 import Comment from "../models/schemas/comment";
+import Question from "../models/schemas/question"; // Question 모델을 임포트합니다.
 
 const CommentService = {
-  // 커뮤니티 댓글 생성
   // 커뮤니티 댓글 생성
   async createComment(
     postId: Types.ObjectId,
@@ -16,6 +16,15 @@ const CommentService = {
         comment,
       });
       await newComment.save();
+
+      // 게시글의 commentIds 배열에 새로운 댓글의 ID를 추가합니다.
+      const post = await Question.findById(postId);
+      if (!post) {
+        throw new Error("게시글을 찾을 수 없습니다.");
+      }
+      post.commentIds.push(newComment._id);
+      await post.save();
+
       return newComment; // 새로운 댓글의 ID를 반환
     } catch (error) {
       console.error(error);
