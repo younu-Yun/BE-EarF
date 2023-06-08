@@ -1,45 +1,46 @@
-import jwt from "jsonwebtoken";
-import { User } from "../models";
+import { Secret, SignOptions, sign } from "jsonwebtoken";
+import { User, IUser } from "../models/index";
+import dotenv from "dotenv";
+dotenv.config();
 
-const jwtSecret = process.env.JWT_SECRET || "default_secret_key";
-const accessTokenExpiration = "1h";
-const refreshTokenExpiration = "7d";
+export const setUserToken = async (
+  user: IUser,
+  isOnlyAccess: boolean
+): Promise<{ accessToken: string; refreshToken?: string }> => {
+  const accessPayload = {
+    _id: user._id,
+    id: user.id,
+    name: user.name,
+    email: user.email,
+  };
+  const accessOptions = { algorithm: "HS256", expiresIn: "1h" };
+  const accessToken = sign(
+    accessPayload,
+    process.env.JWTACCESS as Secret,
+    accessOptions as SignOptions
+  );
 
-export const generateAccessToken = (_id: string): string => {
-  const token = jwt.sign({ _id }, jwtSecret, {
-    expiresIn: accessTokenExpiration,
-  });
-  return token;
-};
+  if (!isOnlyAccess) {
+    const refreshPayload = {
+      id: user.id,
+    };
+    const refreshOptions = { algorithm: "HS256", expiresIn: "7d" };
+    const refreshToken = sign(
+      refreshPayload,
+      process.env.JWTREFRESH as Secret,
+      refreshOptions as SignOptions
+    );
 
-export const generateRefreshToken = (_id: string): string => {
-  const token = jwt.sign({ _id }, jwtSecret, {
-    expiresIn: refreshTokenExpiration,
-  });
-  return token;
-};
+    await User.updateOne(
+      { id: refreshPayload.id },
+      {
+        refreshToken: refreshToken,
+      }
+    );
 
-export const verifyAccessToken = (token: string): any => {
-  const payload = jwt.verify(token, jwtSecret);
-  return payload;
-};
-
-export const verifyRefreshToken = (token: string): any => {
-  const payload = jwt.verify(token, jwtSecret);
-  return payload;
-};
-
-export const deleteRefreshToken = async (_id: string): Promise<void> => {
-  try {
-    const user = await User.findById(_id);
-
-    if (!user) {
-      throw new Error("사용자를 찾을 수 없습니다.");
-    }
-
-    user.refreshToken = "";
-    await user.save();
-  } catch (error) {
-    throw new Error("리프레시 토큰을 삭제할 수 없습니다.");
+    return { accessToken, refreshToken };
+  } else {
+    console.log("혹시 여기까지 오니?");
+    return { accessToken };
   }
 };

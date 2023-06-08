@@ -1,12 +1,7 @@
 import bcrypt from "bcrypt";
 import { hashPassword } from "../utils/hashPassword";
 import { User, IUser } from "../models";
-import {
-  generateAccessToken,
-  generateRefreshToken,
-  verifyAccessToken,
-  verifyRefreshToken,
-} from "../utils/jwt";
+import { setUserToken } from "../utils/jwt";
 
 export default class UserService {
   // 유저 회원가입
@@ -18,7 +13,6 @@ export default class UserService {
     phoneNumber: string
   ): Promise<IUser> => {
     try {
-      // 대부분의 유효성 검사는 프론트에서 받아올때 한다고 함.
       const hashedPassword = await hashPassword(password);
 
       const user: IUser = new User({
@@ -41,7 +35,7 @@ export default class UserService {
   public loginUser = async (
     id: string,
     password: string
-  ): Promise<{ accessToken: string; refreshToken: string }> => {
+  ): Promise<{ accessToken: string; refreshToken?: string }> => {
     const user: IUser | null = await User.findOne({ id }).select("+password");
 
     if (!user || !user.password) {
@@ -58,10 +52,7 @@ export default class UserService {
     }
 
     try {
-      const accessToken = generateAccessToken(user._id);
-      const refreshToken = generateRefreshToken(user._id);
-      user.refreshToken = refreshToken;
-      await user.save();
+      const { accessToken, refreshToken } = await setUserToken(user, false); // setUserToken 함수 호출 시 await 키워드 추가
       return { accessToken, refreshToken };
     } catch (error) {
       throw new Error(
@@ -70,42 +61,23 @@ export default class UserService {
     }
   };
 
-  // 리프레시 토큰 갱신
-  public refreshTokens = async (
-    refreshToken: string
-  ): Promise<{ accessToken: string; refreshToken: string }> => {
-    try {
-      const decoded = verifyRefreshToken(refreshToken);
-      const userId = decoded.sub;
-
-      const accessToken = generateAccessToken(userId);
-      const newRefreshToken = generateRefreshToken(userId);
-
-      return { accessToken, refreshToken: newRefreshToken };
-    } catch (error) {
-      throw new Error(
-        "리프레시 토큰을 갱신할 수 없습니다. 다시 로그인해주세요."
-      );
-    }
+  // ID로 유저 가져오기
+  public getUserById = async (id: string): Promise<IUser | null> => {
+    return User.findById(id);
   };
 
-  // ID로 유저 가져오기
-  static async getUserById(id: string): Promise<IUser | null> {
-    return User.findById({ _id: id });
-  }
-
   // 모든 유저 가져오기
-  static async getAllUsers(): Promise<IUser[]> {
+  public getAllUsers = async (): Promise<IUser[]> => {
     return User.find();
-  }
+  };
 
   // ID로 유저 업데이트하기
-  static async updateUserById(
+  public updateUserById = async (
     id: string,
     updatedData: Partial<IUser>
-  ): Promise<IUser | null> {
+  ): Promise<IUser | null> => {
     const updatedUser = await User.findByIdAndUpdate(
-      { _id: id },
+      id,
       {
         name: updatedData.name,
         email: updatedData.email,
@@ -116,5 +88,68 @@ export default class UserService {
     );
 
     return updatedUser;
-  }
+  };
+
+  // Email, Name으로 유저 id찾기
+  public getIdByEmailAndName = async (
+    email: string,
+    name: string
+  ): Promise<string | undefined> => {
+    try {
+      const user: IUser | null = await User.findOne({ email, name });
+      if (!user) {
+        throw new Error("유저를 찾을 수 없습니다.");
+      }
+      return user.id;
+    } catch (error) {
+      throw new Error("이메일과 이름으로 유저 ID를 가져오는데 실패했습니다.");
+    }
+  };
+
+  // 토큰생성
+  public getUserForToken = async (id: string): Promise<IUser | null> => {
+    try {
+      const user = await User.findOne(
+        { _id: id },
+        {
+          _id: 1,
+          id: 1,
+          name: 1,
+          email: 1,
+        }
+      );
+      console.log(user);
+      return user;
+    } catch (error) {
+      console.log(error);
+      throw new Error("유저의 토큰을 생성하는데 실패했습니다.");
+    }
+  };
+
+  public getUserRefreshToken = async (id: string): Promise<IUser | null> => {
+    try {
+      const user = await User.findOne({ id }, "refreshToken");
+      return user;
+    } catch (error) {
+      throw new Error("유저의 refresh토큰을 발견하는데 실패했습니다.");
+    }
+  };
+
+  public invalidateTokens = async (id: string) => {
+    try {
+      // Access 토큰과 Refresh 토큰 모두 무효화
+      await User.updateOne(
+        { id },
+        {
+          $unset: {
+            accessToken: 1,
+            refreshToken: 1,
+          },
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      throw new Error("토큰 무효화에 실패했습니다.");
+    }
+  };
 }
