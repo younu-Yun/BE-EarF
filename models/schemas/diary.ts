@@ -5,6 +5,8 @@ interface IDiary extends Document {
   tag: string[];
   imageUrl?: string;
   title: string;
+  date: Date;
+  shareStatus: boolean;
   content: string;
   createdAt: Date;
   updatedAt: Date;
@@ -23,6 +25,7 @@ const diarySchema: Schema<IDiary> = new Schema<IDiary>(
     },
     imageUrl: {
       type: String,
+      required: false,
     },
     title: {
       type: String,
@@ -32,6 +35,15 @@ const diarySchema: Schema<IDiary> = new Schema<IDiary>(
       type: String,
       required: true,
     },
+    shareStatus: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    date: {
+      type: Date,
+      required: true,
+    }
   },
   { timestamps: true }
 );
