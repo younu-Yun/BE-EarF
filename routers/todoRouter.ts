@@ -1,15 +1,19 @@
-import { Router } from 'express';
-import todoController from '../controller/todoController';
-import { authenticateToken } from "../middlewares/authmiddleware";
+import { Router } from "express";
+import todoController from "../controller/todoController";
+import authAccess from "../middlewares/authAccess";
 
 const todoRouter = Router();
 //todo-list 등록
-todoRouter.post('/:date', authenticateToken, todoController.createTodo);
+todoRouter.post("/:date", authAccess, todoController.createTodo);
 //todo-list 조회
-todoRouter.get('/:date', authenticateToken, todoController.getTodo);
+todoRouter.get("/:date", authAccess, todoController.getTodo);
 //todo-list 완료 여부
-todoRouter.patch('/:date/:todoIndex', authenticateToken, todoController.completeStatusUpdateTodo);
+todoRouter.patch(
+  "/:date/:todoIndex",
+  authAccess,
+  todoController.completeStatusUpdateTodo
+);
 //todo-list 삭제
-todoRouter.delete('/:date/:todoIndex', authenticateToken, todoController.deleteTodo);
+todoRouter.delete("/:date/:todoIndex", authAccess, todoController.deleteTodo);
 
 export default todoRouter;

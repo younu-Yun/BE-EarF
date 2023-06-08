@@ -1,17 +1,17 @@
-import { Router } from 'express';
-import diaryController from '../controller/diaryController';
-import { authenticateToken } from "../middlewares/authmiddleware";
+import { Router } from "express";
+import diaryController from "../controller/diaryController";
+import authAccess from "../middlewares/authAccess";
 const diaryRouter = Router();
 
 //calendar diary 전체 조회
-diaryRouter.get('/month', authenticateToken, diaryController.getAllDiariesByMonth);
+diaryRouter.get("/month", authAccess, diaryController.getAllDiariesByMonth);
 //calendar diary 등록
-diaryRouter.post('/:date', authenticateToken, diaryController.createDiary);
+diaryRouter.post("/:date", authAccess, diaryController.createDiary);
 //calendar diary 조회
-diaryRouter.get('/:date', authenticateToken, diaryController.getDiary);
+diaryRouter.get("/:date", authAccess, diaryController.getDiary);
 //calendar diary 수정
-diaryRouter.patch('/:date', authenticateToken, diaryController.updateDiary);
+diaryRouter.patch("/:date", authAccess, diaryController.updateDiary);
 //calendar diary 삭제
-diaryRouter.delete('/:date', authenticateToken, diaryController.deleteDiary);
+diaryRouter.delete("/:date", authAccess, diaryController.deleteDiary);
 
 export default diaryRouter;
