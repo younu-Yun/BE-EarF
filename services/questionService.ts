@@ -69,14 +69,46 @@ const questionService = {
     }
   },
 
-  // 모든 커뮤니티 질문 조회 (정렬 방식 추가)
-  async readAllQuestions(sort: string) {
+  // ...
+
+  // 모든 커뮤니티 질문 조회 (정렬 방식 선택 가능)
+  // 모든 커뮤니티 질문 조회 (정렬 방식 선택 가능)
+  async readAllQuestions(sort: string = "latest") {
     try {
       let questions;
-      if (sort === "latest") {
-        questions = await Question.find().sort({ updatedAt: -1 }); // 최신순
-      } else if (sort === "oldest") {
-        questions = await Question.find().sort({ updatedAt: 1 }); // 오래된 순
+      if (sort === "oldest") {
+        questions = await Question.aggregate([
+          {
+            $addFields: {
+              numComments: { $size: "$commentIds" },
+            },
+          },
+          {
+            $sort: { createdAt: 1 }, // 생성된 시간 순 (과거 순)
+          },
+        ]);
+      } else if (sort === "latest") {
+        questions = await Question.aggregate([
+          {
+            $addFields: {
+              numComments: { $size: "$commentIds" },
+            },
+          },
+          {
+            $sort: { createdAt: -1 }, // 생성된 시간 순 (최신 순)
+          },
+        ]);
+      } else if (sort === "mostComments") {
+        questions = await Question.aggregate([
+          {
+            $addFields: {
+              numComments: { $size: "$commentIds" },
+            },
+          },
+          {
+            $sort: { numComments: -1 }, // 댓글 수가 많은 순으로 정렬
+          },
+        ]);
       } else {
         throw new Error("정렬 방식이 잘못되었습니다."); // 잘못된 정렬 방식
       }

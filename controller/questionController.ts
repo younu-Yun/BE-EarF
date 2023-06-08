@@ -93,11 +93,8 @@ const questionController = {
    */
   async readAllQuestions(req: Request, res: Response) {
     try {
-      let { order } = req.query; // order 파라미터를 쿼리에서 가져옴.
-      if (typeof order !== "string") {
-        order = "latest"; // 기본값으로 최신순 정렬을 선택
-      }
-      const questions = await questionService.readAllQuestions(order);
+      const sort = req.query.sort as string; // 문자열로 형변환
+      const questions = await questionService.readAllQuestions(sort);
       res.json(questions);
     } catch (error: unknown) {
       if (error instanceof Error) {
