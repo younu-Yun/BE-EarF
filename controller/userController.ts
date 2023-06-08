@@ -51,7 +51,6 @@ export default class UserController {
   public logoutUser = async (req: Request, res: Response) => {
     try {
       const { id } = req.user as IUser;
-      console.log(id); // 현재 로그인된 사용자의 이메일
       if (id) {
         await this.userService.invalidateTokens(id);
         res.status(200).json({ message: "로그아웃되었습니다." });
@@ -112,7 +111,6 @@ export default class UserController {
 
   public createAccessToken = async (req: Request, res: Response) => {
     try {
-      console.log("이쪽에 왔으면 access토큰을 줘야지??");
       const { _id } = req.user as IUser;
       const userForToken: IUser | null = await this.userService.getUserForToken(
         _id
