@@ -2,6 +2,10 @@ import { Request, RequestHandler, Response } from "express";
 import UserService from "../services/userService";
 import { setUserToken } from "../utils/jwt";
 import { IUser, User } from "../models";
+import { randomPassword } from "../utils/randomPassword";
+import sendmail from "../utils/sendmail";
+import { hashPassword } from "../utils/hashPassword";
+import bcrypt from "bcrypt";
 
 export default class UserController {
   private userService: UserService;
@@ -121,6 +125,56 @@ export default class UserController {
       } else {
         res.status(404).json({ error: "유저를 찾을 수 없습니다." });
       }
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
+  };
+
+  public resetPassword = async (req: Request, res: Response) => {
+    try {
+      const { email } = req.body;
+      const tempPassword = randomPassword();
+      const user = await this.userService.getUserByEmail(email);
+
+      if (user === null) {
+        return res
+          .status(400)
+          .json({ message: "해당 메일을 가진 유저가 없습니다." });
+      }
+
+      await this.userService.updatePasswordFromEmail(email, tempPassword);
+      await sendmail(email, "임시 비밀번호", `${tempPassword}`);
+
+      res.status(200).send(`${email}으로 임시비밀번호를 전송했습니다.`);
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
+  };
+
+  public changePassword = async (req: Request, res: Response) => {
+    try {
+      const { _id } = req.user as IUser;
+      const { currentPassword, password } = req.body;
+      const user = await this.userService.getUserPassword(_id);
+
+      if (!user) {
+        return res.status(400).json({ message: "유저를 찾을 수 없습니다." });
+      }
+
+      const isPasswordMatch = await bcrypt.compare(
+        currentPassword,
+        user.password
+      );
+
+      if (!isPasswordMatch) {
+        return res
+          .status(400)
+          .json({ message: "비밀번호가 일치하지 않습니다." });
+      }
+
+      await this.userService.updatePasswordFromId(_id, password);
+
+      res.status(200).send("비밀번호 변경이 완료되었습니다.");
     } catch (error) {
       res.status(500).json({ error: (error as Error).message });
     }

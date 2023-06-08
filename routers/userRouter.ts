@@ -15,5 +15,9 @@ router.patch("/:id", authAccess, userController.updateUserById);
 router.post("/register", userController.registerUser);
 // Email, Name으로 유저 id찾기 API
 router.post("/loginid", authAccess, userController.getIdByEmailAndName);
+// 유저 비밀번호 초기화
+router.post("/reset", userController.resetPassword);
+// 유저 비밀번호 변경
+router.post("/change", authAccess, userController.changePassword);
 
 export default router;

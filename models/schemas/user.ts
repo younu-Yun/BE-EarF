@@ -14,6 +14,7 @@ export interface IUser extends Document {
   transportNum: number;
   basketNum: number;
   refreshToken: string;
+  isTempPassword: boolean;
 }
 
 export interface IBadge extends Document {
@@ -94,6 +95,10 @@ const UserSchema: Schema<IUser> = new Schema<IUser>(
     refreshToken: {
       type: String,
       default: "",
+    },
+    isTempPassword: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true } // 최초작성, 3회 이상 연속작성

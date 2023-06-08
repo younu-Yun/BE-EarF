@@ -66,6 +66,11 @@ export default class UserService {
     return User.findById(id);
   };
 
+  // Email로 유저 가져오기
+  public getUserByEmail = async (email: string): Promise<IUser | null> => {
+    return User.findOne({ email });
+  };
+
   // 모든 유저 가져오기
   public getAllUsers = async (): Promise<IUser[]> => {
     return User.find();
@@ -133,6 +138,16 @@ export default class UserService {
     }
   };
 
+  public getUserPassword = async (_id: string): Promise<IUser | null> => {
+    try {
+      const user = await User.findOne({ _id }, "password");
+      console.log(user);
+      return user;
+    } catch (error) {
+      throw new Error("유저의 password를 발견하는데 실패했습니다.");
+    }
+  };
+
   public invalidateTokens = async (id: string) => {
     try {
       // Access 토큰과 Refresh 토큰 모두 무효화
@@ -147,6 +162,42 @@ export default class UserService {
       );
     } catch (error) {
       throw new Error("토큰 무효화에 실패했습니다.");
+    }
+  };
+
+  public async updatePasswordFromEmail(email: string, tempPassword: string) {
+    try {
+      console.log("여기까지는 그래도 오네??");
+      await User.updateOne(
+        { email },
+        {
+          password: await hashPassword(tempPassword),
+          isTempPassword: true,
+        }
+      );
+      console.log("패스워드가 갱신되었습니다.");
+    } catch (error) {
+      console.log(error);
+      throw new Error("패스워드 갱신에 실패했습니다.");
+    }
+  }
+
+  public updatePasswordFromId = async (id: string, password: string) => {
+    try {
+      console.log(password);
+      const hashedPassword = await hashPassword(password);
+      console.log(password);
+
+      await User.updateOne(
+        { _id: id },
+        {
+          password: hashedPassword,
+          isTempPassword: false,
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      throw new Error("패스워드 갱신에 실패했습니다.");
     }
   };
 }

@@ -1,5 +1,7 @@
 import nodemailer, { SentMessageInfo } from "nodemailer";
 import mjml2html from "mjml";
+import dotenv from "dotenv";
+dotenv.config();
 
 const transport = nodemailer.createTransport({
   service: "Gmail",
@@ -56,6 +58,8 @@ const setMailOption = (
 
         <mj-text font-size="16px" line-height="1.5">
           임시 비밀번호를 발급해드리겠습니다!
+          ${text}
+          ${contentMessage}
         </mj-text>
 
         <mj-text font-size="16px" line-height="1.5"> 지구를 지키자! EarF </mj-text>
@@ -108,7 +112,6 @@ const setMailOption = (
         reject(err);
         return;
       }
-
       resolve(info);
     });
   });
