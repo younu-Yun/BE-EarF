@@ -23,6 +23,14 @@ const createTodo: CreateTodo = async (
   completed
 ) => {
   try {
+    const existingTodo = await Todo.findOne({ userId, date });
+
+    if (existingTodo) {
+      existingTodo.todoList.push(...todoList);
+      existingTodo.completed.push(...completed);
+      await existingTodo.save();
+      return existingTodo;
+    }
     const createTodoList = await Todo.create({
       userId,
       date,
@@ -55,10 +63,14 @@ const todoService = {
   async deleteTodo(userId: string, date: Date, todoIndex: number) {
     try {
       const deletedTodoList = await Todo.findOne({ userId, date });
+  
       if (deletedTodoList) {
         deletedTodoList.todoList.splice(todoIndex, 1);
         deletedTodoList.completed.splice(todoIndex, 1);
         await deletedTodoList.save();
+        if (deletedTodoList.todoList.length === 0) {
+          await Todo.deleteOne({ userId, date });
+        }
       }
       return deletedTodoList;
     } catch (error) {
