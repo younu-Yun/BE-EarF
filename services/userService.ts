@@ -88,6 +88,7 @@ export default class UserService {
         email: updatedData.email,
         phoneNumber: updatedData.phoneNumber,
         profileImage: updatedData.profileImage,
+        checkedBadge: updatedData.checkedBadge,
       },
       { new: true }
     );

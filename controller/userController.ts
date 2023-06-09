@@ -89,7 +89,7 @@ export default class UserController {
     }
   };
 
-  // ID로 유저 업데이트하기
+  // 유저 정보 업데이트하기
   public updateUserById: RequestHandler = async (
     req: Request,
     res: Response
@@ -103,6 +103,7 @@ export default class UserController {
     }
   };
 
+  // 이메일과 이름으로 아이디 찾기
   public getIdByEmailAndName = async (req: Request, res: Response) => {
     try {
       const { email, name } = req.body;
@@ -113,6 +114,7 @@ export default class UserController {
     }
   };
 
+  // 엑세스 토큰 발급
   public createAccessToken = async (req: Request, res: Response) => {
     try {
       const { _id } = req.user as IUser;
