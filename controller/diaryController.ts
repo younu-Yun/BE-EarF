@@ -6,9 +6,9 @@ const diaryController = {
   async getAllDiariesByMonth(req: Request, res: Response) {
     try {
       const { startDate, endDate } = req.query;
-      const { id } = req.user as IUser;
+      const { _id } = req.user as IUser;
       const allDiariesByMonth = await diaryService.getAllDiariesByMonth(
-        id,
+        _id,
         new Date(startDate as string),
         new Date(endDate as string)
       );
@@ -26,9 +26,9 @@ const diaryController = {
         shareStatus
       } = req.body;
       const { date } = req.params;
-      const { id } = req.user as IUser;
+      const { _id } = req.user as IUser;
       const createDiary = await diaryService.createDiary(
-        id,
+        _id,
         new Date(date as string),
         tag,
         title,
@@ -43,8 +43,8 @@ const diaryController = {
     try {
       const { image } = req.body;
       const { date } = req.params;
-      const { id } = req.user as IUser;
-      const photoRegisterInDiary = await diaryService.photoRegisterInDiary(id, new Date(date as string), image);
+      const { _id } = req.user as IUser;
+      const photoRegisterInDiary = await diaryService.photoRegisterInDiary(_id, new Date(date as string), image);
       res.status(200).json(photoRegisterInDiary);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -59,9 +59,9 @@ const diaryController = {
         shareStatus
       } = req.body;
       const { date } = req.params;
-      const { id } = req.user as IUser;
+      const { _id } = req.user as IUser;
       const updatedDiary = await diaryService.updateDiary(
-        id,
+        _id,
         new Date(date as string),
         tag,
         title,
@@ -75,8 +75,8 @@ const diaryController = {
   async deleteDiary(req: Request, res: Response) {
     try {
       const { date } = req.params;
-      const { id } = req.user as IUser;
-      const deletedDiary = await diaryService.deleteDiary(id, new Date(date as string));
+      const { _id } = req.user as IUser;
+      const deletedDiary = await diaryService.deleteDiary(_id, new Date(date as string));
       res.json(deletedDiary);
     } catch (error: any) {
       res.status(500).json({ error: error.message });

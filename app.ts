@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import passport from "passport";
 import apiRouter from "./routers";
-import configurePassport from "./passport";
+// import configurePassport from "./passport";
 
 const app = express();
 dotenv.config();
@@ -28,7 +28,7 @@ app.use(express.static("public")); // 정적 파일 서비스
 
 // Passport 초기화
 app.use(passport.initialize());
-configurePassport(passport);
+// configurePassport(passport);
 
 app.use("/api", apiRouter);
 
