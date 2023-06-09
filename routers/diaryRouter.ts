@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import diaryController from '../controller/diaryController';
-import { authenticateToken } from "../middlewares/authmiddleware";
+import authAccess from "../middlewares/authAccess";
 import { upload } from "../utils/multer";
 
 const diaryRouter = Router();
@@ -8,9 +8,9 @@ const diaryRouter = Router();
 //calendar diary 전체 조회
 diaryRouter.get("/month", authAccess, diaryController.getAllDiariesByMonth);
 //calendar diary 등록
-diaryRouter.post('/:date', authenticateToken, diaryController.createDiary);
+diaryRouter.post('/:date', authAccess, diaryController.createDiary);
 //calendar diary 사진 등록
-diaryRouter.post('/image/:date', authenticateToken, upload.none(), diaryController.photoRegisterInDiary);
+diaryRouter.post('/image/:date', authAccess, upload.single("postImage"), diaryController.photoRegisterInDiary);
 //calendar diary 조회
 diaryRouter.get("/:date", authAccess, diaryController.getDiary);
 //calendar diary 수정

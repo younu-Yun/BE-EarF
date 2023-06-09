@@ -2,7 +2,7 @@ import { Diary } from '../models/schemas/diary';
 
 interface CreateDiary {
   (
-    _id: string,
+    // _id: string,
     date: Date,
     tag: string[],
     title: string,
@@ -13,7 +13,7 @@ interface CreateDiary {
 
 interface UpdateDiary {
   (
-    _id: string,
+    // _id: string,
     date: Date,
     tag: string[],
     title: string,
@@ -30,7 +30,6 @@ const Error_Message = {
 };
 
 const createDiary: CreateDiary = async (
-  _id,
   date,
   tag,
   title,
@@ -39,7 +38,6 @@ const createDiary: CreateDiary = async (
 ) => {
   try {
     const createDiary = await Diary.create({
-      _id,
       date,
       tag,
       title,
@@ -54,7 +52,7 @@ const createDiary: CreateDiary = async (
 };
 
 const updateDiary: UpdateDiary = async (
-  _id,
+  
   date,
   tag,
   title,
@@ -63,7 +61,7 @@ const updateDiary: UpdateDiary = async (
 ) => {
   try {
     const updatedDiary = await Diary.findOneAndUpdate(
-      { _id, date },
+      {  date },
       { tag, title, content, shareStatus },
       { new: true }
     );
@@ -75,10 +73,10 @@ const updateDiary: UpdateDiary = async (
 
 const diaryService = {
   //월간 diary 태그 조회
-  async getAllDiariesByMonth(_id: string, startDate: Date, endDate: Date) {
+  async getAllDiariesByMonth( startDate: Date, endDate: Date) {
     try {
       const allDiariesByMonth = await Diary.find({
-        _id,
+        
         date: { $gte: new Date(startDate), $lte: new Date(endDate) }
       }).select('tag');
       
@@ -108,10 +106,10 @@ const diaryService = {
   //diary 생성
   createDiary,
   //diary 사진 등록
-  async photoRegisterInDiary(_id:string, date: Date, image: string) {
+  async photoRegisterInDiary( date: Date, image: string | undefined) {
     try {
       const photoRegisterInDiary = await Diary.findOneAndUpdate(
-        { _id, date },
+        {  date },
         { image });
       return photoRegisterInDiary;
     } catch (error) {
@@ -121,18 +119,18 @@ const diaryService = {
   //diary 수정
   updateDiary,
   //diary 삭제
-  async deleteDiary(_id: string, date: Date) {
+  async deleteDiary( date: Date) {
     try {
-      const deletedDiary = await Diary.findOneAndDelete({ _id, date });
+      const deletedDiary = await Diary.findOneAndDelete({  date });
       return deletedDiary;
     } catch (error) {
       throw new Error(Error_Message.deleteDiaryError);
     }
   },
   //diary 조회
-  async getDiary(_id: string, date: Date) {
+  async getDiary( date: Date) {
     try {
-      const getDiary = await Diary.findOne({ _id, date });
+      const getDiary = await Diary.findOne({  date });
       return getDiary;
     } catch (error) {
       throw new Error(Error_Message.getDiaryError);
