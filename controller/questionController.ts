@@ -96,8 +96,14 @@ const questionController = {
    */
   async readAllQuestions(req: Request, res: Response) {
     try {
-      const sort = req.query.sort as string; // 문자열로 형변환
-      const questions = await questionService.readAllQuestions(sort);
+      const sort = (req.query.sort as string) || "latest"; // 정렬 기준
+      const page = parseInt(req.query.page as string) || 1; // 페이지 번호
+      const limit = parseInt(req.query.limit as string) || 10; // 페이지당 항목 수
+      const questions = await questionService.readAllQuestions(
+        sort,
+        page,
+        limit,
+      );
       res.json(questions);
     } catch (error: unknown) {
       if (error instanceof Error) {

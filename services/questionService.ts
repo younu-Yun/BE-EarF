@@ -71,12 +71,14 @@ const questionService = {
     }
   },
 
-  // ...
-
   // 모든 커뮤니티 질문 조회 (정렬 방식 선택 가능)
-  // 모든 커뮤니티 질문 조회 (정렬 방식 선택 가능)
-  async readAllQuestions(sort: string = "latest") {
+  async readAllQuestions(
+    sort: string = "latest",
+    page: number = 1,
+    limit: number = 10,
+  ) {
     try {
+      const skip = (page - 1) * limit;
       let questions;
       if (sort === "oldest") {
         questions = await Question.aggregate([
@@ -88,7 +90,9 @@ const questionService = {
           {
             $sort: { createdAt: 1 }, // 생성된 시간 순 (과거 순)
           },
-        ]);
+        ])
+          .skip(skip)
+          .limit(limit);
       } else if (sort === "latest") {
         questions = await Question.aggregate([
           {
@@ -99,7 +103,9 @@ const questionService = {
           {
             $sort: { createdAt: -1 }, // 생성된 시간 순 (최신 순)
           },
-        ]);
+        ])
+          .skip(skip)
+          .limit(limit);
       } else if (sort === "mostComments") {
         questions = await Question.aggregate([
           {
@@ -110,7 +116,9 @@ const questionService = {
           {
             $sort: { numComments: -1 }, // 댓글 수가 많은 순으로 정렬
           },
-        ]);
+        ])
+          .skip(skip)
+          .limit(limit);
       } else {
         throw new Error("정렬 방식이 잘못되었습니다."); // 잘못된 정렬 방식
       }
