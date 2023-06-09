@@ -52,7 +52,6 @@ const createDiary: CreateDiary = async (
 };
 
 const updateDiary: UpdateDiary = async (
-  
   date,
   tag,
   title,
@@ -61,7 +60,7 @@ const updateDiary: UpdateDiary = async (
 ) => {
   try {
     const updatedDiary = await Diary.findOneAndUpdate(
-      {  date },
+      { date },
       { tag, title, content, shareStatus },
       { new: true }
     );
@@ -76,7 +75,6 @@ const diaryService = {
   async getAllDiariesByMonth( startDate: Date, endDate: Date) {
     try {
       const allDiariesByMonth = await Diary.find({
-        
         date: { $gte: new Date(startDate), $lte: new Date(endDate) }
       }).select('tag');
       
@@ -109,7 +107,7 @@ const diaryService = {
   async photoRegisterInDiary( date: Date, image: string | undefined) {
     try {
       const photoRegisterInDiary = await Diary.findOneAndUpdate(
-        {  date },
+        { date },
         { image });
       return photoRegisterInDiary;
     } catch (error) {
@@ -121,7 +119,7 @@ const diaryService = {
   //diary 삭제
   async deleteDiary( date: Date) {
     try {
-      const deletedDiary = await Diary.findOneAndDelete({  date });
+      const deletedDiary = await Diary.findOneAndDelete({ date });
       return deletedDiary;
     } catch (error) {
       throw new Error(Error_Message.deleteDiaryError);
@@ -130,7 +128,7 @@ const diaryService = {
   //diary 조회
   async getDiary( date: Date) {
     try {
-      const getDiary = await Diary.findOne({  date });
+      const getDiary = await Diary.findOne({ date });
       return getDiary;
     } catch (error) {
       throw new Error(Error_Message.getDiaryError);
