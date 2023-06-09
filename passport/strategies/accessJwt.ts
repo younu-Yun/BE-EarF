@@ -10,7 +10,6 @@ const jwtOptions = {
 
 const accessJwt = new JwtStrategy(jwtOptions, async (payload, done) => {
   try {
-    console.log("이곳에는 왔니?");
     const user = await User.findOne({ id: payload.id });
     if (!user) {
       return done(null, false);

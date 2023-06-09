@@ -1,5 +1,7 @@
 import nodemailer, { SentMessageInfo } from "nodemailer";
 import mjml2html from "mjml";
+import dotenv from "dotenv";
+dotenv.config();
 
 const transport = nodemailer.createTransport({
   service: "Gmail",
@@ -16,12 +18,6 @@ const setMailOption = (
   subject: string,
   text: string
 ): Promise<string | undefined> => {
-  if (subject === "임시 비밀번호") {
-    contentMessage = "로그인후 비밀번호를 변경해 주세요.";
-  } else {
-    contentMessage = "인증번호 입니다. 인증을 완료해 주세요.";
-  }
-
   const { html } = mjml2html(
     `
 <mjml>
@@ -55,7 +51,9 @@ const setMailOption = (
         </mj-text>
 
         <mj-text font-size="16px" line-height="1.5">
-          임시 비밀번호를 발급해드리겠습니다!
+          임시 비밀번호를 발급해드리겠습니다! <br>
+          ${text} <br>
+          ${contentMessage}
         </mj-text>
 
         <mj-text font-size="16px" line-height="1.5"> 지구를 지키자! EarF </mj-text>
@@ -108,7 +106,6 @@ const setMailOption = (
         reject(err);
         return;
       }
-
       resolve(info);
     });
   });
