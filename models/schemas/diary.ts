@@ -1,8 +1,10 @@
 import { Schema, Document, Model, model } from 'mongoose';
+import User, { IUser } from '../schemas/user';
 
 interface IDiary extends Document {
+  id: IUser['id'];
   tag: string[];
-  imageUrl?: string;
+  imageUrl: string;
   title: string;
   date: Date;
   shareStatus: boolean;
@@ -13,13 +15,18 @@ interface IDiary extends Document {
 
 const diarySchema: Schema<IDiary> = new Schema<IDiary>(
   {
+    id: {
+      type: String,
+      ref: 'User',
+      required: true
+    },
     tag: {
       type: [String],
       required: true,
     },
     imageUrl: {
       type: String,
-      required: false,
+      required: true,
     },
     title: {
       type: String,
