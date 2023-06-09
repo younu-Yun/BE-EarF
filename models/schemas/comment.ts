@@ -13,19 +13,19 @@ const CommentSchema = new Schema<IComment>(
   {
     id: {
       type: String,
-      // required: true,
+      required: true,
     },
     name: {
       type: String,
-      // required: true,
+      required: true,
     },
     profileImage: {
       type: String,
-      // required: true,
+      required: true,
     },
     checkedBadge: {
       type: String,
-      // required: true,
+      required: true,
     },
     comment: {
       type: String,
