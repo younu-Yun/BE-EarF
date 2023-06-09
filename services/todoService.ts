@@ -35,7 +35,7 @@ const createTodo: CreateTodo = async (
       id,
       date,
       todoList,
-      completed
+      completed: [false]
     });
     return createTodoList;
   } catch (error) {
