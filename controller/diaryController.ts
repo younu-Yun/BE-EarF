@@ -42,6 +42,7 @@ const diaryController = {
   },
   async photoRegisterInDiary(req: Request, res: Response) {
     try {
+      //`https://34.64.216.86/${req.file?.filename}`
       const image = req.file?.filename;
       console.log(req.file)
       const { date } = req.params;
