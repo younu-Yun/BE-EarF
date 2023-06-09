@@ -2,7 +2,7 @@ import { Diary } from '../models/schemas/diary';
 
 interface CreateDiary {
   (
-    id: string,
+    _id: string,
     date: Date,
     tag: string[],
     title: string,
@@ -13,7 +13,7 @@ interface CreateDiary {
 
 interface UpdateDiary {
   (
-    id: string,
+    _id: string,
     date: Date,
     tag: string[],
     title: string,
