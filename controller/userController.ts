@@ -66,11 +66,11 @@ export default class UserController {
     }
   };
 
-  // ID로 유저 가져오기
+  // 유저 정보 가져오기
   public getUserById: RequestHandler = async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
-      const user = await this.userService.getUserById(id);
+      const { _id } = req.user as IUser;
+      const user = await this.userService.getUserById(_id);
       res.json(user);
     } catch (error) {
       res.status(500).json({ error: "유저정보를 불러오는데 실패하였습니다." });
@@ -95,8 +95,8 @@ export default class UserController {
     res: Response
   ) => {
     try {
-      const { id } = req.params;
-      const updatedUser = await this.userService.updateUserById(id, req.body);
+      const { _id } = req.user as IUser;
+      const updatedUser = await this.userService.updateUserById(_id, req.body);
       res.json(updatedUser);
     } catch (error) {
       res.status(500).json({ error: "유저정보를 수정하는데 실패하였습니다." });

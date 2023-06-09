@@ -62,8 +62,8 @@ export default class UserService {
   };
 
   // ID로 유저 가져오기
-  public getUserById = async (id: string): Promise<IUser | null> => {
-    return User.findById(id);
+  public getUserById = async (_id: string): Promise<IUser | null> => {
+    return User.findById(_id);
   };
 
   // Email로 유저 가져오기
@@ -78,11 +78,11 @@ export default class UserService {
 
   // ID로 유저 업데이트하기
   public updateUserById = async (
-    id: string,
+    _id: string,
     updatedData: Partial<IUser>
   ): Promise<IUser | null> => {
     const updatedUser = await User.findByIdAndUpdate(
-      id,
+      _id,
       {
         name: updatedData.name,
         email: updatedData.email,
