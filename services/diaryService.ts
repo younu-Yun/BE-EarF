@@ -2,7 +2,7 @@ import { Diary } from '../models/schemas/diary';
 
 interface CreateDiary {
   (
-    _id: string,
+    id: string,
     date: Date,
     tag: string[],
     title: string,
@@ -13,7 +13,7 @@ interface CreateDiary {
 
 interface UpdateDiary {
   (
-    _id: string,
+    id: string,
     date: Date,
     tag: string[],
     title: string,
@@ -48,6 +48,7 @@ const createDiary: CreateDiary = async (
     });
     return createDiary;
   } catch (error) {
+    console.log(error)
     throw new Error(Error_Message.createDiaryError);
   }
 };
@@ -129,9 +130,9 @@ const diaryService = {
     }
   },
   //diary 조회
-  async getDiary(id: string | undefined, date: Date) {
+  async getDiary(_id: string, date: Date) {
     try {
-      const getDiary = await Diary.find({ id, date });
+      const getDiary = await Diary.findOne({ _id, date });
       return getDiary;
     } catch (error) {
       throw new Error(Error_Message.getDiaryError);
