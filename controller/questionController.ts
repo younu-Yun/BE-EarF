@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import questionService from "../services/communityService";
+import questionService from "../services/questionService";
 
 const questionController = {
   /**
@@ -9,15 +9,21 @@ const questionController = {
    */
   async createQuestion(req: Request, res: Response) {
     try {
-      const { userId, title, content } = req.body;
+      const { userId, userName, imageUrl, title, content } = req.body;
       const question = await questionService.createQuestion(
         userId,
+        userName,
+        imageUrl,
         title,
         content,
       );
       res.status(201).json(question);
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "알 수 없는 오류가 발생했습니다." });
+      }
     }
   },
 
@@ -30,11 +36,15 @@ const questionController = {
     try {
       const { id } = req.params;
       const { title, content } = req.body;
+      console.log(req.body);
       const question = await questionService.updateQuestion(id, title, content);
       res.json(question);
-    } catch (error: any) {
-      console.log(error);
-      res.status(500).json({ error: error.message });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "알 수 없는 오류가 발생했습니다." });
+      }
     }
   },
 
@@ -48,8 +58,12 @@ const questionController = {
       const { id } = req.params;
       const question = await questionService.deleteQuestion(id);
       res.json(question);
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "알 수 없는 오류가 발생했습니다." });
+      }
     }
   },
 
@@ -63,8 +77,12 @@ const questionController = {
       const { id } = req.params;
       const question = await questionService.readQuestion(id);
       res.json(question);
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "알 수 없는 오류가 발생했습니다." });
+      }
     }
   },
 
@@ -75,10 +93,15 @@ const questionController = {
    */
   async readAllQuestions(req: Request, res: Response) {
     try {
-      const questions = await questionService.readAllQuestions();
+      const sort = req.query.sort as string; // 문자열로 형변환
+      const questions = await questionService.readAllQuestions(sort);
       res.json(questions);
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "알 수 없는 오류가 발생했습니다." });
+      }
     }
   },
 
@@ -93,8 +116,36 @@ const questionController = {
       const { userId } = req.body;
       const question = await questionService.likeQuestion(questionId, userId);
       res.json(question);
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "알 수 없는 오류가 발생했습니다." });
+      }
+    }
+  },
+
+  /**
+   * 특정 질문에 댓글 추가.
+   * 요청 URL의 매개변수에서 질문 ID를 추출하고, 요청 본문에서 댓글 ID를 추출하여 questionService.addCommentToQuestion을 호출.
+   * 댓글이 추가된 질문을 클라이언트에게 JSON 형식으로 응답.
+   */
+  async addCommentToQuestion(req: Request, res: Response) {
+    try {
+      const { questionId } = req.params;
+      const { commentId } = req.body;
+      const question = await questionService.addCommentToQuestion(
+        questionId,
+        //@ts-ignore
+        new Types.ObjectId(commentId),
+      );
+      res.json(question);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "알 수 없는 오류가 발생했습니다." });
+      }
     }
   },
 };

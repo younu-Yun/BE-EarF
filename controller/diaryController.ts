@@ -36,6 +36,7 @@ const diaryController = {
         shareStatus);
       res.status(200).json(createDiary);
     } catch (error: any) {
+      console.log(error)
       res.status(500).json({ error: error.message });
     }
   },
