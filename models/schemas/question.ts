@@ -1,9 +1,10 @@
 import { Schema, model, Document } from "mongoose";
 
 interface IQuestion extends Document {
-  userId: string;
-  userName: string;
-  imageUrl: string;
+  id: string;
+  name: string;
+  profileImage: string;
+  checkedBadge: string;
   title: string;
   content: string;
   likeIds: Schema.Types.ObjectId[];
@@ -12,17 +13,21 @@ interface IQuestion extends Document {
 
 const QuestionSchema = new Schema<IQuestion>(
   {
-    userId: {
+    id: {
       type: String,
       required: true,
     },
-    userName: {
+    name: {
       type: String,
       required: true,
     },
-    imageUrl: {
+    profileImage: {
       type: String,
-      required: true,
+      // required: true,
+    },
+    checkedBadge: {
+      type: String,
+      // required: true,
     },
     title: {
       type: String,

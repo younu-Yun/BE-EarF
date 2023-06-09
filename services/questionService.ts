@@ -4,17 +4,19 @@ import Question from "../models/schemas/question";
 const questionService = {
   // 커뮤니티 질문 생성
   async createQuestion(
-    userId: string,
-    userName: string,
-    imageUrl: string,
+    id: string,
+    name: string,
+    profileImage: string,
+    checkedBadge: string,
     title: string,
     content: string,
   ) {
     try {
       const question = new Question({
-        userId,
-        userName,
-        imageUrl,
+        id,
+        name,
+        profileImage,
+        checkedBadge,
         title,
         content,
         likeIds: [],

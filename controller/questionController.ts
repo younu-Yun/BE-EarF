@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import questionService from "../services/questionService";
+import { IUser } from "../models";
 
 const questionController = {
   /**
@@ -9,11 +10,13 @@ const questionController = {
    */
   async createQuestion(req: Request, res: Response) {
     try {
-      const { userId, userName, imageUrl, title, content } = req.body;
+      const { id, name, profileImage, checkedBadge } = req.user as IUser;
+      const { title, content } = req.body;
       const question = await questionService.createQuestion(
-        userId,
-        userName,
-        imageUrl,
+        id,
+        name,
+        profileImage,
+        checkedBadge,
         title,
         content,
       );

@@ -1,18 +1,24 @@
 import { Types } from "mongoose";
 import Comment from "../models/schemas/comment";
-import Question from "../models/schemas/question"; // Question 모델을 임포트합니다.
+import Question from "../models/schemas/question";
 
 const CommentService = {
   // 커뮤니티 댓글 생성
   async createComment(
-    postId: Types.ObjectId,
-    userId: Types.ObjectId,
+    postId: string,
+    id: string,
+    name: string,
+    profileImage: string,
+    checkedBadge: string,
     comment: string,
   ) {
     try {
       const newComment = new Comment({
         postId,
-        userId,
+        id,
+        name,
+        profileImage,
+        checkedBadge,
         comment,
       });
       await newComment.save();

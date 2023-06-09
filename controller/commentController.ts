@@ -1,18 +1,22 @@
 import { Types } from "mongoose";
 import { Request, Response } from "express";
 import CommentService from "../services/commentService";
+import { IUser } from "../models";
 
 const CommentController = {
   // 새로운 댓글 생성
   async createComment(req: Request, res: Response) {
     try {
-      const { userId, comment } = req.body;
+      const { id, name, profileImage, checkedBadge } = req.user as IUser;
+      console.log(req.user);
       const { postId } = req.params;
-      const _postId = new Types.ObjectId(postId);
-      const _userId = new Types.ObjectId(userId);
+      const { comment } = req.body;
       const newComment = await CommentService.createComment(
-        _postId,
-        _userId,
+        postId,
+        id,
+        name,
+        profileImage,
+        checkedBadge,
         comment,
       );
       res.status(201).json(newComment);
