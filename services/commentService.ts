@@ -23,7 +23,7 @@ const CommentService = {
       });
       await newComment.save();
 
-      // 게시글의 commentIds 배열에 새로운 댓글의 ID를 추가합니다.
+      // 게시글 commentIds 배열에 새로운 댓글 ID 추가.
       const post = await Question.findById(postId);
       if (!post) {
         throw new Error("게시글을 찾을 수 없습니다.");
@@ -117,11 +117,20 @@ const CommentService = {
   // 게시글의 댓글 조회
   async readComment(id: Types.ObjectId) {
     try {
-      const comment = await Comment.findById(id);
-      if (!comment) {
+      const comment = await Comment.aggregate([
+        { $match: { _id: new Types.ObjectId(id) } },
+        {
+          $addFields: {
+            numLikes: { $size: "$likeIds" },
+          },
+        },
+      ]);
+
+      if (!comment || comment.length === 0) {
         throw new Error("커뮤니티 댓글을 찾을 수 없습니다.");
       }
-      return comment;
+
+      return comment[0];
     } catch (error) {
       console.error(error);
       throw new Error("커뮤니티 댓글 조회에 실패하였습니다.");
@@ -131,7 +140,15 @@ const CommentService = {
   // 게시글의 모든 댓글 조회
   async readAllCommentsOfPost(postId: Types.ObjectId) {
     try {
-      const comments = await Comment.find({ postId });
+      const comments = await Comment.aggregate([
+        { $match: { postId: new Types.ObjectId(postId) } },
+        {
+          $addFields: {
+            numLikes: { $size: "$likeIds" },
+          },
+        },
+      ]);
+
       return comments;
     } catch (error) {
       console.error(error);
