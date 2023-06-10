@@ -154,7 +154,7 @@ const questionController = {
       const { commentId } = req.body;
       const question = await questionService.addCommentToQuestion(
         questionId,
-        //@ts-ignore
+        // @ts-ignore
         new Types.ObjectId(commentId),
       );
       res.json(question);

@@ -114,7 +114,7 @@ const CommentService = {
     }
   },
 
-  // 커뮤니티 댓글 조회
+  // 게시글의 댓글 조회
   async readComment(id: Types.ObjectId) {
     try {
       const comment = await Comment.findById(id);
@@ -128,7 +128,7 @@ const CommentService = {
     }
   },
 
-  // 특정 커뮤니티 게시글의 모든 댓글 조회
+  // 게시글의 모든 댓글 조회
   async readAllCommentsOfPost(postId: Types.ObjectId) {
     try {
       const comments = await Comment.find({ postId });

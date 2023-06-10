@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 import Question from "../models/schemas/question";
 import Comment from "../models/schemas/comment";
 
@@ -73,11 +73,21 @@ const questionService = {
   // 커뮤니티 질문 조회
   async readQuestion(id: string) {
     try {
-      const question = await Question.findOne({ _id: id });
-      if (!question) {
+      const question = await Question.aggregate([
+        { $match: { _id: new Types.ObjectId(id) } },
+        {
+          $addFields: {
+            numLikes: { $size: "$likeIds" },
+            numComments: { $size: "$commentIds" },
+          },
+        },
+      ]);
+
+      if (!question || question.length === 0) {
         throw new Error("커뮤니티 질문을 찾을 수 없습니다.");
       }
-      return question;
+
+      return question[0];
     } catch (error) {
       throw new Error("커뮤니티 질문을 불러오는데 실패하였습니다.");
     }
@@ -96,6 +106,7 @@ const questionService = {
         questions = await Question.aggregate([
           {
             $addFields: {
+              numLikes: { $size: "$likeIds" },
               numComments: { $size: "$commentIds" },
             },
           },
@@ -109,6 +120,7 @@ const questionService = {
         questions = await Question.aggregate([
           {
             $addFields: {
+              numLikes: { $size: "$likeIds" },
               numComments: { $size: "$commentIds" },
             },
           },
@@ -122,6 +134,7 @@ const questionService = {
         questions = await Question.aggregate([
           {
             $addFields: {
+              numLikes: { $size: "$likeIds" },
               numComments: { $size: "$commentIds" },
             },
           },
@@ -137,6 +150,7 @@ const questionService = {
           {
             $addFields: {
               numLikes: { $size: "$likeIds" },
+              numComments: { $size: "$commentIds" },
             },
           },
           {
