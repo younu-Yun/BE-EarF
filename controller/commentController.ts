@@ -8,11 +8,17 @@ const CommentController = {
   async createComment(req: Request, res: Response) {
     try {
       const { id, name, profileImage, checkedBadge } = req.user as IUser;
-      console.log(req.user);
       const { postId } = req.params;
       const { comment } = req.body;
+
+      if (!Types.ObjectId.isValid(postId)) {
+        res.status(400).json({ error: "유효하지 않은 게시글 ID입니다." });
+        return;
+      }
+
+      const _postId = new Types.ObjectId(postId);
       const newComment = await CommentService.createComment(
-        postId,
+        _postId,
         id,
         name,
         profileImage,

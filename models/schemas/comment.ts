@@ -11,6 +11,11 @@ interface IComment extends Document {
 
 const CommentSchema = new Schema<IComment>(
   {
+    postId: {
+      type: Schema.Types.ObjectId,
+      ref: "question",
+      required: true,
+    },
     id: {
       type: String,
       required: true,
@@ -21,7 +26,7 @@ const CommentSchema = new Schema<IComment>(
     },
     profileImage: {
       type: String,
-      required: true,
+      // required: true,
     },
     checkedBadge: {
       type: String,

@@ -60,7 +60,10 @@ const questionController = {
     try {
       const { id } = req.params;
       const question = await questionService.deleteQuestion(id);
-      res.json(question);
+      if (!question) {
+        return res.status(404).json({ error: "질문을 찾을 수 없습니다." });
+      }
+      res.json({ message: "질문이 성공적으로 삭제되었습니다.", question });
     } catch (error: unknown) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });

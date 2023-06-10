@@ -13,7 +13,7 @@ commentRouter.post(
 
 // 특정 게시글의 모든 댓글 조회
 commentRouter.get(
-  "/questions/comments/:postId/",
+  "/questions/comments/:postId",
   CommentController.readAllCommentsOfPost,
 );
 

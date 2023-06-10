@@ -1,5 +1,6 @@
 import { Schema } from "mongoose";
 import Question from "../models/schemas/question";
+import Comment from "../models/schemas/comment";
 
 const questionService = {
   // 커뮤니티 질문 생성
@@ -51,7 +52,18 @@ const questionService = {
   // 커뮤니티 질문 삭제
   async deleteQuestion(id: string) {
     try {
-      const question = await Question.findOneAndDelete({ _id: id });
+      // 질문 찾기
+      const question = await Question.findById(id);
+      if (!question) {
+        throw new Error("커뮤니티 질문을 찾을 수 없습니다.");
+      }
+
+      // 해당 질문에 달린 모든 댓글 삭제
+      await Comment.deleteMany({ _id: { $in: question.commentIds } });
+
+      // 질문 삭제
+      await Question.deleteOne({ _id: id });
+
       return question;
     } catch (error) {
       throw new Error("커뮤니티 질문 삭제에 실패하였습니다.");

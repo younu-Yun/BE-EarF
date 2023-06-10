@@ -5,7 +5,7 @@ import Question from "../models/schemas/question";
 const CommentService = {
   // 커뮤니티 댓글 생성
   async createComment(
-    postId: string,
+    postId: Types.ObjectId,
     id: string,
     name: string,
     profileImage: string,
@@ -59,11 +59,28 @@ const CommentService = {
   // 커뮤니티 댓글 삭제
   async deleteComment(id: Types.ObjectId) {
     try {
-      const deletedComment = await Comment.findByIdAndDelete(id);
-      if (!deletedComment) {
+      // 댓글 찾기.
+      const comment = await Comment.findById(id);
+      if (!comment) {
         throw new Error("커뮤니티 댓글을 찾을 수 없습니다.");
       }
-      return deletedComment;
+
+      // 댓글이 있는 게시글 찾기.
+      const post = await Question.findById(comment.postId);
+      if (!post) {
+        throw new Error("게시글을 찾을 수 없습니다.");
+      }
+
+      // commentIds 배열에서 댓글 ID 삭제.
+      post.commentIds = post.commentIds.filter(
+        commentId => commentId.toString() !== id.toString(),
+      );
+      await post.save();
+
+      // 댓글 자체 삭제.
+      await Comment.findByIdAndDelete(id);
+
+      return "댓글이 정상적으로 삭제되었습니다.";
     } catch (error) {
       console.error(error);
       throw new Error("커뮤니티 댓글 삭제에 실패하였습니다.");
