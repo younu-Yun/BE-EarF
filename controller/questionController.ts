@@ -1,4 +1,4 @@
-import { Schema, Types } from "mongoose";
+import { Types } from "mongoose";
 import { Request, Response } from "express";
 import questionService from "../services/questionService";
 import { IUser } from "../models";
@@ -103,6 +103,11 @@ const questionController = {
       const sort = (req.query.sort as string) || "latest"; // 정렬 기준
       const page = parseInt(req.query.page as string) || 1; // 페이지 번호
       const limit = parseInt(req.query.limit as string) || 10; // 페이지당 항목 수
+
+      if (!["latest", "oldest", "mostComments", "mostLikes"].includes(sort)) {
+        return res.status(400).json({ error: "Invalid sort parameter." });
+      }
+
       const questions = await questionService.readAllQuestions(
         sort,
         page,

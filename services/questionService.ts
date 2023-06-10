@@ -1,4 +1,4 @@
-import mongoose, { Schema, Types } from "mongoose";
+import { Schema } from "mongoose";
 import Question from "../models/schemas/question";
 import Comment from "../models/schemas/comment";
 
@@ -127,6 +127,20 @@ const questionService = {
           },
           {
             $sort: { numComments: -1 }, // 댓글 수가 많은 순으로 정렬
+          },
+        ])
+          .skip(skip)
+          .limit(limit);
+      } else if (sort === "mostLikes") {
+        // 좋아요가 많은 순으로 정렬하는 로직 추가
+        questions = await Question.aggregate([
+          {
+            $addFields: {
+              numLikes: { $size: "$likeIds" },
+            },
+          },
+          {
+            $sort: { numLikes: -1 }, // 좋아요가 많은 순으로 정렬
           },
         ])
           .skip(skip)
