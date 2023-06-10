@@ -87,6 +87,33 @@ const CommentService = {
     }
   },
 
+  // 댓글 좋아요 누르기 / 취소하기
+  async toggleLike(postId: string, commentId: string, userId: string) {
+    try {
+      const post = await Question.findById(postId);
+      if (!post) {
+        throw new Error("게시글을 찾을 수 없습니다.");
+      }
+
+      const comment = await Comment.findById(commentId);
+      if (!comment) {
+        throw new Error("댓글을 찾을 수 없습니다.");
+      }
+
+      const likeIndex = comment.likeIds.indexOf(userId);
+      if (likeIndex === -1) {
+        comment.likeIds.push(userId);
+      } else {
+        comment.likeIds.splice(likeIndex, 1);
+      }
+      await comment.save();
+      return comment;
+    } catch (error) {
+      console.error(error);
+      throw new Error("댓글 좋아요 기능 처리에 실패하였습니다.");
+    }
+  },
+
   // 커뮤니티 댓글 조회
   async readComment(id: Types.ObjectId) {
     try {

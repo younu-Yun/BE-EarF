@@ -37,4 +37,11 @@ commentRouter.delete(
   CommentController.deleteComment,
 );
 
+// 댓글에 대한 좋아요 추가 혹은 취소
+commentRouter.patch(
+  "/questions/comments/:postId/:commentId/like",
+  authAccess,
+  CommentController.toggleLike,
+);
+
 export default commentRouter;

@@ -7,6 +7,7 @@ interface IComment extends Document {
   profileImage: string;
   checkedBadge: string;
   comment: string;
+  likeIds: string[];
 }
 
 const CommentSchema = new Schema<IComment>(
@@ -36,6 +37,12 @@ const CommentSchema = new Schema<IComment>(
       type: String,
       required: true,
     },
+    likeIds: [
+      {
+        type: String,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true },
 );

@@ -115,6 +115,26 @@ const CommentController = {
       }
     }
   },
+  // 댓글 좋아요 누르기 / 취소하기
+  async toggleLike(req: Request, res: Response) {
+    try {
+      const { postId } = req.params;
+      const { commentId } = req.params;
+      const { id: userId } = req.user as IUser;
+      const question = await CommentService.toggleLike(
+        postId,
+        commentId,
+        userId,
+      );
+      res.json(question);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "알 수 없는 오류가 발생했습니다." });
+      }
+    }
+  },
 };
 
 export default CommentController;
