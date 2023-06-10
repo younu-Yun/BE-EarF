@@ -35,7 +35,7 @@ questionRouter.delete(
 questionRouter.patch(
   "/questions/:questionId/like",
   authAccess,
-  questionController.likeQuestion,
+  questionController.toggleLike,
 );
 
 export default questionRouter;

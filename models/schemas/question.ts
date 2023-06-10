@@ -7,7 +7,7 @@ interface IQuestion extends Document {
   checkedBadge: string;
   title: string;
   content: string;
-  likeIds: Schema.Types.ObjectId[];
+  likeIds: String[];
   commentIds: Schema.Types.ObjectId[];
 }
 
@@ -39,7 +39,7 @@ const QuestionSchema = new Schema<IQuestion>(
     },
     likeIds: [
       {
-        type: Schema.Types.ObjectId,
+        type: String,
         ref: "User",
       },
     ],

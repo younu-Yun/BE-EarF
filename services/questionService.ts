@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 import Question from "../models/schemas/question";
 import Comment from "../models/schemas/comment";
 
@@ -141,27 +141,23 @@ const questionService = {
   },
 
   // 좋아요 누르기 / 취소하기
-  async likeQuestion(questionId: string, userId: Schema.Types.ObjectId) {
+  async toggleLike(questionId: string, userId: string) {
     try {
       const question = await Question.findById(questionId);
       if (!question) {
         throw new Error("질문을 찾을 수 없습니다.");
       }
 
-      const likeIndex = question.likeIds.findIndex(
-        id => id.toString() === userId.toString(),
-      );
+      const likeIndex = question.likeIds.indexOf(userId);
       if (likeIndex === -1) {
-        // 좋아요 누르기: 사용자 ID를 'likes' 배열에 추가
         question.likeIds.push(userId);
       } else {
-        // 좋아요 취소: 사용자 ID를 'likes' 배열에서 제거
         question.likeIds.splice(likeIndex, 1);
       }
-
       await question.save();
       return question;
     } catch (error) {
+      console.error(error);
       throw new Error("좋아요 기능 처리에 실패하였습니다.");
     }
   },
