@@ -14,7 +14,6 @@ const jwtOptions: StrategyOptions = {
 
 const refreshJwt = new JwtStrategy(jwtOptions, async (payload, done) => {
   try {
-    console.log("여기까지는 오는거야?");
     const user = await User.findOne(
       { id: payload.id },
       { refreshToken: 1, id: 1 }

@@ -1,9 +1,10 @@
 import { Schema, Document, Model, model } from 'mongoose';
+import User, { IUser } from '../schemas/user';
 
 interface ITodo extends Document {
-  userId: Schema.Types.ObjectId;
-  todoList: String[];
+  id: IUser['id'];
   date: Date;
+  todoList: String[];
   completed: Boolean[];
   createdAt: Date;
   updatedAt: Date;
@@ -11,10 +12,10 @@ interface ITodo extends Document {
 
 const todoSchema: Schema<ITodo> = new Schema<ITodo>(
   {
-    userId: {
-      type: Schema.Types.ObjectId,
+    id: {
+      type: String,
       ref: 'User',
-      required: true,
+      required: true
     },
     date: {
       type: Date,

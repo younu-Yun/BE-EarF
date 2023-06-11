@@ -62,8 +62,13 @@ export default class UserService {
   };
 
   // ID로 유저 가져오기
-  public getUserById = async (id: string): Promise<IUser | null> => {
-    return User.findById(id);
+  public getUserById = async (_id: string): Promise<IUser | null> => {
+    return User.findById(_id);
+  };
+
+  // Email로 유저 가져오기
+  public getUserByEmail = async (email: string): Promise<IUser | null> => {
+    return User.findOne({ email });
   };
 
   // 모든 유저 가져오기
@@ -73,16 +78,17 @@ export default class UserService {
 
   // ID로 유저 업데이트하기
   public updateUserById = async (
-    id: string,
+    _id: string,
     updatedData: Partial<IUser>
   ): Promise<IUser | null> => {
     const updatedUser = await User.findByIdAndUpdate(
-      id,
+      _id,
       {
         name: updatedData.name,
         email: updatedData.email,
         phoneNumber: updatedData.phoneNumber,
         profileImage: updatedData.profileImage,
+        checkedBadge: updatedData.checkedBadge,
       },
       { new: true }
     );
@@ -118,10 +124,8 @@ export default class UserService {
           email: 1,
         }
       );
-      console.log(user);
       return user;
     } catch (error) {
-      console.log(error);
       throw new Error("유저의 토큰을 생성하는데 실패했습니다.");
     }
   };
@@ -132,6 +136,16 @@ export default class UserService {
       return user;
     } catch (error) {
       throw new Error("유저의 refresh토큰을 발견하는데 실패했습니다.");
+    }
+  };
+
+  public getUserPassword = async (_id: string): Promise<IUser | null> => {
+    try {
+      const user = await User.findOne({ _id }, "password");
+      console.log(user);
+      return user;
+    } catch (error) {
+      throw new Error("유저의 password를 발견하는데 실패했습니다.");
     }
   };
 
@@ -148,8 +162,43 @@ export default class UserService {
         }
       );
     } catch (error) {
-      console.log(error);
       throw new Error("토큰 무효화에 실패했습니다.");
+    }
+  };
+
+  public async updatePasswordFromEmail(email: string, tempPassword: string) {
+    try {
+      console.log("여기까지는 그래도 오네??");
+      await User.updateOne(
+        { email },
+        {
+          password: await hashPassword(tempPassword),
+          isTempPassword: true,
+        }
+      );
+      console.log("패스워드가 갱신되었습니다.");
+    } catch (error) {
+      console.log(error);
+      throw new Error("패스워드 갱신에 실패했습니다.");
+    }
+  }
+
+  public updatePasswordFromId = async (id: string, password: string) => {
+    try {
+      console.log(password);
+      const hashedPassword = await hashPassword(password);
+      console.log(password);
+
+      await User.updateOne(
+        { _id: id },
+        {
+          password: hashedPassword,
+          isTempPassword: false,
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      throw new Error("패스워드 갱신에 실패했습니다.");
     }
   };
 }
