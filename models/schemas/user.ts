@@ -102,7 +102,7 @@ const UserSchema: Schema<IUser> = new Schema<IUser>(
       default: false,
     },
   },
-  { timestamps: true } // 최초작성, 3회 이상 연속작성
+  { timestamps: true }, // 최초작성, 3회 이상 연속작성
 );
 
 export default model<IUser>("User", UserSchema);
