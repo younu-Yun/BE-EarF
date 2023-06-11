@@ -132,6 +132,7 @@ export default class UserController {
     }
   };
 
+  // 비밀번호 초기화
   public resetPassword = async (req: Request, res: Response) => {
     try {
       const { email } = req.body;
@@ -153,6 +154,7 @@ export default class UserController {
     }
   };
 
+  // 비밀번호 변경
   public changePassword = async (req: Request, res: Response) => {
     try {
       const { _id } = req.user as IUser;
@@ -177,6 +179,37 @@ export default class UserController {
       await this.userService.updatePasswordFromId(_id, password);
 
       res.status(200).send("비밀번호 변경이 완료되었습니다.");
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
+  };
+
+  // 프로필 이미지 변경
+  public changeProfile = async (req: Request, res: Response) => {
+    try {
+      const { _id } = req.user as IUser;
+      const profileImage = `http://34.64.216.86:4735/${req.file?.filename}`;
+      const updatedImage = await this.userService.updateProfileImage(
+        _id,
+        profileImage
+      );
+      res.send(updatedImage);
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
+  };
+
+  // 프로필 이미지 삭제
+  public deleteProfile = async (req: Request, res: Response) => {
+    try {
+      const { _id } = req.user as IUser;
+      // 파일이름만 default이미지로 바꾸면 됨.
+      const profileImage = `http://34.64.216.86:4735/${req.file?.filename}`;
+      const defaultImage = await this.userService.updateProfileImage(
+        _id,
+        profileImage
+      );
+      res.send(defaultImage);
     } catch (error) {
       res.status(500).json({ error: (error as Error).message });
     }

@@ -1,4 +1,4 @@
-import { Diary } from '../models/schemas/diary';
+import { Diary } from "../models/schemas/diary";
 
 interface CreateDiary {
   (
@@ -25,10 +25,10 @@ interface UpdateDiary {
 }
 
 const Error_Message = {
-  createDiaryError: '다이어리 생성에 실패했습니다.',
-  updateDiaryError: '다이어리 수정에 실패했습니다.',
-  deleteDiaryError: '다이어리 삭제에 실패했습니다.',
-  getDiaryError: '다이어리를 불러오는 데에 실패했습니다.',
+  createDiaryError: "다이어리 생성에 실패했습니다.",
+  updateDiaryError: "다이어리 수정에 실패했습니다.",
+  deleteDiaryError: "다이어리 삭제에 실패했습니다.",
+  getDiaryError: "다이어리를 불러오는 데에 실패했습니다.",
 };
 
 const createDiary: CreateDiary = async (
@@ -48,11 +48,11 @@ const createDiary: CreateDiary = async (
       title,
       content,
       shareStatus,
-      imageUrl
+      imageUrl,
     });
     return createDiary;
   } catch (error) {
-    console.log(error)
+    console.log(error);
     throw new Error(Error_Message.createDiaryError);
   }
 };
@@ -84,14 +84,14 @@ const diaryService = {
     try {
       const allDiariesByMonth = await Diary.find({
         id,
-        date: { $gte: new Date(startDate), $lte: new Date(endDate) }
-      }).select('tag');
-      
+        date: { $gte: new Date(startDate), $lte: new Date(endDate) },
+      }).select("tag");
+
       const tags: string[] = [];
 
       allDiariesByMonth.forEach((diary) => {
         diary.tag.forEach((tag) => {
-          const allTags = tag.split(',').map((t) => t.trim());
+          const allTags = tag.split(",").map((t) => t.trim());
           tags.push(...allTags);
         });
       });

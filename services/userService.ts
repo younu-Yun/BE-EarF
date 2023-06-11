@@ -142,7 +142,6 @@ export default class UserService {
   public getUserPassword = async (_id: string): Promise<IUser | null> => {
     try {
       const user = await User.findOne({ _id }, "password");
-      console.log(user);
       return user;
     } catch (error) {
       throw new Error("유저의 password를 발견하는데 실패했습니다.");
@@ -168,7 +167,6 @@ export default class UserService {
 
   public async updatePasswordFromEmail(email: string, tempPassword: string) {
     try {
-      console.log("여기까지는 그래도 오네??");
       await User.updateOne(
         { email },
         {
@@ -176,19 +174,14 @@ export default class UserService {
           isTempPassword: true,
         }
       );
-      console.log("패스워드가 갱신되었습니다.");
     } catch (error) {
-      console.log(error);
       throw new Error("패스워드 갱신에 실패했습니다.");
     }
   }
 
   public updatePasswordFromId = async (id: string, password: string) => {
     try {
-      console.log(password);
       const hashedPassword = await hashPassword(password);
-      console.log(password);
-
       await User.updateOne(
         { _id: id },
         {
@@ -197,8 +190,20 @@ export default class UserService {
         }
       );
     } catch (error) {
-      console.log(error);
       throw new Error("패스워드 갱신에 실패했습니다.");
+    }
+  };
+
+  public updateProfileImage = async (id: string, profileImage: string) => {
+    try {
+      await User.updateOne(
+        { _id: id },
+        {
+          profileImage,
+        }
+      );
+    } catch (error) {
+      throw new Error("프로필 이미지 업로드에 실패했습니다.");
     }
   };
 }

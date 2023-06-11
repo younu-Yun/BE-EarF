@@ -1,6 +1,7 @@
 import express from "express";
 import UserController from "../controller/userController";
 import authAccess from "../middlewares/authAccess";
+import { upload } from "../utils/multer";
 
 const router = express.Router();
 const userController = new UserController();
@@ -19,6 +20,19 @@ router.post("/loginid", authAccess, userController.getIdByEmailAndName);
 router.post("/reset", userController.resetPassword);
 // 유저 비밀번호 변경 API
 router.post("/change", authAccess, userController.changePassword);
-// 유저 프로필
+// 유저 프로필이미지 변경
+router.post(
+  "/profile",
+  authAccess,
+  upload.single("profileImage"),
+  userController.changeProfile
+);
+// 유저 프로필이미지 삭제
+router.delete(
+  "/profile",
+  authAccess,
+  upload.single("profileImage"),
+  userController.deleteProfile
+);
 
 export default router;
