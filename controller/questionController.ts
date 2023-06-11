@@ -54,8 +54,8 @@ const questionController = {
 
   /**
    * 질문 삭제.
-   * 요청 URL의 매개변수에서 질문 ID를 추출하여 questionService.deleteQuestion을 호출합니다.
-   * 삭제된 질문을 클라이언트에게 JSON 형식으로 응답합니다.
+   * 요청 URL의 매개변수에서 질문 ID를 추출하여 questionService.deleteQuestion을 호출.
+   * 삭제된 질문을 클라이언트에게 JSON 형식으로 응답.
    */
   async deleteQuestion(req: Request, res: Response) {
     try {
@@ -111,6 +111,27 @@ const questionController = {
       const questions = await questionService.readAllQuestions(
         sort,
         page,
+        limit,
+      );
+      res.json(questions);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "알 수 없는 오류가 발생했습니다." });
+      }
+    }
+  },
+
+  /**
+   * 댓글이 없는 가장 오래된 질문 조회.
+   * 요청 쿼리에서 limit을 추출하여 questionService.readOldestQuestionsWithNoComments 호출.
+   * 조회된 질문을 클라이언트에게 JSON 형식으로 응답.
+   */
+  async readOldestQuestionsWithNoComments(req: Request, res: Response) {
+    try {
+      const limit = parseInt(req.query.limit as string) || 8; // 기본값 8
+      const questions = await questionService.readOldestQuestionsWithNoComments(
         limit,
       );
       res.json(questions);

@@ -26,7 +26,6 @@ const questionService = {
       await question.save();
       return question;
     } catch (error) {
-      console.log(error);
       throw new Error("커뮤니티 질문 생성에 실패하였습니다.");
     }
   },
@@ -44,7 +43,6 @@ const questionService = {
       }
       return question;
     } catch (error) {
-      console.error(error);
       throw new Error("커뮤니티 질문 수정에 실패하였습니다.");
     }
   },
@@ -165,6 +163,31 @@ const questionService = {
       return questions;
     } catch (error) {
       throw new Error("커뮤니티 질문을 모두 불러오는데 실패하였습니다.");
+    }
+  },
+
+  // 댓글이 0개인 질문 중 가장 오래된 것 8개 조회
+  async readOldestQuestionsWithNoComments(limit: number = 8) {
+    try {
+      const questions = await Question.aggregate([
+        {
+          $addFields: {
+            numComments: { $size: "$commentIds" },
+          },
+        },
+        {
+          $match: { numComments: 0 }, // 댓글이 0개인 질문만 선택
+        },
+        {
+          $sort: { createdAt: 1 }, // 생성된 시간 순 (과거 순)
+        },
+      ]).limit(limit);
+      return questions;
+    } catch (error) {
+      console.log(error);
+      throw new Error(
+        "댓글이 없는 가장 오래된 질문을 불러오는데 실패하였습니다.",
+      );
     }
   },
 
