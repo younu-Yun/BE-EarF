@@ -146,6 +146,27 @@ const questionController = {
   },
 
   /**
+   * 좋아요가 많은 게시글을 최신순으로 5개만 가지고 오는 함수.
+   * 요청 쿼리에서 limit을 추출하여 questionService.readMostLikedLatestQuestions 호출.
+   * 조회된 질문을 클라이언트에게 JSON 형식으로 응답.
+   */
+  async readMostLikedLatestQuestions(req: Request, res: Response) {
+    try {
+      const limit = parseInt(req.query.limit as string) || 5; // 기본값 5
+      const questions = await questionService.readMostLikedLatestQuestions(
+        limit,
+      );
+      res.json(questions);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "알 수 없는 오류가 발생했습니다." });
+      }
+    }
+  },
+
+  /**
    * 특정 질문에 대한 좋아요 토글.
    * 요청 URL의 매개변수에서 질문 ID를 추출하고, 로그인된 사용자의 ID를 요청 객체에서 가져와 questionService.toggleLike을 호출.
    * 좋아요가 토글된 질문을 클라이언트에게 JSON 형식으로 응답.

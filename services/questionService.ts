@@ -199,6 +199,29 @@ const questionService = {
     }
   },
 
+  // 좋아요가 많은 게시글을 최신순으로 5개만 가지고 오기
+  async readMostLikedLatestQuestions(limit: number = 5) {
+    try {
+      const questions = await Question.aggregate([
+        {
+          $addFields: {
+            numLikes: { $size: "$likeIds" },
+            numComments: { $size: "$commentIds" },
+          },
+        },
+        {
+          $sort: { numLikes: -1, createdAt: -1 }, // 좋아요가 많은 순과 최신 순으로 정렬
+        },
+      ]).limit(limit);
+      return questions;
+    } catch (error) {
+      if (error instanceof mongoose.Error) {
+        throw new Error("데이터베이스 조회에 실패하였습니다.");
+      }
+      throw new Error("좋아요가 많은 게시글을 불러오는데 실패하였습니다.");
+    }
+  },
+
   // 좋아요 누르기 / 취소하기
   async toggleLike(questionId: string, userId: string) {
     try {

@@ -14,6 +14,12 @@ questionRouter.post(
 // 모든 질문 조회
 questionRouter.get("/questions", questionController.readAllQuestions);
 
+// 좋아요가 많은 게시글을 최신순으로 5개만 가지고 오기
+questionRouter.get(
+  "/questions/most-liked",
+  questionController.readMostLikedLatestQuestions,
+);
+
 // 댓글이 없는 가장 오래된 질문들 조회
 questionRouter.get(
   "/questions/no-comments",
