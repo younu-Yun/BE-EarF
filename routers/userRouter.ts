@@ -19,5 +19,6 @@ router.post("/loginid", authAccess, userController.getIdByEmailAndName);
 router.post("/reset", userController.resetPassword);
 // 유저 비밀번호 변경 API
 router.post("/change", authAccess, userController.changePassword);
+// 유저 프로필
 
 export default router;
