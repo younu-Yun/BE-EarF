@@ -222,6 +222,30 @@ const questionService = {
     }
   },
 
+  // 가장 최근에 댓글이 달린 게시글 하나만 가져오기
+  async readLatestCommentedQuestion() {
+    try {
+      // 최신 댓글 찾기
+      const latestComment = await Comment.findOne().sort({ createdAt: -1 });
+      if (!latestComment) {
+        throw new Error("댓글을 찾을 수 없습니다.");
+      }
+
+      // 해당 댓글이 달린 게시글 찾기
+      const question = await Question.findById(latestComment.postId);
+      if (!question) {
+        throw new Error("게시글을 찾을 수 없습니다.");
+      }
+
+      return question;
+    } catch (error) {
+      console.error(error);
+      throw new Error(
+        "가장 최근에 댓글이 달린 게시글을 불러오는데 실패하였습니다.",
+      );
+    }
+  },
+
   // 좋아요 누르기 / 취소하기
   async toggleLike(questionId: string, userId: string) {
     try {

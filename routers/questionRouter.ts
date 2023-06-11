@@ -26,6 +26,12 @@ questionRouter.get(
   questionController.readOldestQuestionsWithNoComments,
 );
 
+// 가장 최근에 댓글이 달린 질문 조회
+questionRouter.get(
+  "/questions/latest-commented",
+  questionController.readLatestCommentedQuestion,
+);
+
 // 특정 질문 조회
 questionRouter.get("/questions/:id", questionController.readQuestion);
 
