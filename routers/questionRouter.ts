@@ -11,6 +11,13 @@ questionRouter.post(
   questionController.createQuestion,
 );
 
+// 로그인된 사용자가 작성한 모든 질문 조회
+questionRouter.get(
+  "/questions/user",
+  authAccess,
+  questionController.readUserQuestions,
+);
+
 // 모든 질문 조회
 questionRouter.get("/questions", questionController.readAllQuestions);
 

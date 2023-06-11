@@ -185,6 +185,25 @@ const questionController = {
   },
 
   /**
+   * 로그인된 사용자가 작성한 모든 질문 조회.
+   * 요청 객체에서 사용자 ID를 가져와 questionService.readUserQuestions를 호출.
+   * 조회된 질문을 클라이언트에게 JSON 형식으로 응답.
+   */
+  async readUserQuestions(req: Request, res: Response) {
+    try {
+      const { id: userId } = req.user as IUser;
+      const questions = await questionService.readUserQuestions(userId);
+      res.json(questions);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "알 수 없는 오류가 발생했습니다." });
+      }
+    }
+  },
+
+  /**
    * 특정 질문에 대한 좋아요 토글.
    * 요청 URL의 매개변수에서 질문 ID를 추출하고, 로그인된 사용자의 ID를 요청 객체에서 가져와 questionService.toggleLike을 호출.
    * 좋아요가 토글된 질문을 클라이언트에게 JSON 형식으로 응답.

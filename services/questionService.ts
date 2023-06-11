@@ -246,6 +246,24 @@ const questionService = {
     }
   },
 
+  // 로그인된 사용자가 작성한 모든 질문 조회
+  async readUserQuestions(userId: string) {
+    try {
+      const questions = await Question.find({ id: userId }).sort({
+        createdAt: -1,
+      });
+      if (!questions || questions.length === 0) {
+        throw new Error("사용자가 작성한 질문을 찾을 수 없습니다.");
+      }
+      return questions;
+    } catch (error) {
+      if (error instanceof mongoose.Error) {
+        throw new Error("데이터베이스 조회에 실패하였습니다."); // 데이터베이스 에러
+      }
+      throw new Error("사용자가 작성한 질문을 불러오는데 실패하였습니다."); // 그 외의 에러
+    }
+  },
+
   // 좋아요 누르기 / 취소하기
   async toggleLike(questionId: string, userId: string) {
     try {
