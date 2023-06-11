@@ -130,7 +130,8 @@ const questionController = {
    */
   async readOldestQuestionsWithNoComments(req: Request, res: Response) {
     try {
-      const limit = parseInt(req.query.limit as string) || 8; // 기본값 8
+      const limit = parseInt(req.query.limit as string) || 8; //기본값 8
+
       const questions = await questionService.readOldestQuestionsWithNoComments(
         limit,
       );

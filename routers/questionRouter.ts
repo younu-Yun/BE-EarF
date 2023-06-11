@@ -14,14 +14,14 @@ questionRouter.post(
 // 모든 질문 조회
 questionRouter.get("/questions", questionController.readAllQuestions);
 
-// 특정 질문 조회
-questionRouter.get("/questions/:id", questionController.readQuestion);
-
 // 댓글이 없는 가장 오래된 질문들 조회
 questionRouter.get(
   "/questions/no-comments",
   questionController.readOldestQuestionsWithNoComments,
 );
+
+// 특정 질문 조회
+questionRouter.get("/questions/:id", questionController.readQuestion);
 
 // 질문 수정
 questionRouter.patch(

@@ -1,4 +1,4 @@
-import { Schema, Types } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 import Question from "../models/schemas/question";
 import Comment from "../models/schemas/comment";
 
@@ -82,12 +82,15 @@ const questionService = {
       ]);
 
       if (!question || question.length === 0) {
-        throw new Error("커뮤니티 질문을 찾을 수 없습니다.");
+        throw new Error("해당 ID의 커뮤니티 질문을 찾을 수 없습니다.");
       }
 
       return question[0];
     } catch (error) {
-      throw new Error("커뮤니티 질문을 불러오는데 실패하였습니다.");
+      if (error instanceof mongoose.Error) {
+        throw new Error("데이터베이스 조회에 실패하였습니다."); // 데이터베이스 에러
+      }
+      throw new Error("커뮤니티 질문을 불러오는데 실패하였습니다. 야호!!"); // 그 외의 에러
     }
   },
 
@@ -162,6 +165,9 @@ const questionService = {
       }
       return questions;
     } catch (error) {
+      if (error instanceof mongoose.Error) {
+        throw new Error("데이터베이스 조회에 실패했습니다");
+      }
       throw new Error("커뮤니티 질문을 모두 불러오는데 실패하였습니다.");
     }
   },
@@ -184,7 +190,9 @@ const questionService = {
       ]).limit(limit);
       return questions;
     } catch (error) {
-      console.log(error);
+      if (error instanceof mongoose.Error) {
+        throw new Error("데이터베이스 조회에 실패했습니다.");
+      }
       throw new Error(
         "댓글이 없는 가장 오래된 질문을 불러오는데 실패하였습니다.",
       );
