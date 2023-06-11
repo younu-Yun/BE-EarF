@@ -1,27 +1,48 @@
-import { Schema, Document, model, Types } from "mongoose";
+import { Schema, Document, model } from "mongoose";
 
 interface IComment extends Document {
   postId: Schema.Types.ObjectId; // 게시글 ObjectId 참조.
-  userId: Schema.Types.ObjectId; // 댓글 작성자 ObjectId 참조.
+  id: string;
+  name: string;
+  profileImage: string;
+  checkedBadge: string;
   comment: string;
+  likeIds: string[];
 }
 
 const CommentSchema = new Schema<IComment>(
   {
     postId: {
       type: Schema.Types.ObjectId,
-      ref: "Question",
+      ref: "question",
       required: true,
     },
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
+    id: {
+      type: String,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    profileImage: {
+      type: String,
+      // required: true,
+    },
+    checkedBadge: {
+      type: String,
       required: true,
     },
     comment: {
       type: String,
       required: true,
     },
+    likeIds: [
+      {
+        type: String,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true },
 );

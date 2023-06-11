@@ -1,5 +1,7 @@
+import { Types } from "mongoose";
 import { Request, Response } from "express";
 import questionService from "../services/questionService";
+import { IUser } from "../models";
 
 const questionController = {
   /**
@@ -9,11 +11,13 @@ const questionController = {
    */
   async createQuestion(req: Request, res: Response) {
     try {
-      const { userId, userName, imageUrl, title, content } = req.body;
+      const { id, name, profileImage, checkedBadge } = req.user as IUser;
+      const { title, content } = req.body;
       const question = await questionService.createQuestion(
-        userId,
-        userName,
-        imageUrl,
+        id,
+        name,
+        profileImage,
+        checkedBadge,
         title,
         content,
       );
@@ -57,7 +61,10 @@ const questionController = {
     try {
       const { id } = req.params;
       const question = await questionService.deleteQuestion(id);
-      res.json(question);
+      if (!question) {
+        return res.status(404).json({ error: "질문을 찾을 수 없습니다." });
+      }
+      res.json({ message: "질문이 성공적으로 삭제되었습니다.", question });
     } catch (error: unknown) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
@@ -93,8 +100,19 @@ const questionController = {
    */
   async readAllQuestions(req: Request, res: Response) {
     try {
-      const sort = req.query.sort as string; // 문자열로 형변환
-      const questions = await questionService.readAllQuestions(sort);
+      const sort = (req.query.sort as string) || "latest"; // 정렬 기준
+      const page = parseInt(req.query.page as string) || 1; // 페이지 번호
+      const limit = parseInt(req.query.limit as string) || 10; // 페이지당 항목 수
+
+      if (!["latest", "oldest", "mostComments", "mostLikes"].includes(sort)) {
+        return res.status(400).json({ error: "Invalid sort parameter." });
+      }
+
+      const questions = await questionService.readAllQuestions(
+        sort,
+        page,
+        limit,
+      );
       res.json(questions);
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -106,15 +124,15 @@ const questionController = {
   },
 
   /**
-   * 특정 질문에 좋아요 추가.
-   * 요청 URL의 매개변수에서 질문 ID를 추출하고, 요청 본문에서 사용자 ID를 추출하여 questionService.likeQuestion을 호출.
-   * 좋아요가 추가된 질문을 클라이언트에게 JSON 형식으로 응답.
+   * 특정 질문에 대한 좋아요 토글.
+   * 요청 URL의 매개변수에서 질문 ID를 추출하고, 로그인된 사용자의 ID를 요청 객체에서 가져와 questionService.toggleLike을 호출.
+   * 좋아요가 토글된 질문을 클라이언트에게 JSON 형식으로 응답.
    */
-  async likeQuestion(req: Request, res: Response) {
+  async toggleLike(req: Request, res: Response) {
     try {
       const { questionId } = req.params;
-      const { userId } = req.body;
-      const question = await questionService.likeQuestion(questionId, userId);
+      const { id: userId } = req.user as IUser;
+      const question = await questionService.toggleLike(questionId, userId);
       res.json(question);
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -136,7 +154,7 @@ const questionController = {
       const { commentId } = req.body;
       const question = await questionService.addCommentToQuestion(
         questionId,
-        //@ts-ignore
+        // @ts-ignore
         new Types.ObjectId(commentId),
       );
       res.json(question);

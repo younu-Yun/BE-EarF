@@ -1,18 +1,28 @@
 import { Types } from "mongoose";
 import { Request, Response } from "express";
 import CommentService from "../services/commentService";
+import { IUser } from "../models";
 
 const CommentController = {
   // 새로운 댓글 생성
   async createComment(req: Request, res: Response) {
     try {
-      const { userId, comment } = req.body;
+      const { id, name, profileImage, checkedBadge } = req.user as IUser;
       const { postId } = req.params;
+      const { comment } = req.body;
+
+      if (!Types.ObjectId.isValid(postId)) {
+        res.status(400).json({ error: "유효하지 않은 게시글 ID입니다." });
+        return;
+      }
+
       const _postId = new Types.ObjectId(postId);
-      const _userId = new Types.ObjectId(userId);
       const newComment = await CommentService.createComment(
         _postId,
-        _userId,
+        id,
+        name,
+        profileImage,
+        checkedBadge,
         comment,
       );
       res.status(201).json(newComment);
@@ -97,6 +107,26 @@ const CommentController = {
       const _postId = new Types.ObjectId(postId);
       const comments = await CommentService.readAllCommentsOfPost(_postId);
       res.json(comments);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "알 수 없는 오류가 발생했습니다." });
+      }
+    }
+  },
+  // 댓글 좋아요 누르기 / 취소하기
+  async toggleLike(req: Request, res: Response) {
+    try {
+      const { postId } = req.params;
+      const { commentId } = req.params;
+      const { id: userId } = req.user as IUser;
+      const question = await CommentService.toggleLike(
+        postId,
+        commentId,
+        userId,
+      );
+      res.json(question);
     } catch (error: unknown) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
