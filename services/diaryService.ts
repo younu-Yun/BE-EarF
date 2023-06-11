@@ -1,13 +1,17 @@
 import { Diary } from '../models/schemas/diary';
-
+import { deleteDiaryImage } from '../utils/multer';
 interface CreateDiary {
   (
     id: string,
+    name: string,
+    profileImage: string,
+    checkedBadge: string,
     date: Date,
     tag: string[],
     title: string,
     content: string,
     shareStatus: boolean,
+    likeIds: string[],
     imageUrl: string
   ): Promise<any>;
 }
@@ -15,11 +19,15 @@ interface CreateDiary {
 interface UpdateDiary {
   (
     id: string,
+    name: string,
+    profileImage: string,
+    checkedBadge: string,
     date: Date,
     tag: string[],
     title: string,
     content: string,
     shareStatus: boolean,
+    likeIds: string[],
     imageUrl: string
   ): Promise<any>;
 }
@@ -33,21 +41,29 @@ const Error_Message = {
 
 const createDiary: CreateDiary = async (
   id,
+  name,
+  profileImage,
+  checkedBadge,
   date,
   tag,
   title,
   content,
   shareStatus,
+  likeIds,
   imageUrl
 ) => {
   try {
     const createDiary = await Diary.create({
       id,
+      name,
+      profileImage,
+      checkedBadge,
       date,
       tag,
       title,
       content,
       shareStatus,
+      likeIds,
       imageUrl
     });
     return createDiary;
@@ -59,17 +75,38 @@ const createDiary: CreateDiary = async (
 
 const updateDiary: UpdateDiary = async (
   id,
+  name,
+  profileImage,
+  checkedBadge,
   date,
   tag,
   title,
   content,
   shareStatus,
+  likeIds,
   imageUrl
 ) => {
   try {
+    const diaryToUpdate = await Diary.findOne({ id, date });
+
+    if (diaryToUpdate) {
+      const previousFilePath = `public/${diaryToUpdate.imageUrl.split('/')[3]}`;
+      deleteDiaryImage(previousFilePath);
+    }
+
     const updatedDiary = await Diary.findOneAndUpdate(
       { id, date },
-      { tag, title, content, shareStatus, imageUrl },
+      { 
+        name,
+        profileImage,
+        checkedBadge,
+        tag,
+        title,
+        content,
+        shareStatus,
+        likeIds,
+        imageUrl 
+      },
       { new: true }
     );
     return updatedDiary;
@@ -118,11 +155,13 @@ const diaryService = {
   async deleteDiary(id: string, date: Date) {
     try {
       const deletedDiary = await Diary.findOneAndDelete({ id, date });
-      return deletedDiary;
-    } catch (error) {
+      const filePath = `public/${deletedDiary?.imageUrl.split('/')[3]}`;
+      deleteDiaryImage(filePath);
+      console.log(`${id}님 ${date} 다이어리 삭제`);
+      } catch (error) {
       throw new Error(Error_Message.deleteDiaryError);
     }
-  },
+  },  
   //diary 조회
   async getDiary(id: string, date: Date) {
     try {
