@@ -40,8 +40,13 @@ const questionController = {
     try {
       const { id } = req.params;
       const { title, content } = req.body;
-      console.log(req.body);
-      const question = await questionService.updateQuestion(id, title, content);
+      const { id: userId } = req.user as IUser;
+      const question = await questionService.updateQuestion(
+        userId,
+        id,
+        title,
+        content,
+      );
       res.json(question);
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -60,7 +65,8 @@ const questionController = {
   async deleteQuestion(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const question = await questionService.deleteQuestion(id);
+      const { id: userId } = req.user as IUser;
+      const question = await questionService.deleteQuestion(userId, id);
       if (!question) {
         return res.status(404).json({ error: "질문을 찾을 수 없습니다." });
       }
@@ -73,7 +79,6 @@ const questionController = {
       }
     }
   },
-
   /**
    * 특정 질문 조회.
    * 요청 URL의 매개변수에서 질문 ID를 추출하여 questionService.readQuestion을 호출.

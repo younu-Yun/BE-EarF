@@ -38,6 +38,7 @@ const CommentController = {
   // 댓글 수정
   async updateComment(req: Request, res: Response) {
     try {
+      const { id: userId } = req.user as IUser;
       const { id } = req.params;
       if (!Types.ObjectId.isValid(id)) {
         res.status(400).json({ error: "유효하지 않은 ID입니다." });
@@ -45,7 +46,11 @@ const CommentController = {
       }
       const _id = new Types.ObjectId(id);
       const { comment } = req.body;
-      const updatedComment = await CommentService.updateComment(_id, comment);
+      const updatedComment = await CommentService.updateComment(
+        _id,
+        comment,
+        userId,
+      );
       res.json(updatedComment);
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -59,13 +64,14 @@ const CommentController = {
   // 댓글 삭제
   async deleteComment(req: Request, res: Response) {
     try {
+      const { id: userId } = req.user as IUser;
       const { id } = req.params;
       if (!Types.ObjectId.isValid(id)) {
         res.status(400).json({ error: "유효하지 않은 ID입니다." });
         return;
       }
       const _id = new Types.ObjectId(id);
-      const deletedComment = await CommentService.deleteComment(_id);
+      const deletedComment = await CommentService.deleteComment(_id, userId);
       res.json(deletedComment);
     } catch (error: unknown) {
       if (error instanceof Error) {

@@ -31,16 +31,27 @@ const questionService = {
   },
 
   // 커뮤니티 질문 수정
-  async updateQuestion(id: string, title: string, content: string) {
+  async updateQuestion(
+    userId: string,
+    questionId: string,
+    title: string,
+    content: string,
+  ) {
     try {
-      const question = await Question.findByIdAndUpdate(
-        id,
-        { title: title, content: content },
-        { new: true, useFindAndModify: false },
-      );
+      const question = await Question.findById(questionId);
       if (!question) {
         throw new Error("커뮤니티 질문을 찾을 수 없습니다.");
       }
+
+      // 질문의 작성자 ID와 요청한 사용자의 ID가 일치하는지 확인
+      if (question.id !== userId) {
+        throw new Error("작성자만 질문을 수정할 수 있습니다.");
+      }
+
+      question.title = title;
+      question.content = content;
+      await question.save();
+
       return question;
     } catch (error) {
       throw new Error("커뮤니티 질문 수정에 실패하였습니다.");
@@ -48,26 +59,29 @@ const questionService = {
   },
 
   // 커뮤니티 질문 삭제
-  async deleteQuestion(id: string) {
+  async deleteQuestion(userId: string, questionId: string) {
     try {
-      // 질문 찾기
-      const question = await Question.findById(id);
+      const question = await Question.findById(questionId);
       if (!question) {
         throw new Error("커뮤니티 질문을 찾을 수 없습니다.");
+      }
+
+      // 질문의 작성자 ID와 요청한 사용자의 ID가 일치하는지 확인
+      if (question.id !== userId) {
+        throw new Error("작성자만 질문을 삭제할 수 있습니다.");
       }
 
       // 해당 질문에 달린 모든 댓글 삭제
       await Comment.deleteMany({ _id: { $in: question.commentIds } });
 
       // 질문 삭제
-      await Question.deleteOne({ _id: id });
+      await Question.deleteOne({ _id: questionId });
 
       return question;
     } catch (error) {
       throw new Error("커뮤니티 질문 삭제에 실패하였습니다.");
     }
   },
-
   // 커뮤니티 질문 조회
   async readQuestion(id: string) {
     try {

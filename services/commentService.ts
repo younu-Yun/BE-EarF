@@ -39,16 +39,22 @@ const CommentService = {
   },
 
   // 커뮤니티 댓글 수정
-  async updateComment(id: Types.ObjectId, comment: string) {
+  async updateComment(id: Types.ObjectId, comment: string, userId: string) {
     try {
+      const targetComment = await Comment.findById(id);
+      if (!targetComment) {
+        throw new Error("커뮤니티 댓글을 찾을 수 없습니다.");
+      }
+      if (targetComment.id !== userId) {
+        throw new Error("작성자만 댓글을 수정할 수 있습니다.");
+      }
+
       const updatedComment = await Comment.findByIdAndUpdate(
         id,
         { comment },
         { new: true, useFindAndModify: false },
       );
-      if (!updatedComment) {
-        throw new Error("커뮤니티 댓글을 찾을 수 없습니다.");
-      }
+
       return updatedComment;
     } catch (error) {
       console.error(error);
@@ -57,27 +63,26 @@ const CommentService = {
   },
 
   // 커뮤니티 댓글 삭제
-  async deleteComment(id: Types.ObjectId) {
+  async deleteComment(id: Types.ObjectId, userId: string) {
     try {
-      // 댓글 찾기.
-      const comment = await Comment.findById(id);
-      if (!comment) {
+      const targetComment = await Comment.findById(id);
+      if (!targetComment) {
         throw new Error("커뮤니티 댓글을 찾을 수 없습니다.");
       }
+      if (targetComment.id !== userId) {
+        throw new Error("작성자만 댓글을 삭제할 수 있습니다.");
+      }
 
-      // 댓글이 있는 게시글 찾기.
-      const post = await Question.findById(comment.postId);
+      const post = await Question.findById(targetComment.postId);
       if (!post) {
         throw new Error("게시글을 찾을 수 없습니다.");
       }
 
-      // commentIds 배열에서 댓글 ID 삭제.
       post.commentIds = post.commentIds.filter(
         commentId => commentId.toString() !== id.toString(),
       );
       await post.save();
 
-      // 댓글 자체 삭제.
       await Comment.findByIdAndDelete(id);
 
       return "댓글이 정상적으로 삭제되었습니다.";
