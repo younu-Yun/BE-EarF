@@ -18,11 +18,11 @@ questionRouter.get(
   questionController.readUserQuestions,
 );
 
-//모든 질문 조회
-questionRouter.get("/questions", questionController.readAllQuestions);
-
 // 모든 질문 조회(정렬기능)
 questionRouter.get("/questions", questionController.readAllQuestionsWithSort);
+
+//모든 질문 조회
+questionRouter.get("/questions-all", questionController.readAllQuestions);
 
 // 좋아요가 많은 게시글을 최신순으로 5개만 가지고 오기
 questionRouter.get(

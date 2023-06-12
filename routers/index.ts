@@ -4,6 +4,7 @@ import userRouter from "./userRouter";
 import authRouter from "./authRouter";
 import questionRouter from "./questionRouter";
 import commentRouter from "./commentRouter";
+import boastRouter from "./boastRouter";
 import diaryRouter from "./diaryRouter";
 import todoRouter from "./todoRouter";
 
@@ -18,6 +19,7 @@ router.use("/user", userRouter);
 router.use("/auth", authRouter);
 router.use("/community", questionRouter);
 router.use("/community", commentRouter);
+router.use("/community", boastRouter);
 router.use("/diary", diaryRouter);
 router.use("/todo", todoRouter);
 

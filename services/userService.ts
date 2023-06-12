@@ -71,6 +71,11 @@ export default class UserService {
     return User.findOne({ email });
   };
 
+  // Email로 유저 가져오기
+  public getUserByloginId = async (id: string): Promise<IUser | null> => {
+    return User.findOne({ id });
+  };
+
   // 모든 유저 가져오기
   public getAllUsers = async (): Promise<IUser[]> => {
     return User.find();
@@ -142,7 +147,6 @@ export default class UserService {
   public getUserPassword = async (_id: string): Promise<IUser | null> => {
     try {
       const user = await User.findOne({ _id }, "password");
-      console.log(user);
       return user;
     } catch (error) {
       throw new Error("유저의 password를 발견하는데 실패했습니다.");
@@ -166,9 +170,23 @@ export default class UserService {
     }
   };
 
+  public async checkPassword(_id: string, password: string) {
+    try {
+      const user = await User.findById(_id).select("+password");
+      if (!user) {
+        throw new Error("유저를 찾을 수 없습니다.");
+      }
+
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      return passwordMatch;
+    } catch (error) {
+      console.log(error);
+      throw new Error("패스워드 확인에 실패했습니다.");
+    }
+  }
+
   public async updatePasswordFromEmail(email: string, tempPassword: string) {
     try {
-      console.log("여기까지는 그래도 오네??");
       await User.updateOne(
         { email },
         {
@@ -176,19 +194,14 @@ export default class UserService {
           isTempPassword: true,
         }
       );
-      console.log("패스워드가 갱신되었습니다.");
     } catch (error) {
-      console.log(error);
       throw new Error("패스워드 갱신에 실패했습니다.");
     }
   }
 
   public updatePasswordFromId = async (id: string, password: string) => {
     try {
-      console.log(password);
       const hashedPassword = await hashPassword(password);
-      console.log(password);
-
       await User.updateOne(
         { _id: id },
         {
@@ -197,8 +210,28 @@ export default class UserService {
         }
       );
     } catch (error) {
-      console.log(error);
       throw new Error("패스워드 갱신에 실패했습니다.");
+    }
+  };
+
+  public updateProfileImage = async (id: string, profileImage: string) => {
+    try {
+      await User.updateOne(
+        { _id: id },
+        {
+          profileImage,
+        }
+      );
+    } catch (error) {
+      throw new Error("프로필 이미지 업로드에 실패했습니다.");
+    }
+  };
+
+  public deleteUser = async (id: string) => {
+    try {
+      await User.deleteOne({ _id: id });
+    } catch (error) {
+      throw new Error("회원 탈퇴에 실패했습니다.");
     }
   };
 }

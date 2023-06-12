@@ -7,7 +7,7 @@ export interface IUser extends Document {
   email: string;
   phoneNumber: string;
   profileImage: string;
-  badges: [];
+  badges: string[];
   checkedBadge: string;
   postNum: number;
   tumblerNum: number;
@@ -21,20 +21,6 @@ export interface IBadge extends Document {
   type: string;
   ThumbBadge: string;
 }
-
-// 뱃지 스키마 정의
-const badgeSchema: Schema<IBadge> = new Schema<IBadge>({
-  type: {
-    type: String,
-    required: true,
-    enum: ["최초", "연속", "신규", "텀블", "교통", "버켓", "커뮤"],
-  },
-  ThumbBadge: {
-    //대표이미지로 수정
-    type: String,
-    default: "신규",
-  },
-});
 
 // 유저 스키마 정의
 const UserSchema: Schema<IUser> = new Schema<IUser>(
@@ -66,7 +52,10 @@ const UserSchema: Schema<IUser> = new Schema<IUser>(
       type: String,
       default: "",
     },
-    badges: [badgeSchema],
+    badges: {
+      type: [String],
+      default: ["신규"],
+    },
     // 뱃지뿐만 아니라 캘린더에 현재까지 유저의 총 태그갯수를 조회하는 api가 필요할 것 같아서 남겨두려고 함.
     checkedBadge: {
       type: String,
@@ -102,7 +91,7 @@ const UserSchema: Schema<IUser> = new Schema<IUser>(
       default: false,
     },
   },
-  { timestamps: true }, // 최초작성, 3회 이상 연속작성
+  { timestamps: true } // 최초작성, 3회 이상 연속작성
 );
 
 export default model<IUser>("User", UserSchema);

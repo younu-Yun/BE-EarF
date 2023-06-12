@@ -31,7 +31,8 @@ const CommentSchema = new Schema<IComment>(
     },
     checkedBadge: {
       type: String,
-      required: true,
+      default: "신규",
+      enum: ["최초", "연속", "신규", "텀블", "교통", "버켓", "커뮤"],
     },
     comment: {
       type: String,

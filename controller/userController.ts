@@ -18,6 +18,10 @@ export default class UserController {
   public registerUser: RequestHandler = async (req: Request, res: Response) => {
     try {
       const { id, password, name, email, phoneNumber } = req.body;
+      const registeredId = await this.userService.getUserByloginId(id);
+      if (registeredId) {
+        return res.status(400).json({ message: "이미 등록된 ID입니다." });
+      }
       const user = await this.userService.registerUser(
         id,
         password,
@@ -132,6 +136,30 @@ export default class UserController {
     }
   };
 
+  // 비밀번호 확인
+  public checkPassword = async (req: Request, res: Response) => {
+    try {
+      const { password } = req.body;
+      const { _id } = req.user as IUser;
+      const checkedPassword = await this.userService.checkPassword(
+        _id,
+        password
+      );
+      if (checkedPassword) {
+        res.status(200).json({
+          message: "비밀번호가 확인되었습니다. 마이페이지로 이동합니다.",
+        });
+      } else {
+        res.status(400).json({
+          message: "비밀번호가 일치하지 않습니다. 다시 입력해주세요!",
+        });
+      }
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
+  };
+
+  // 비밀번호 초기화
   public resetPassword = async (req: Request, res: Response) => {
     try {
       const { email } = req.body;
@@ -153,6 +181,7 @@ export default class UserController {
     }
   };
 
+  // 비밀번호 변경
   public changePassword = async (req: Request, res: Response) => {
     try {
       const { _id } = req.user as IUser;
@@ -177,6 +206,51 @@ export default class UserController {
       await this.userService.updatePasswordFromId(_id, password);
 
       res.status(200).send("비밀번호 변경이 완료되었습니다.");
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
+  };
+
+  // 프로필 이미지 변경
+  public changeProfile = async (req: Request, res: Response) => {
+    try {
+      const { _id } = req.user as IUser;
+      const profileImage = `http://34.64.216.86:4735/${req.file?.filename}`;
+      const updatedImage = await this.userService.updateProfileImage(
+        _id,
+        profileImage
+      );
+      res.send(updatedImage);
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
+  };
+
+  // 프로필 이미지 삭제
+  public deleteProfile = async (req: Request, res: Response) => {
+    try {
+      const { _id } = req.user as IUser;
+      // 파일이름만 default이미지로 바꾸면 됨.
+      const profileImage = `http://34.64.216.86:4735/${req.file?.filename}`;
+      const defaultImage = await this.userService.updateProfileImage(
+        _id,
+        profileImage
+      );
+      res.send(defaultImage);
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
+  };
+
+  // 유저 회원 탈퇴
+  public deleteUser = async (req: Request, res: Response) => {
+    try {
+      const { _id } = req.user as IUser;
+      await this.userService.deleteUser(_id);
+      res.status(200).json({
+        message:
+          "회원 탈퇴가 정상적으로 완료되었습니다. 그동안 EarF를 이용해주셔서 감사합니다",
+      });
     } catch (error) {
       res.status(500).json({ error: (error as Error).message });
     }
