@@ -237,4 +237,20 @@ export default class UserController {
       res.status(500).json({ error: (error as Error).message });
     }
   };
+
+  // 유저 회원 탈퇴
+  public deleteUser = async (req: Request, res: Response) => {
+    try {
+      const { _id } = req.user as IUser;
+      await this.userService.deleteUser(_id);
+      res
+        .status(200)
+        .json({
+          message:
+            "회원 탈퇴가 정상적으로 완료되었습니다. 그동안 EarF를 이용해주셔서 감사합니다",
+        });
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
+  };
 }

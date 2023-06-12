@@ -37,5 +37,5 @@ router.delete(
   userController.deleteProfile
 );
 // 유저 회원 탈퇴 API
-router.delete("delete", authAccess);
+router.delete("/delete", authAccess, userController.deleteUser);
 export default router;

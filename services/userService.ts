@@ -221,4 +221,12 @@ export default class UserService {
       throw new Error("프로필 이미지 업로드에 실패했습니다.");
     }
   };
+
+  public deleteUser = async (id: string) => {
+    try {
+      await User.deleteOne({ _id: id });
+    } catch (error) {
+      throw new Error("회원 탈퇴에 실패했습니다.");
+    }
+  };
 }
