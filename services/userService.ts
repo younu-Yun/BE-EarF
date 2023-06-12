@@ -71,6 +71,11 @@ export default class UserService {
     return User.findOne({ email });
   };
 
+  // Email로 유저 가져오기
+  public getUserByloginId = async (id: string): Promise<IUser | null> => {
+    return User.findOne({ id });
+  };
+
   // 모든 유저 가져오기
   public getAllUsers = async (): Promise<IUser[]> => {
     return User.find();

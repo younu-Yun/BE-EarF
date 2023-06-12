@@ -18,6 +18,10 @@ export default class UserController {
   public registerUser: RequestHandler = async (req: Request, res: Response) => {
     try {
       const { id, password, name, email, phoneNumber } = req.body;
+      const registeredId = await this.userService.getUserByloginId(id);
+      if (registeredId) {
+        return res.status(400).json({ message: "이미 등록된 ID입니다." });
+      }
       const user = await this.userService.registerUser(
         id,
         password,
@@ -243,12 +247,10 @@ export default class UserController {
     try {
       const { _id } = req.user as IUser;
       await this.userService.deleteUser(_id);
-      res
-        .status(200)
-        .json({
-          message:
-            "회원 탈퇴가 정상적으로 완료되었습니다. 그동안 EarF를 이용해주셔서 감사합니다",
-        });
+      res.status(200).json({
+        message:
+          "회원 탈퇴가 정상적으로 완료되었습니다. 그동안 EarF를 이용해주셔서 감사합니다",
+      });
     } catch (error) {
       res.status(500).json({ error: (error as Error).message });
     }
