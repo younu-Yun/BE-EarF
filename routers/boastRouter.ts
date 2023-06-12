@@ -8,6 +8,6 @@ boastRouter.get("/boasts/:id", BoastController.loadSingleDiary);
 // 자랑하기 게시글 불러오기
 boastRouter.get("/boasts", BoastController.loadBoast);
 // 자랑하기 게시글 좋아요/ 취소
-boastRouter.post("/boasts/:id/like", authAccess, BoastController.toggleLike);
+boastRouter.patch("/boasts/:id/like", authAccess, BoastController.toggleLike);
 
 export default boastRouter;

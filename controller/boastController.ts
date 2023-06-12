@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import boastService from "../services/boastService";
+import { IUser } from "../models";
 
 const BoastController = {
   // 단일 다이어리 게시글 불러오기
@@ -59,7 +60,8 @@ const BoastController = {
   // 다이어리 게시글 좋아요 누르기 / 취소하기
   async toggleLike(req: Request, res: Response) {
     try {
-      const { diaryId, userId } = req.body;
+      const { id: userId } = req.user as IUser;
+      const { id: diaryId } = req.params;
 
       const diary = await boastService.toggleLike(diaryId, userId);
 
