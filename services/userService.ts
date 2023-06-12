@@ -165,6 +165,21 @@ export default class UserService {
     }
   };
 
+  public async checkPassword(_id: string, password: string) {
+    try {
+      const user = await User.findById(_id).select("+password");
+      if (!user) {
+        throw new Error("유저를 찾을 수 없습니다.");
+      }
+
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      return passwordMatch;
+    } catch (error) {
+      console.log(error);
+      throw new Error("패스워드 확인에 실패했습니다.");
+    }
+  }
+
   public async updatePasswordFromEmail(email: string, tempPassword: string) {
     try {
       await User.updateOne(

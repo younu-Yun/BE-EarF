@@ -132,6 +132,29 @@ export default class UserController {
     }
   };
 
+  // 비밀번호 확인
+  public checkPassword = async (req: Request, res: Response) => {
+    try {
+      const { password } = req.body;
+      const { _id } = req.user as IUser;
+      const checkedPassword = await this.userService.checkPassword(
+        _id,
+        password
+      );
+      if (checkedPassword) {
+        res.status(200).json({
+          message: "비밀번호가 확인되었습니다. 마이페이지로 이동합니다.",
+        });
+      } else {
+        res.status(400).json({
+          message: "비밀번호가 일치하지 않습니다. 다시 입력해주세요!",
+        });
+      }
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
+  };
+
   // 비밀번호 초기화
   public resetPassword = async (req: Request, res: Response) => {
     try {
