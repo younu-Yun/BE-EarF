@@ -1,5 +1,7 @@
 import { Diary } from '../models/schemas/diary';
+import { User } from '../models';
 import { deleteDiaryImage } from '../utils/multer';
+
 interface CreateDiary {
   (
     id: string,
@@ -53,6 +55,12 @@ const createDiary: CreateDiary = async (
   imageUrl
 ) => {
   try {
+    const diaryToCreate = await Diary.findOne({ id, date });
+
+    if (diaryToCreate) {
+      throw new Error(Error_Message.createDiaryError);
+    }
+    
     const createDiary = await Diary.create({
       id,
       name,
@@ -66,6 +74,15 @@ const createDiary: CreateDiary = async (
       likeIds,
       imageUrl
     });
+
+    if (tag.includes('텀블러')) {
+      await User.updateOne({ id }, { $inc: { tumblerNum: 1 } });
+    } else if (tag.includes('대중교통')) {
+      await User.updateOne({ id }, { $inc: { transportNum: 1 } });
+    } else if (tag.includes('장바구니')) {
+      await User.updateOne({ id }, { $inc: { basketNum: 1 } });
+    }
+    
     return createDiary;
   } catch (error) {
     console.log(error)
@@ -92,6 +109,22 @@ const updateDiary: UpdateDiary = async (
     if (diaryToUpdate) {
       const previousFilePath = `public/${diaryToUpdate.imageUrl.split('/')[3]}`;
       deleteDiaryImage(previousFilePath);
+
+      if (diaryToUpdate.tag.includes('텀블러')) {
+        await User.updateOne({ id }, { $inc: { tumblerNum: -1 } });
+      } else if (diaryToUpdate.tag.includes('대중교통')) {
+        await User.updateOne({ id }, { $inc: { transportNum: -1 } });
+      } else if (diaryToUpdate.tag.includes('장바구니')) {
+        await User.updateOne({ id }, { $inc: { basketNum: -1 } });
+      }
+    }
+
+    if (tag.includes('텀블러')) {
+      await User.updateOne({ id }, { $inc: { tumblerNum: 1 } });
+    } else if (tag.includes('대중교통')) {
+      await User.updateOne({ id }, { $inc: { transportNum: 1 } });
+    } else if (tag.includes('장바구니')) {
+      await User.updateOne({ id }, { $inc: { basketNum: 1 } });
     }
 
     const updatedDiary = await Diary.findOneAndUpdate(
@@ -108,7 +141,7 @@ const updateDiary: UpdateDiary = async (
         imageUrl 
       },
       { new: true }
-    );
+    ); 
     return updatedDiary;
   } catch (error) {
     throw new Error(Error_Message.updateDiaryError);
@@ -117,8 +150,10 @@ const updateDiary: UpdateDiary = async (
 
 const diaryService = {
   //월간 diary 태그 조회
-  async getAllDiariesByMonth(id: string, startDate: Date, endDate: Date) {
+  async getAllDiariesByMonth(id: string, month: string) {
     try {
+      const startDate = new Date(`${month}-01`);
+      const endDate = new Date(`${month}-31`);
       const allDiariesByMonth = await Diary.find({
         id,
         date: { $gte: new Date(startDate), $lte: new Date(endDate) }
@@ -154,6 +189,18 @@ const diaryService = {
   //diary 삭제
   async deleteDiary(id: string, date: Date) {
     try {
+      const diaryToDelete = await Diary.findOne({ id, date });
+      
+      if (diaryToDelete) {
+        if (diaryToDelete.tag.includes('텀블러')) {
+          await User.updateOne({ id }, { $inc: { tumblerNum: -1 } });
+        } else if (diaryToDelete.tag.includes('대중교통')) {
+          await User.updateOne({ id }, { $inc: { transportNum: -1 } });
+        } else if (diaryToDelete.tag.includes('장바구니')) {
+          await User.updateOne({ id }, { $inc: { basketNum: -1 } });
+        }
+      }
+
       const deletedDiary = await Diary.findOneAndDelete({ id, date });
       const filePath = `public/${deletedDiary?.imageUrl.split('/')[3]}`;
       deleteDiaryImage(filePath);

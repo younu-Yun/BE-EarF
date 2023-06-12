@@ -6,7 +6,7 @@ import { upload } from "../utils/multer";
 const diaryRouter = Router();
 
 //calendar diary 전체 조회
-diaryRouter.get("/month", authAccess, diaryController.getAllDiariesByMonth);
+diaryRouter.get("/month/:month", authAccess, diaryController.getAllDiariesByMonth);
 //calendar diary 등록
 diaryRouter.post('/:date', authAccess, upload.single("imageUrl"), diaryController.createDiary);
 //calendar diary 조회
