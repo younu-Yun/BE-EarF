@@ -149,8 +149,25 @@ const updateDiary: UpdateDiary = async (
 };
 
 const diaryService = {
-  //월간 diary 태그 조회
+  //월간 diary 조회
   async getAllDiariesByMonth(id: string, month: string) {
+    try {
+      const startDate = new Date(`${month}-01`);
+      const endDate = new Date(`${month}-31`);
+      const allDiariesByMonth = await Diary.find({
+        id,
+        date: { $gte: new Date(startDate), $lte: new Date(endDate) }
+      }).select('date tag');
+      
+      const diaryData = allDiariesByMonth.map(diary => [diary.date.toISOString().split('T')[0], diary.tag[0].replace(/'/g, '').split(',').length]);
+      
+      return diaryData;
+    } catch (error) {
+      throw new Error(Error_Message.getDiaryError);
+    }
+  },
+  //월간 diary 태그 조회
+  async getAllDiariesTagByMonth(id: string, month: string) {
     try {
       const startDate = new Date(`${month}-01`);
       const endDate = new Date(`${month}-31`);
