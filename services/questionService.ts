@@ -82,6 +82,7 @@ const questionService = {
       throw new Error("커뮤니티 질문 삭제에 실패하였습니다.");
     }
   },
+
   // 커뮤니티 질문 조회
   async readQuestion(id: string) {
     try {
@@ -102,14 +103,27 @@ const questionService = {
       return question[0];
     } catch (error) {
       if (error instanceof mongoose.Error) {
-        throw new Error("데이터베이스 조회에 실패하였습니다."); // 데이터베이스 에러
+        throw new Error("데이터베이스 조회에 실패하였습니다.");
       }
-      throw new Error("커뮤니티 질문을 불러오는데 실패하였습니다. 야호!!"); // 그 외의 에러
+      throw new Error("커뮤니티 질문을 불러오는데 실패하였습니다.");
+    }
+  },
+
+  // 모든 커뮤니티 질문 조회 (전체 조회)
+  async readAllQuestions() {
+    try {
+      const questions = await Question.find({});
+      return questions;
+    } catch (error) {
+      if (error instanceof mongoose.Error) {
+        throw new Error("데이터베이스 조회에 실패하였습니다.");
+      }
+      throw new Error("커뮤니티 질문을 모두 불러오는데 실패하였습니다.");
     }
   },
 
   // 모든 커뮤니티 질문 조회 (정렬 방식 선택 가능)
-  async readAllQuestions(
+  async readAllQuestionsWithSort(
     sort: string = "latest",
     page: number = 1,
     limit: number = 10,

@@ -98,12 +98,26 @@ const questionController = {
     }
   },
 
+  // 모든 질문조회
+  async readAllQuestions(req: Request, res: Response) {
+    try {
+      const questions = await questionService.readAllQuestions();
+      res.json(questions);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "An unknown error occurred." });
+      }
+    }
+  },
+
   /**
-   * 모든 질문 조회.
+   * 모든 질문 조회(정렬기능 추가).
    * questionService.readAllQuestions을 호출하여 모든 질문을 가져온 뒤,
    * 클라이언트에게 JSON 형식으로 응답.
    */
-  async readAllQuestions(req: Request, res: Response) {
+  async readAllQuestionsWithSort(req: Request, res: Response) {
     try {
       const sort = (req.query.sort as string) || "latest"; // 정렬 기준
       const page = parseInt(req.query.page as string) || 1; // 페이지 번호
@@ -113,7 +127,7 @@ const questionController = {
         return res.status(400).json({ error: "Invalid sort parameter." });
       }
 
-      const questions = await questionService.readAllQuestions(
+      const questions = await questionService.readAllQuestionsWithSort(
         sort,
         page,
         limit,
