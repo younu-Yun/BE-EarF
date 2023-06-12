@@ -58,7 +58,7 @@ const createDiary: CreateDiary = async (
     const diaryToCreate = await Diary.findOne({ id, date });
 
     if (diaryToCreate) {
-      throw new Error(Error_Message.createDiaryError);
+      throw new Error(Error_Message.createDiaryError + '이미 해당 일자의 Diary가 존재합니다.');
     }
     
     const createDiary = await Diary.create({
