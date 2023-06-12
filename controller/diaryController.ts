@@ -18,6 +18,19 @@ const diaryController = {
       res.status(500).json({ error: error.message });
     }
   },
+  async getAllDiariesTagByMonth(req: Request, res: Response) {
+    try {
+      const { month } = req.params;
+      const { id } = req.user as IUser;
+      const allDiariesTagByMonth = await diaryService.getAllDiariesTagByMonth(
+        id,
+        month,
+      );
+      res.status(200).json(allDiariesTagByMonth);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  },
   async createDiary(req: Request, res: Response) {
     try {
       const {
