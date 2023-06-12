@@ -7,12 +7,11 @@ const Domain = 'http://34.64.216.86:4725/';
 const diaryController = {
   async getAllDiariesByMonth(req: Request, res: Response) {
     try {
-      const { startDate, endDate } = req.query;
+      const { month } = req.params;
       const { id } = req.user as IUser;
       const allDiariesByMonth = await diaryService.getAllDiariesByMonth(
         id,
-        new Date(startDate as string),
-        new Date(endDate as string)
+        month,
       );
       res.status(200).json(allDiariesByMonth);
     } catch (error: any) {

@@ -55,6 +55,12 @@ const createDiary: CreateDiary = async (
   imageUrl
 ) => {
   try {
+    const diaryToCreate = await Diary.findOne({ id, date });
+
+    if (diaryToCreate) {
+      throw new Error(Error_Message.createDiaryError);
+    }
+    
     const createDiary = await Diary.create({
       id,
       name,
@@ -148,7 +154,6 @@ const diaryService = {
     try {
       const startDate = new Date(`${month}-01`);
       const endDate = new Date(`${month}-31`);
-      
       const allDiariesByMonth = await Diary.find({
         id,
         date: { $gte: new Date(startDate), $lte: new Date(endDate) }
