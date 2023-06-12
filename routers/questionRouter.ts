@@ -18,6 +18,12 @@ questionRouter.get(
   questionController.readUserQuestions,
 );
 
+//질문 검색
+questionRouter.get(
+  "/questions/search",
+  questionController.searchQuestionsByKeyword,
+);
+
 // 모든 질문 조회(정렬기능)
 questionRouter.get("/questions", questionController.readAllQuestionsWithSort);
 

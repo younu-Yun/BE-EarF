@@ -205,6 +205,7 @@ const questionController = {
         page,
         limit,
       );
+
       res.json(questions);
     } catch (error: unknown) {
       if (error instanceof Error) {

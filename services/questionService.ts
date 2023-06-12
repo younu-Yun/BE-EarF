@@ -277,7 +277,6 @@ const questionService = {
     }
   },
 
-  // 모든 커뮤니티 질문 조회 (키워드 검색)
   async searchQuestionsByKeyword(
     keyword: string,
     page: number = 1,
@@ -290,8 +289,8 @@ const questionService = {
         {
           $match: {
             $or: [
-              { title: { $regex: keyword, $options: "i" } }, // 제목에 키워드가 포함되는 경우
-              { content: { $regex: keyword, $options: "i" } }, // 내용에 키워드가 포함되는 경우
+              { title: { $regex: keyword, $options: "i" } },
+              { content: { $regex: keyword, $options: "i" } },
             ],
           },
         },
@@ -302,7 +301,7 @@ const questionService = {
           },
         },
         {
-          $sort: { createdAt: -1 }, // 최신 순으로 정렬
+          $sort: { createdAt: -1 },
         },
         {
           $skip: skip,
