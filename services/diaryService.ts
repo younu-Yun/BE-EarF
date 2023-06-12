@@ -1,6 +1,6 @@
-import { Diary } from '../models/schemas/diary';
-import { User } from '../models';
-import { deleteDiaryImage } from '../utils/multer';
+import { Diary } from "../models/schemas/diary";
+import { User } from "../models";
+import { deleteDiaryImage } from "../utils/multer";
 
 interface CreateDiary {
   (
@@ -35,10 +35,10 @@ interface UpdateDiary {
 }
 
 const Error_Message = {
-  createDiaryError: '다이어리 생성에 실패했습니다.',
-  updateDiaryError: '다이어리 수정에 실패했습니다.',
-  deleteDiaryError: '다이어리 삭제에 실패했습니다.',
-  getDiaryError: '다이어리를 불러오는 데에 실패했습니다.',
+  createDiaryError: "다이어리 생성에 실패했습니다.",
+  updateDiaryError: "다이어리 수정에 실패했습니다.",
+  deleteDiaryError: "다이어리 삭제에 실패했습니다.",
+  getDiaryError: "다이어리를 불러오는 데에 실패했습니다.",
 };
 
 const createDiary: CreateDiary = async (
@@ -60,7 +60,7 @@ const createDiary: CreateDiary = async (
     if (diaryToCreate) {
       throw new Error(Error_Message.createDiaryError);
     }
-    
+
     const createDiary = await Diary.create({
       id,
       name,
@@ -72,20 +72,20 @@ const createDiary: CreateDiary = async (
       content,
       shareStatus,
       likeIds,
-      imageUrl
+      imageUrl,
     });
 
-    if (tag.includes('텀블러')) {
+    if (tag.includes("텀블러")) {
       await User.updateOne({ id }, { $inc: { tumblerNum: 1 } });
-    } else if (tag.includes('대중교통')) {
+    } else if (tag.includes("대중교통")) {
       await User.updateOne({ id }, { $inc: { transportNum: 1 } });
-    } else if (tag.includes('장바구니')) {
+    } else if (tag.includes("장바구니")) {
       await User.updateOne({ id }, { $inc: { basketNum: 1 } });
     }
-    
+
     return createDiary;
   } catch (error) {
-    console.log(error)
+    console.log(error);
     throw new Error(Error_Message.createDiaryError);
   }
 };
@@ -107,29 +107,29 @@ const updateDiary: UpdateDiary = async (
     const diaryToUpdate = await Diary.findOne({ id, date });
 
     if (diaryToUpdate) {
-      const previousFilePath = `public/${diaryToUpdate.imageUrl.split('/')[3]}`;
+      const previousFilePath = `public/${diaryToUpdate.imageUrl.split("/")[3]}`;
       deleteDiaryImage(previousFilePath);
 
-      if (diaryToUpdate.tag.includes('텀블러')) {
+      if (diaryToUpdate.tag.includes("텀블러")) {
         await User.updateOne({ id }, { $inc: { tumblerNum: -1 } });
-      } else if (diaryToUpdate.tag.includes('대중교통')) {
+      } else if (diaryToUpdate.tag.includes("대중교통")) {
         await User.updateOne({ id }, { $inc: { transportNum: -1 } });
-      } else if (diaryToUpdate.tag.includes('장바구니')) {
+      } else if (diaryToUpdate.tag.includes("장바구니")) {
         await User.updateOne({ id }, { $inc: { basketNum: -1 } });
       }
     }
 
-    if (tag.includes('텀블러')) {
+    if (tag.includes("텀블러")) {
       await User.updateOne({ id }, { $inc: { tumblerNum: 1 } });
-    } else if (tag.includes('대중교통')) {
+    } else if (tag.includes("대중교통")) {
       await User.updateOne({ id }, { $inc: { transportNum: 1 } });
-    } else if (tag.includes('장바구니')) {
+    } else if (tag.includes("장바구니")) {
       await User.updateOne({ id }, { $inc: { basketNum: 1 } });
     }
 
     const updatedDiary = await Diary.findOneAndUpdate(
       { id, date },
-      { 
+      {
         name,
         profileImage,
         checkedBadge,
@@ -138,10 +138,10 @@ const updateDiary: UpdateDiary = async (
         content,
         shareStatus,
         likeIds,
-        imageUrl 
+        imageUrl,
       },
       { new: true }
-    ); 
+    );
     return updatedDiary;
   } catch (error) {
     throw new Error(Error_Message.updateDiaryError);
@@ -156,14 +156,14 @@ const diaryService = {
       const endDate = new Date(`${month}-31`);
       const allDiariesByMonth = await Diary.find({
         id,
-        date: { $gte: new Date(startDate), $lte: new Date(endDate) }
-      }).select('tag');
-      
+        date: { $gte: new Date(startDate), $lte: new Date(endDate) },
+      }).select("tag");
+
       const tags: string[] = [];
 
       allDiariesByMonth.forEach((diary) => {
         diary.tag.forEach((tag) => {
-          const allTags = tag.split(',').map((t) => t.trim());
+          const allTags = tag.split(",").map((t) => t.trim());
           tags.push(...allTags);
         });
       });
@@ -190,25 +190,25 @@ const diaryService = {
   async deleteDiary(id: string, date: Date) {
     try {
       const diaryToDelete = await Diary.findOne({ id, date });
-      
+
       if (diaryToDelete) {
-        if (diaryToDelete.tag.includes('텀블러')) {
+        if (diaryToDelete.tag.includes("텀블러")) {
           await User.updateOne({ id }, { $inc: { tumblerNum: -1 } });
-        } else if (diaryToDelete.tag.includes('대중교통')) {
+        } else if (diaryToDelete.tag.includes("대중교통")) {
           await User.updateOne({ id }, { $inc: { transportNum: -1 } });
-        } else if (diaryToDelete.tag.includes('장바구니')) {
+        } else if (diaryToDelete.tag.includes("장바구니")) {
           await User.updateOne({ id }, { $inc: { basketNum: -1 } });
         }
       }
 
       const deletedDiary = await Diary.findOneAndDelete({ id, date });
-      const filePath = `public/${deletedDiary?.imageUrl.split('/')[3]}`;
+      const filePath = `public/${deletedDiary?.imageUrl.split("/")[3]}`;
       deleteDiaryImage(filePath);
       console.log(`${id}님 ${date} 다이어리 삭제`);
-      } catch (error) {
+    } catch (error) {
       throw new Error(Error_Message.deleteDiaryError);
     }
-  },  
+  },
   //diary 조회
   async getDiary(id: string, date: Date) {
     try {
