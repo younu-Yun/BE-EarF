@@ -188,12 +188,13 @@ const questionController = {
   /**
    * 가장 최근에 댓글이 달린 질문을 조회.
    * questionService.readLatestCommentedQuestion를 호출.
-   * 조회된 질문을 클라이언트에게 JSON 형식으로 응답.
+   * 조회된 질문과 그 질문에 달린 가장 최근 댓글을 클라이언트에게 JSON 형식으로 응답.
    */
   async readLatestCommentedQuestion(req: Request, res: Response) {
     try {
-      const question = await questionService.readLatestCommentedQuestion();
-      res.json(question);
+      const result = await questionService.readLatestCommentedQuestion();
+
+      res.json(result);
     } catch (error: unknown) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });

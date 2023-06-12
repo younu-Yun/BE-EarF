@@ -250,22 +250,25 @@ const questionService = {
     }
   },
 
-  // 가장 최근에 댓글이 달린 게시글 하나만 가져오기
+  // 가장 최근에 댓글이 달린 게시글과 그 댓글을 가져오기
   async readLatestCommentedQuestion() {
     try {
-      // 최신 댓글 찾기
       const latestComment = await Comment.findOne().sort({ createdAt: -1 });
       if (!latestComment) {
         throw new Error("댓글을 찾을 수 없습니다.");
       }
 
-      // 해당 댓글이 달린 게시글 찾기
       const question = await Question.findById(latestComment.postId);
       if (!question) {
         throw new Error("게시글을 찾을 수 없습니다.");
       }
 
-      return question;
+      const result = {
+        title: question.title,
+        comment: latestComment.comment,
+      };
+
+      return result;
     } catch (error) {
       console.error(error);
       throw new Error(
