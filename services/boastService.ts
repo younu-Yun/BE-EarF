@@ -44,6 +44,35 @@ const boastService = {
     }
   },
 
+  // shareStatus가 true인 다이어리 중에서 좋아요가 가장 많은 상위 5개의 다이어리 찾기
+  async loadTop5Boast() {
+    try {
+      const diaries = await Diary.aggregate([
+        { $match: { shareStatus: true } },
+        {
+          $addFields: {
+            likeCount: {
+              $cond: {
+                if: { $isArray: "$likeIds" },
+                then: { $size: "$likeIds" },
+                else: 0,
+              },
+            },
+          },
+        },
+        { $sort: { likeCount: -1 } },
+        { $limit: 5 },
+        { $project: { likeCount: 0 } },
+      ]);
+      return diaries;
+    } catch (error) {
+      console.error(error);
+      throw new Error(
+        "좋아요가 많은 상위 5개의 자랑하기 게시글을 불러오는데 실패했습니다.",
+      );
+    }
+  },
+
   // 다이어리 게시글 좋아요 누르기 / 취소하기
   async toggleLike(diaryId: string, userId: string) {
     try {

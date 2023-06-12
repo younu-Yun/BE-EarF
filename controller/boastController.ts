@@ -57,6 +57,23 @@ const BoastController = {
     }
   },
 
+  // 좋아요가 많은 상위 5개의 자랑하기 게시글 불러오기
+  async loadTop5Boast(req: Request, res: Response) {
+    try {
+      const diaries = await boastService.loadTop5Boast();
+      res.status(200).json(diaries);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({
+          error:
+            "좋아요가 많은 상위 5개의 자랑하기 게시글을 불러오는데 실패했습니다.",
+        });
+      }
+    }
+  },
+
   // 다이어리 게시글 좋아요 누르기 / 취소하기
   async toggleLike(req: Request, res: Response) {
     try {

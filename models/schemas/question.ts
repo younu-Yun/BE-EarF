@@ -33,6 +33,7 @@ const QuestionSchema = new Schema<IQuestion>(
     title: {
       type: String,
       required: true,
+      index: true,
     },
     content: {
       type: String,

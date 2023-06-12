@@ -186,6 +186,36 @@ const questionController = {
   },
 
   /**
+   * 키워드로 질문 검색.
+   * 요청 쿼리에서 키워드, 페이지, 제한 수를 추출하여 questionService.searchQuestionsByKeyword 호출.
+   * 검색된 질문을 클라이언트에게 JSON 형식으로 응답.
+   */
+  async searchQuestionsByKeyword(req: Request, res: Response) {
+    try {
+      const { keyword } = req.query;
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+
+      if (!keyword) {
+        return res.status(400).json({ error: "검색 키워드를 입력하세요." });
+      }
+
+      const questions = await questionService.searchQuestionsByKeyword(
+        keyword as string,
+        page,
+        limit,
+      );
+      res.json(questions);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "알 수 없는 오류가 발생했습니다." });
+      }
+    }
+  },
+
+  /**
    * 가장 최근에 댓글이 달린 질문을 조회.
    * questionService.readLatestCommentedQuestion를 호출.
    * 조회된 질문과 그 질문에 달린 가장 최근 댓글을 클라이언트에게 JSON 형식으로 응답.
