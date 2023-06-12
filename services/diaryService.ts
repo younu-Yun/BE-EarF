@@ -159,7 +159,7 @@ const diaryService = {
         date: { $gte: new Date(startDate), $lte: new Date(endDate) }
       }).select('date tag');
       
-      const diaryData = allDiariesByMonth.map(diary => [diary.date.toISOString().split('T')[0], diary.tag[0].replace(/'/g, '').split(',').length]);
+      const diaryData = allDiariesByMonth.map(diary => [diary.date.toISOString().split('T')[0], diary.tag.length]);
       
       return diaryData;
     } catch (error) {
