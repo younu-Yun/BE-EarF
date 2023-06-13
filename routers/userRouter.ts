@@ -10,10 +10,14 @@ const userController = new UserController();
 router.get("/", authAccess, userController.getUserById);
 // 유저 업데이트하기 API
 router.patch("/", authAccess, userController.updateUserById);
+// 유저 이름 찾기 API
+router.get("/:_id", userController.getNameById);
 // 모든 유저 가져오기 API
 router.get("/all", authAccess, userController.getAllUsers);
 // 유저 회원가입 API
 router.post("/register", userController.registerUser);
+// 유저ID 중복검사 API
+router.post("/registerid", userController.registerId);
 // Email, Name으로 유저 id찾기 API
 router.post("/loginid", userController.getIdByEmailAndName);
 // 유저 비밀번호 확인 API

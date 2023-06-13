@@ -15,16 +15,16 @@ const DB_URL =
 mongoose.connect(DB_URL, { dbName: "EarF" });
 const db = mongoose.connection;
 db.on("connected", () =>
-  console.log("정상적으로 MongoDB 서버에 연결되었습니다!  " + DB_URL),
+  console.log("정상적으로 MongoDB 서버에 연결되었습니다!  " + DB_URL)
 );
-db.on("error", error =>
-  console.error("\nMongoDB 연결에 실패하였습니다...\n" + DB_URL + "\n" + error),
+db.on("error", (error) =>
+  console.error("\nMongoDB 연결에 실패하였습니다...\n" + DB_URL + "\n" + error)
 );
 
 app.use(cors());
 app.use(express.json()); // JSON 요청 바디 파싱
 app.use(express.urlencoded({ extended: true })); // URL-encoded 요청 바디 파싱
-app.use(express.static("public")); // 정적 파일 서비스
+app.use("/image", express.static("public")); // 정적 파일 서비스
 
 // Passport 초기화
 app.use(passport.initialize());

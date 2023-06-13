@@ -4,8 +4,8 @@ import { setUserToken } from "../utils/jwt";
 import { IUser, User } from "../models";
 import { randomPassword } from "../utils/randomPassword";
 import sendmail from "../utils/sendmail";
-import { hashPassword } from "../utils/hashPassword";
 import bcrypt from "bcrypt";
+import sendResponse from "../utils/sendResponse";
 
 export default class UserController {
   private userService: UserService;
@@ -15,12 +15,12 @@ export default class UserController {
   }
 
   // 유저 회원가입
-  public registerUser: RequestHandler = async (req: Request, res: Response) => {
+  public registerUser = async (req: Request, res: Response) => {
     try {
       const { id, password, name, email, phoneNumber } = req.body;
       const registeredId = await this.userService.getUserByloginId(id);
       if (registeredId) {
-        return res.status(400).json({ message: "이미 등록된 ID입니다." });
+        return sendResponse(res, 400, "이미 등록된 아이디입니다.");
       }
       const user = await this.userService.registerUser(
         id,
@@ -29,16 +29,31 @@ export default class UserController {
         email,
         phoneNumber
       );
-      res
-        .status(200)
-        .json({ message: "회원가입이 정상적으로 이루어졌습니다.", user });
+      sendResponse(res, 200, "회원가입이 정상적으로 이루어졌습니다.", user);
+      // res
+      //   .status(200)
+      //   .json({ message: "회원가입이 정상적으로 이루어졌습니다.", user });
     } catch (error) {
       res.status(500).json({ error: (error as Error).message });
     }
   };
 
+  // 유저ID 중복검사
+  public registerId = async (req: Request, res: Response) => {
+    try {
+      const { id } = req.body;
+      const registeredId = await this.userService.getUserByloginId(id);
+      if (registeredId) {
+        sendResponse(res, 200, "이미 등록된 아이디입니다.");
+      }
+      sendResponse(res, 201, "사용 가능한 아이디입니다.");
+    } catch (error) {
+      sendResponse(res, 400, "유저가 찾아지지 않습니다.");
+    }
+  };
+
   // 유저 로그인
-  public loginUser: RequestHandler = async (req: Request, res: Response) => {
+  public loginUser = async (req: Request, res: Response) => {
     try {
       const { id, password } = req.body;
       const { accessToken, refreshToken } = await this.userService.loginUser(
@@ -71,7 +86,7 @@ export default class UserController {
   };
 
   // 유저 정보 가져오기
-  public getUserById: RequestHandler = async (req: Request, res: Response) => {
+  public getUserById = async (req: Request, res: Response) => {
     try {
       const { _id } = req.user as IUser;
       const user = await this.userService.getUserById(_id);
@@ -81,8 +96,19 @@ export default class UserController {
     }
   };
 
+  // 유저 이름 가져오기
+  public getNameById = async (req: Request, res: Response) => {
+    try {
+      const { _id } = req.params;
+      const user = await this.userService.getUserById(_id);
+      res.json(user?.name);
+    } catch (error) {
+      res.status(500).json({ error: "유저정보를 불러오는데 실패하였습니다." });
+    }
+  };
+
   // 모든 유저 가져오기
-  public getAllUsers: RequestHandler = async (req: Request, res: Response) => {
+  public getAllUsers = async (req: Request, res: Response) => {
     try {
       const users = await this.userService.getAllUsers();
       res.json(users);
@@ -94,10 +120,7 @@ export default class UserController {
   };
 
   // 유저 정보 업데이트하기
-  public updateUserById: RequestHandler = async (
-    req: Request,
-    res: Response
-  ) => {
+  public updateUserById = async (req: Request, res: Response) => {
     try {
       const { _id } = req.user as IUser;
       const updatedUser = await this.userService.updateUserById(_id, req.body);
