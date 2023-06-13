@@ -262,8 +262,8 @@ const questionController = {
   async toggleLike(req: Request, res: Response) {
     try {
       const { questionId } = req.params;
-      const { id: userId } = req.user as IUser;
-      const question = await questionService.toggleLike(questionId, userId);
+      const { _id } = req.user as IUser; // _id 값을 _id 변수에 할당
+      const question = await questionService.toggleLike(questionId, _id);
       res.json(question);
     } catch (error) {
       if (error instanceof Error) {

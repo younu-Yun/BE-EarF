@@ -78,16 +78,16 @@ const boastService = {
   },
 
   // 다이어리 게시글 좋아요 누르기 / 취소하기
-  async toggleLike(diaryId: string, userId: string) {
+  async toggleLike(diaryId: string, _id: string) {
     try {
       const diary = await Diary.findById(diaryId);
       if (!diary) {
         throw new Error("게시글을 찾을 수 없습니다.");
       }
 
-      const likeIndex = diary.likeIds.indexOf(userId);
+      const likeIndex = diary.likeIds.indexOf(_id);
       if (likeIndex === -1) {
-        diary.likeIds.push(userId);
+        diary.likeIds.push(_id);
       } else {
         diary.likeIds.splice(likeIndex, 1);
       }
