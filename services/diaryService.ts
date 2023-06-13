@@ -14,7 +14,7 @@ interface CreateDiary {
     content: string,
     shareStatus: boolean,
     likeIds: string[],
-    imageUrl: string
+    imageUrl: string,
   ): Promise<any>;
 }
 
@@ -30,7 +30,7 @@ interface UpdateDiary {
     content: string,
     shareStatus: boolean,
     likeIds: string[],
-    imageUrl: string
+    imageUrl: string,
   ): Promise<any>;
 }
 
@@ -52,7 +52,7 @@ const createDiary: CreateDiary = async (
   content,
   shareStatus,
   likeIds,
-  imageUrl
+  imageUrl,
 ) => {
   try {
     const diaryToCreate = await Diary.findOne({ id, date });
@@ -101,7 +101,7 @@ const updateDiary: UpdateDiary = async (
   content,
   shareStatus,
   likeIds,
-  imageUrl
+  imageUrl,
 ) => {
   try {
     const diaryToUpdate = await Diary.findOne({ id, date });
@@ -140,7 +140,7 @@ const updateDiary: UpdateDiary = async (
         likeIds,
         imageUrl,
       },
-      { new: true }
+      { new: true },
     );
     return updatedDiary;
   } catch (error) {
@@ -159,7 +159,7 @@ const diaryService = {
         date: { $gte: new Date(startDate), $lte: new Date(endDate) },
       }).select("date tag");
 
-      const diaryData = allDiariesByMonth.map((diary) => [
+      const diaryData = allDiariesByMonth.map(diary => [
         diary.date.toISOString().split("T")[0],
         diary.tag[0].replace(/'/g, "").split(",").length,
       ]);
@@ -181,16 +181,16 @@ const diaryService = {
 
       const tags: string[] = [];
 
-      allDiariesByMonth.forEach((diary) => {
-        diary.tag.forEach((tag) => {
-          const allTags = tag.split(",").map((t) => t.trim());
+      allDiariesByMonth.forEach(diary => {
+        diary.tag.forEach(tag => {
+          const allTags = tag.split(",").map(t => t.trim());
           tags.push(...allTags);
         });
       });
 
       const tagsCount: { [key: string]: number } = {};
 
-      tags.forEach((tag) => {
+      tags.forEach(tag => {
         if (tagsCount[tag]) {
           tagsCount[tag] += 1;
         } else {

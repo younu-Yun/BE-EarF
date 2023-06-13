@@ -1,28 +1,38 @@
-import { Schema, Document, Model, model } from 'mongoose';
-import User, { IUser } from '../schemas/user';
+import { Schema, Document, Model, model } from "mongoose";
+import User, { IUser } from "../schemas/user";
+
+interface ILike {
+  _id: string;
+  name: string;
+}
 
 interface IDiary extends Document {
-  id: IUser['id'];
-  name: IUser['name'];
-  profileImage: IUser['profileImage'];
-  checkedBadge: IUser['checkedBadge'];
+  id: IUser["id"];
+  name: IUser["name"];
+  profileImage: IUser["profileImage"];
+  checkedBadge: IUser["checkedBadge"];
   tag: string[];
   imageUrl: string;
   title: string;
   content: string;
   date: Date;
   shareStatus: boolean;
-  likeIds: string[];
+  likeIds: ILike[];
   createdAt: Date;
   updatedAt: Date;
 }
+
+const LikeSchema = new Schema<ILike>({
+  _id: { type: String, required: true },
+  name: { type: String, required: true },
+});
 
 const diarySchema: Schema<IDiary> = new Schema<IDiary>(
   {
     id: {
       type: String,
-      ref: 'User',
-      required: true
+      ref: "User",
+      required: true,
     },
     name: {
       type: String,
@@ -58,18 +68,16 @@ const diarySchema: Schema<IDiary> = new Schema<IDiary>(
       required: true,
       default: false,
     },
-    likeIds: {
-      type: [String],
-      required: true,
-    },
+    likeIds: [LikeSchema],
+
     date: {
       type: Date,
       required: true,
-    }
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-const Diary: Model<IDiary> = model<IDiary>('Diary', diarySchema);
+const Diary: Model<IDiary> = model<IDiary>("Diary", diarySchema);
 
 export { IDiary, Diary };

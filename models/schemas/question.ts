@@ -1,5 +1,10 @@
 import { Schema, model, Document } from "mongoose";
 
+interface ILike {
+  _id: string;
+  name: string;
+}
+
 interface IQuestion extends Document {
   id: string;
   name: string;
@@ -7,9 +12,14 @@ interface IQuestion extends Document {
   checkedBadge: string;
   title: string;
   content: string;
-  likeIds: String[];
+  likeIds: ILike[];
   commentIds: Schema.Types.ObjectId[];
 }
+
+const LikeSchema = new Schema<ILike>({
+  _id: { type: String, required: true },
+  name: { type: String, required: true },
+});
 
 const QuestionSchema = new Schema<IQuestion>(
   {
@@ -39,12 +49,8 @@ const QuestionSchema = new Schema<IQuestion>(
       type: String,
       required: true,
     },
-    likeIds: [
-      {
-        type: String,
-        ref: "User",
-      },
-    ],
+    likeIds: [LikeSchema],
+
     // 댓글 참조하는 배열
     commentIds: [
       {
