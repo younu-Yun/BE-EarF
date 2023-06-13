@@ -256,10 +256,7 @@ export default class UserController {
   public deleteProfile = async (req: Request, res: Response) => {
     try {
       const { _id } = req.user as IUser;
-      // 파일이름만 default이미지로 바꾸면 됨.
-      // const profileImage = `http://34.64.216.86:4735/${req.file?.filename}`;
-      const profileImage =
-        (process.env.IMAGEDOMAIN as Path) + req.file?.filename;
+      const profileImage = `${process.env.IMAGEDOMAIN as Path}defaultImage.png`;
       const defaultImage = await this.userService.updateProfileImage(
         _id,
         profileImage

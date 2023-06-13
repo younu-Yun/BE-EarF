@@ -1,4 +1,5 @@
 import { Schema, Document, model } from "mongoose";
+import { Path } from "typescript";
 
 export interface IUser extends Document {
   id: string;
@@ -50,7 +51,7 @@ const UserSchema: Schema<IUser> = new Schema<IUser>(
     },
     profileImage: {
       type: String,
-      default: "",
+      default: `${process.env.IMAGEDOMAIN as Path}defaultImage.png`,
     },
     badges: {
       type: [String],
