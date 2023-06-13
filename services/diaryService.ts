@@ -63,6 +63,10 @@ const createDiary: CreateDiary = async (
       );
     }
 
+    if (imageUrl === 'undefined') {
+      throw new Error(Error_Message.createDiaryError + '이미지 파일 등록에 실패했습니다.');
+    }
+    
     const createDiary = await Diary.create({
       id,
       name,

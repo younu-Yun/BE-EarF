@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import diaryService from '../services/diaryService';
 import { IUser } from '../models';
 
-const Domain = 'http://34.64.216.86:4725/';
+const Domain = 'http://34.64.216.86/';
 
 const diaryController = {
   async getAllDiariesByMonth(req: Request, res: Response) {
@@ -42,7 +42,7 @@ const diaryController = {
       } = req.body;
       const { date } = req.params;
       const { id, name, profileImage, checkedBadge } = req.user as IUser;
-      const imageUrl = Domain + req.file?.filename;;
+      const imageUrl = Domain + req.file?.filename;
       const createDiary = await diaryService.createDiary(
         id,
         name,
