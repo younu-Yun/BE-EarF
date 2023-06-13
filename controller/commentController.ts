@@ -124,15 +124,10 @@ const CommentController = {
   // 댓글 좋아요 누르기 / 취소하기
   async toggleLike(req: Request, res: Response) {
     try {
-      const { postId } = req.params;
-      const { commentId } = req.params;
-      const { id: userId } = req.user as IUser;
-      const question = await CommentService.toggleLike(
-        postId,
-        commentId,
-        userId,
-      );
-      res.json(question);
+      const { postId, commentId } = req.params;
+      const { _id } = req.user as IUser;
+      const comment = await CommentService.toggleLike(postId, commentId, _id);
+      res.json(comment);
     } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });

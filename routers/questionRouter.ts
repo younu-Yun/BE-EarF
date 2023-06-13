@@ -67,7 +67,7 @@ questionRouter.delete(
 
 // 특정 질문에 좋아요 추가 혹은 취소
 questionRouter.patch(
-  "/questions/:questionId/like",
+  "/like/questions/:questionId",
   authAccess,
   questionController.toggleLike,
 );
