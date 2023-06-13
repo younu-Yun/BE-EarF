@@ -339,16 +339,16 @@ const questionService = {
   },
 
   // 좋아요 누르기 / 취소하기
-  async toggleLike(questionId: string, userId: string) {
+  async toggleLike(questionId: string, _Id: string) {
     try {
       const question = await Question.findById(questionId);
       if (!question) {
         throw new Error("질문을 찾을 수 없습니다.");
       }
 
-      const likeIndex = question.likeIds.indexOf(userId);
+      const likeIndex = question.likeIds.indexOf(_Id);
       if (likeIndex === -1) {
-        question.likeIds.push(userId);
+        question.likeIds.push(_Id);
       } else {
         question.likeIds.splice(likeIndex, 1);
       }

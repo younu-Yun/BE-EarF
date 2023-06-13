@@ -22,7 +22,7 @@ const questionController = {
         content,
       );
       res.status(201).json(question);
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {
@@ -48,7 +48,7 @@ const questionController = {
         content,
       );
       res.json(question);
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {
@@ -71,7 +71,7 @@ const questionController = {
         return res.status(404).json({ error: "질문을 찾을 수 없습니다." });
       }
       res.json({ message: "질문이 성공적으로 삭제되었습니다.", question });
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {
@@ -89,7 +89,7 @@ const questionController = {
       const { id } = req.params;
       const question = await questionService.readQuestion(id);
       res.json(question);
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {
@@ -103,7 +103,7 @@ const questionController = {
     try {
       const questions = await questionService.readAllQuestions();
       res.json(questions);
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {
@@ -133,7 +133,7 @@ const questionController = {
         limit,
       );
       res.json(questions);
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {
@@ -155,7 +155,7 @@ const questionController = {
         limit,
       );
       res.json(questions);
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {
@@ -207,7 +207,7 @@ const questionController = {
       );
 
       res.json(questions);
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {
@@ -226,7 +226,7 @@ const questionController = {
       const result = await questionService.readLatestCommentedQuestion();
 
       res.json(result);
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {
@@ -245,7 +245,7 @@ const questionController = {
       const { id: userId } = req.user as IUser;
       const questions = await questionService.readUserQuestions(userId);
       res.json(questions);
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {
@@ -262,10 +262,10 @@ const questionController = {
   async toggleLike(req: Request, res: Response) {
     try {
       const { questionId } = req.params;
-      const { id: userId } = req.user as IUser;
-      const question = await questionService.toggleLike(questionId, userId);
+      const { _id } = req.user as IUser; // _id 값을 _id 변수에 할당
+      const question = await questionService.toggleLike(questionId, _id);
       res.json(question);
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {
@@ -289,7 +289,7 @@ const questionController = {
         new Types.ObjectId(commentId),
       );
       res.json(question);
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {

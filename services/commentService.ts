@@ -93,7 +93,7 @@ const CommentService = {
   },
 
   // 댓글 좋아요 누르기 / 취소하기
-  async toggleLike(postId: string, commentId: string, userId: string) {
+  async toggleLike(postId: string, commentId: string, _id: string) {
     try {
       const post = await Question.findById(postId);
       if (!post) {
@@ -105,9 +105,9 @@ const CommentService = {
         throw new Error("댓글을 찾을 수 없습니다.");
       }
 
-      const likeIndex = comment.likeIds.indexOf(userId);
+      const likeIndex = comment.likeIds.indexOf(_id);
       if (likeIndex === -1) {
-        comment.likeIds.push(userId);
+        comment.likeIds.push(_id);
       } else {
         comment.likeIds.splice(likeIndex, 1);
       }

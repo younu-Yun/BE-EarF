@@ -26,7 +26,7 @@ const CommentController = {
         comment,
       );
       res.status(201).json(newComment);
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {
@@ -52,7 +52,7 @@ const CommentController = {
         userId,
       );
       res.json(updatedComment);
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {
@@ -73,7 +73,7 @@ const CommentController = {
       const _id = new Types.ObjectId(id);
       const deletedComment = await CommentService.deleteComment(_id, userId);
       res.json(deletedComment);
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {
@@ -93,7 +93,7 @@ const CommentController = {
       const _id = new Types.ObjectId(id);
       const comment = await CommentService.readComment(_id);
       res.json(comment);
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {
@@ -113,7 +113,7 @@ const CommentController = {
       const _postId = new Types.ObjectId(postId);
       const comments = await CommentService.readAllCommentsOfPost(_postId);
       res.json(comments);
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {
@@ -124,16 +124,11 @@ const CommentController = {
   // 댓글 좋아요 누르기 / 취소하기
   async toggleLike(req: Request, res: Response) {
     try {
-      const { postId } = req.params;
-      const { commentId } = req.params;
-      const { id: userId } = req.user as IUser;
-      const question = await CommentService.toggleLike(
-        postId,
-        commentId,
-        userId,
-      );
-      res.json(question);
-    } catch (error: unknown) {
+      const { postId, commentId } = req.params;
+      const { _id } = req.user as IUser;
+      const comment = await CommentService.toggleLike(postId, commentId, _id);
+      res.json(comment);
+    } catch (error) {
       if (error instanceof Error) {
         res.status(500).json({ error: error.message });
       } else {

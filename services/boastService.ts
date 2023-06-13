@@ -17,40 +17,34 @@ const boastService = {
     }
   },
 
-  // shareStatus가 true인 다이어리 찾기
-  async loadBoast() {
+  async loadBoast(tag?: string) {
     try {
-      const diaries = await Diary.find({ shareStatus: true }).sort({
-        createdAt: -1,
-      });
-      return diaries;
+      if (tag) {
+        const diaries = await Diary.aggregate([
+          {
+            $match: {
+              shareStatus: true,
+              tag: tag,
+            },
+          },
+          {
+            $match: {
+              $expr: {
+                $lte: [{ $size: "$tag" }, 1],
+              },
+            },
+          },
+        ]).sort({ createdAt: -1 });
+        return diaries;
+      } else {
+        const diaries = await Diary.find({ shareStatus: true }).sort({
+          createdAt: -1,
+        });
+        return diaries;
+      }
     } catch (error) {
       console.error(error);
       throw new Error("자랑하기 게시글을 불러오는데 실패했습니다.");
-    }
-  },
-
-  //tag 검색 기능, tag.length가 1 이하인 게시글만 검색
-  async searchByTag(tag: string | string[]) {
-    try {
-      let tags: string[] = [];
-
-      if (typeof tag === "string") {
-        tags = [tag];
-      } else if (Array.isArray(tag)) {
-        tags = tag;
-      }
-
-      const diaries = await Diary.find({
-        shareStatus: true,
-        tag: { $in: tags },
-        $where: "this.tag.length <= 1",
-      }).sort({ createdAt: -1 });
-
-      return diaries;
-    } catch (error) {
-      console.error(error);
-      throw new Error("태그 검색에 실패했습니다.");
     }
   },
 
@@ -84,16 +78,16 @@ const boastService = {
   },
 
   // 다이어리 게시글 좋아요 누르기 / 취소하기
-  async toggleLike(diaryId: string, userId: string) {
+  async toggleLike(diaryId: string, _id: string) {
     try {
       const diary = await Diary.findById(diaryId);
       if (!diary) {
         throw new Error("게시글을 찾을 수 없습니다.");
       }
 
-      const likeIndex = diary.likeIds.indexOf(userId);
+      const likeIndex = diary.likeIds.indexOf(_id);
       if (likeIndex === -1) {
-        diary.likeIds.push(userId);
+        diary.likeIds.push(_id);
       } else {
         diary.likeIds.splice(likeIndex, 1);
       }
