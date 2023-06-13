@@ -1,20 +1,32 @@
-import { Request } from 'express';
-import multer, { FileFilterCallback, Multer } from 'multer';
-import fs from 'fs';
+import { Request } from "express";
+import multer, { FileFilterCallback, Multer } from "multer";
+import fs from "fs";
 
 const storageOptions: multer.StorageEngine = multer.diskStorage({
-  destination: (req: Request, file: Express.Multer.File, callback: (error: Error | null, destination: string) => void) => {
-    callback(null, 'public/');
+  destination: (
+    req: Request,
+    file: Express.Multer.File,
+    callback: (error: Error | null, destination: string) => void
+  ) => {
+    callback(null, "public/images");
   },
-  filename: (req: Request, file: Express.Multer.File, callback: (error: Error | null, filename: string) => void) => {
-    const extension = file.originalname.split('.').pop();
-    callback(null, Date.now() + '.' + extension);
+  filename: (
+    req: Request,
+    file: Express.Multer.File,
+    callback: (error: Error | null, filename: string) => void
+  ) => {
+    const extension = file.originalname.split(".").pop();
+    callback(null, Date.now() + "." + extension);
   },
 });
 
-const fileFilter = (req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
+const fileFilter = (
+  req: Request,
+  file: Express.Multer.File,
+  cb: FileFilterCallback
+) => {
   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-    return cb(new Error('이미지 파일만 업로드 가능합니다.'));
+    return cb(new Error("이미지 파일만 업로드 가능합니다."));
   }
   cb(null, true);
 };
@@ -25,11 +37,11 @@ const deleteDiaryImage = (filePath: string | undefined): void => {
   if (filePath) {
     try {
       fs.unlinkSync(filePath);
-      console.log('사진이 성공적으로 삭제되었습니다.');
+      console.log("사진이 성공적으로 삭제되었습니다.");
     } catch (error) {
       console.error(error);
     }
   }
-} 
+};
 
 export { upload, deleteDiaryImage };
