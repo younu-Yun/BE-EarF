@@ -277,6 +277,49 @@ const questionService = {
     }
   },
 
+  async searchQuestionsByKeyword(
+    keyword: string,
+    page: number = 1,
+    limit: number = 10,
+  ) {
+    try {
+      const skip = (page - 1) * limit;
+
+      const questions = await Question.aggregate([
+        {
+          $match: {
+            $or: [
+              { title: { $regex: keyword, $options: "i" } },
+              { content: { $regex: keyword, $options: "i" } },
+            ],
+          },
+        },
+        {
+          $addFields: {
+            numLikes: { $size: "$likeIds" },
+            numComments: { $size: "$commentIds" },
+          },
+        },
+        {
+          $sort: { createdAt: -1 },
+        },
+        {
+          $skip: skip,
+        },
+        {
+          $limit: limit,
+        },
+      ]);
+
+      return questions;
+    } catch (error) {
+      if (error instanceof mongoose.Error) {
+        throw new Error("데이터베이스 조회에 실패하였습니다.");
+      }
+      throw new Error("키워드로 커뮤니티 질문을 검색하는데 실패하였습니다.");
+    }
+  },
+
   // 로그인된 사용자가 작성한 모든 질문 조회
   async readUserQuestions(userId: string) {
     try {
