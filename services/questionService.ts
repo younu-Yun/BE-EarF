@@ -238,6 +238,9 @@ const questionService = {
           },
         },
         {
+          $match: { likeIds: { $ne: [] } }, // likeIds가 빈 배열이 아닌 문서만 선택
+        },
+        {
           $sort: { numLikes: -1, createdAt: -1 }, // 좋아요가 많은 순과 최신 순으로 정렬
         },
       ]).limit(limit);
@@ -277,6 +280,7 @@ const questionService = {
     }
   },
 
+  //키워드로 제목, 내용 검색해서 같은 내용 있으면 해당 게시글 전부 가져오기
   async searchQuestionsByKeyword(
     keyword: string,
     page: number = 1,

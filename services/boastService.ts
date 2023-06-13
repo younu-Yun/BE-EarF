@@ -17,6 +17,7 @@ const boastService = {
     }
   },
 
+  //태그로 검색하기 기능
   async loadBoast(tag?: string) {
     try {
       if (tag) {
@@ -52,7 +53,7 @@ const boastService = {
   async loadTop5Boast() {
     try {
       const diaries = await Diary.aggregate([
-        { $match: { shareStatus: true } },
+        { $match: { shareStatus: true, likeIds: { $ne: [] } } },
         {
           $addFields: {
             likeCount: {
