@@ -15,7 +15,7 @@ router.get("/all", authAccess, userController.getAllUsers);
 // 유저 회원가입 API
 router.post("/register", userController.registerUser);
 // Email, Name으로 유저 id찾기 API
-router.post("/loginid", authAccess, userController.getIdByEmailAndName);
+router.post("/loginid", userController.getIdByEmailAndName);
 // 유저 비밀번호 확인 API
 router.post("/check", authAccess, userController.checkPassword);
 // 유저 비밀번호 초기화후 임시 비밀번호 발급 API
@@ -38,4 +38,5 @@ router.delete(
 );
 // 유저 회원 탈퇴 API
 router.delete("/delete", authAccess, userController.deleteUser);
+
 export default router;
