@@ -1,5 +1,7 @@
 import { Schema, Document, model } from "mongoose";
 import { Path } from "typescript";
+import dotenv from "dotenv";
+dotenv.config();
 
 export interface IUser extends Document {
   id: string;
