@@ -6,7 +6,9 @@ import { randomPassword } from "../utils/randomPassword";
 import sendmail from "../utils/sendmail";
 import bcrypt from "bcrypt";
 import sendResponse from "../utils/sendResponse";
-
+import dotenv from "dotenv";
+import { Path } from "typescript";
+dotenv.config();
 export default class UserController {
   private userService: UserService;
 
@@ -238,7 +240,8 @@ export default class UserController {
   public changeProfile = async (req: Request, res: Response) => {
     try {
       const { _id } = req.user as IUser;
-      const profileImage = `http://34.64.216.86:4735/${req.file?.filename}`;
+      const profileImage =
+        (process.env.IMAGEDOMAIN as Path) + req.file?.filename;
       const updatedImage = await this.userService.updateProfileImage(
         _id,
         profileImage
@@ -254,7 +257,9 @@ export default class UserController {
     try {
       const { _id } = req.user as IUser;
       // 파일이름만 default이미지로 바꾸면 됨.
-      const profileImage = `http://34.64.216.86:4735/${req.file?.filename}`;
+      // const profileImage = `http://34.64.216.86:4735/${req.file?.filename}`;
+      const profileImage =
+        (process.env.IMAGEDOMAIN as Path) + req.file?.filename;
       const defaultImage = await this.userService.updateProfileImage(
         _id,
         profileImage

@@ -14,7 +14,7 @@ interface CreateDiary {
     content: string,
     shareStatus: boolean,
     likeIds: string[],
-    imageUrl: string,
+    imageUrl: string
   ): Promise<any>;
 }
 
@@ -30,7 +30,7 @@ interface UpdateDiary {
     content: string,
     shareStatus: boolean,
     likeIds: string[],
-    imageUrl: string,
+    imageUrl: string
   ): Promise<any>;
 }
 
@@ -52,21 +52,23 @@ const createDiary: CreateDiary = async (
   content,
   shareStatus,
   likeIds,
-  imageUrl,
+  imageUrl
 ) => {
   try {
     const diaryToCreate = await Diary.findOne({ id, date });
 
     if (diaryToCreate) {
       throw new Error(
-        Error_Message.createDiaryError + "이미 해당 일자의 Diary가 존재합니다.",
+        Error_Message.createDiaryError + "이미 해당 일자의 Diary가 존재합니다."
       );
     }
 
-    if (imageUrl === 'undefined') {
-      throw new Error(Error_Message.createDiaryError + '이미지 파일 등록에 실패했습니다.');
+    if (imageUrl === "undefined") {
+      throw new Error(
+        Error_Message.createDiaryError + "이미지 파일 등록에 실패했습니다."
+      );
     }
-    
+
     const createDiary = await Diary.create({
       id,
       name,
@@ -107,7 +109,7 @@ const updateDiary: UpdateDiary = async (
   content,
   shareStatus,
   likeIds,
-  imageUrl,
+  imageUrl
 ) => {
   try {
     const diaryToUpdate = await Diary.findOne({ id, date });
@@ -146,7 +148,7 @@ const updateDiary: UpdateDiary = async (
         likeIds,
         imageUrl,
       },
-      { new: true },
+      { new: true }
     );
     return updatedDiary;
   } catch (error) {
@@ -165,7 +167,7 @@ const diaryService = {
         date: { $gte: new Date(startDate), $lte: new Date(endDate) },
       }).select("date tag");
 
-      const diaryData = allDiariesByMonth.map(diary => [
+      const diaryData = allDiariesByMonth.map((diary) => [
         diary.date.toISOString().split("T")[0],
         diary.tag.length,
       ]);
@@ -187,16 +189,16 @@ const diaryService = {
 
       const tags: string[] = [];
 
-      allDiariesByMonth.forEach(diary => {
-        diary.tag.forEach(tag => {
-          const allTags = tag.split(",").map(t => t.trim());
+      allDiariesByMonth.forEach((diary) => {
+        diary.tag.forEach((tag) => {
+          const allTags = tag.split(",").map((t) => t.trim());
           tags.push(...allTags);
         });
       });
 
       const tagsCount: { [key: string]: number } = {};
 
-      tags.forEach(tag => {
+      tags.forEach((tag) => {
         if (tagsCount[tag]) {
           tagsCount[tag] += 1;
         } else {
@@ -228,7 +230,7 @@ const diaryService = {
       }
 
       const deletedDiary = await Diary.findOneAndDelete({ id, date });
-      const filePath = `public/${deletedDiary?.imageUrl.split("/")[3]}`;
+      const filePath = `public/images/${deletedDiary?.imageUrl.split("/")[3]}`;
       deleteDiaryImage(filePath);
       console.log(`${id}님 ${date} 다이어리 삭제`);
     } catch (error) {
