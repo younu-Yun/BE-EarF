@@ -41,26 +41,6 @@ const BoastController = {
     }
   },
 
-  // // 태그를 이용해 자랑하기 게시글 불러오기
-  // async loadTaggedDiaries(req: Request, res: Response) {
-  //   try {
-  //     const { tag } = req.query;
-  //     if (typeof tag !== "string") {
-  //       throw new Error("Invalid tag query parameter");
-  //     }
-  //     const diaries = await boastService.loadTaggedDiaries(tag);
-  //     res.status(200).json(diaries);
-  //   } catch (error: unknown) {
-  //     if (error instanceof Error) {
-  //       res.status(500).json({ error: error.message });
-  //     } else {
-  //       res
-  //         .status(500)
-  //         .json({ error: "태그로 게시글을 불러오는데 실패했습니다." });
-  //     }
-  //   }
-  // },
-
   // 좋아요가 많은 상위 5개의 자랑하기 게시글 불러오기
   async loadTop5Boast(req: Request, res: Response) {
     try {
