@@ -17,42 +17,48 @@ const boastService = {
     }
   },
 
-  // shareStatus가 true인 다이어리 찾기
-  async loadBoast() {
+  async loadBoast(tag?: string) {
     try {
-      const diaries = await Diary.find({ shareStatus: true }).sort({
-        createdAt: -1,
-      });
-      return diaries;
+      if (tag) {
+        const diaries = await Diary.aggregate([
+          {
+            $match: {
+              shareStatus: true,
+              tag: tag,
+            },
+          },
+          {
+            $match: {
+              $expr: {
+                $lte: [{ $size: "$tag" }, 1],
+              },
+            },
+          },
+        ]).sort({ createdAt: -1 });
+        return diaries;
+      } else {
+        const diaries = await Diary.find({ shareStatus: true }).sort({
+          createdAt: -1,
+        });
+        return diaries;
+      }
     } catch (error) {
       console.error(error);
       throw new Error("자랑하기 게시글을 불러오는데 실패했습니다.");
     }
   },
-
-  //tag 검색 기능, tag.length가 1 이하인 게시글만 검색
-  async searchByTag(tag: string | string[]) {
-    try {
-      let tags: string[] = [];
-
-      if (typeof tag === "string") {
-        tags = [tag];
-      } else if (Array.isArray(tag)) {
-        tags = tag;
-      }
-
-      const diaries = await Diary.find({
-        shareStatus: true,
-        tag: { $in: tags },
-        $where: "this.tag.length <= 1",
-      }).sort({ createdAt: -1 });
-
-      return diaries;
-    } catch (error) {
-      console.error(error);
-      throw new Error("태그 검색에 실패했습니다.");
-    }
-  },
+  // // 태그를 이용해 shareStatus가 true인 다이어리 찾기
+  // async loadTaggedDiaries(tag: string) {
+  //   try {
+  //     const diaries = await Diary.find({ tags: tag, shareStatus: true }).sort({
+  //       createdAt: -1,
+  //     });
+  //     return diaries;
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw new Error("태그로 게시글을 불러오는데 실패했습니다.");
+  //   }
+  // },
 
   // shareStatus가 true인 다이어리 중에서 좋아요가 가장 많은 상위 5개의 다이어리 찾기
   async loadTop5Boast() {
