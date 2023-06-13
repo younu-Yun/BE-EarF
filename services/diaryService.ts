@@ -14,7 +14,7 @@ interface CreateDiary {
     content: string,
     shareStatus: boolean,
     likeIds: string[],
-    imageUrl: string
+    imageUrl: string,
   ): Promise<any>;
 }
 
@@ -30,7 +30,7 @@ interface UpdateDiary {
     content: string,
     shareStatus: boolean,
     likeIds: string[],
-    imageUrl: string
+    imageUrl: string,
   ): Promise<any>;
 }
 
@@ -52,13 +52,15 @@ const createDiary: CreateDiary = async (
   content,
   shareStatus,
   likeIds,
-  imageUrl
+  imageUrl,
 ) => {
   try {
     const diaryToCreate = await Diary.findOne({ id, date });
 
     if (diaryToCreate) {
-      throw new Error(Error_Message.createDiaryError + '이미 해당 일자의 Diary가 존재합니다.');
+      throw new Error(
+        Error_Message.createDiaryError + "이미 해당 일자의 Diary가 존재합니다.",
+      );
     }
 
     const createDiary = await Diary.create({
@@ -101,7 +103,7 @@ const updateDiary: UpdateDiary = async (
   content,
   shareStatus,
   likeIds,
-  imageUrl
+  imageUrl,
 ) => {
   try {
     const diaryToUpdate = await Diary.findOne({ id, date });
@@ -140,7 +142,7 @@ const updateDiary: UpdateDiary = async (
         likeIds,
         imageUrl,
       },
-      { new: true }
+      { new: true },
     );
     return updatedDiary;
   } catch (error) {
@@ -156,11 +158,14 @@ const diaryService = {
       const endDate = new Date(`${month}-31`);
       const allDiariesByMonth = await Diary.find({
         id,
-        date: { $gte: new Date(startDate), $lte: new Date(endDate) }
-      }).select('date tag');
-      
-      const diaryData = allDiariesByMonth.map(diary => [diary.date.toISOString().split('T')[0], diary.tag.length]);
-      
+        date: { $gte: new Date(startDate), $lte: new Date(endDate) },
+      }).select("date tag");
+
+      const diaryData = allDiariesByMonth.map(diary => [
+        diary.date.toISOString().split("T")[0],
+        diary.tag.length,
+      ]);
+
       return diaryData;
     } catch (error) {
       throw new Error(Error_Message.getDiaryError);
@@ -178,16 +183,16 @@ const diaryService = {
 
       const tags: string[] = [];
 
-      allDiariesByMonth.forEach((diary) => {
-        diary.tag.forEach((tag) => {
-          const allTags = tag.split(",").map((t) => t.trim());
+      allDiariesByMonth.forEach(diary => {
+        diary.tag.forEach(tag => {
+          const allTags = tag.split(",").map(t => t.trim());
           tags.push(...allTags);
         });
       });
 
       const tagsCount: { [key: string]: number } = {};
 
-      tags.forEach((tag) => {
+      tags.forEach(tag => {
         if (tagsCount[tag]) {
           tagsCount[tag] += 1;
         } else {

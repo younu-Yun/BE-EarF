@@ -125,8 +125,13 @@ const CommentController = {
   async toggleLike(req: Request, res: Response) {
     try {
       const { postId, commentId } = req.params;
-      const { _id } = req.user as IUser;
-      const comment = await CommentService.toggleLike(postId, commentId, _id);
+      const { _id, name } = req.user as IUser;
+      const comment = await CommentService.toggleLike(
+        postId,
+        commentId,
+        _id,
+        name,
+      );
       res.json(comment);
     } catch (error) {
       if (error instanceof Error) {

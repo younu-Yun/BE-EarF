@@ -61,10 +61,10 @@ const BoastController = {
   // 다이어리 게시글 좋아요 누르기 / 취소하기
   async toggleLike(req: Request, res: Response) {
     try {
-      const { _id } = req.user as IUser;
+      const { _id, name } = req.user as IUser;
       const { id: diaryId } = req.params;
 
-      const diary = await boastService.toggleLike(diaryId, _id);
+      const diary = await boastService.toggleLike(diaryId, _id, name);
 
       res.status(200).json(diary);
     } catch (error) {
