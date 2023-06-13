@@ -41,9 +41,16 @@ const BoastController = {
   // 태그 이름으로 게시글 불러오기
   async searchByTag(req: Request, res: Response) {
     try {
-      const { tag } = req.query;
+      let tags: string[] = [];
+      const queryTags = req.query.tag;
 
-      const diaries = await boastService.searchByTag(tag as string);
+      if (typeof queryTags === "string") {
+        tags = [queryTags];
+      } else if (Array.isArray(queryTags)) {
+        tags = queryTags.map(tag => String(tag));
+      }
+
+      const diaries = await boastService.searchByTag(tags);
 
       res.status(200).json(diaries);
     } catch (error: unknown) {

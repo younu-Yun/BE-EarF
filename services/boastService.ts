@@ -31,12 +31,22 @@ const boastService = {
   },
 
   //tag 검색 기능, tag.length가 1 이하인 게시글만 검색
-  async searchByTag(tag: string) {
+  async searchByTag(tag: string | string[]) {
     try {
+      let tags: string[] = [];
+
+      if (typeof tag === "string") {
+        tags = [tag];
+      } else if (Array.isArray(tag)) {
+        tags = tag;
+      }
+
       const diaries = await Diary.find({
         shareStatus: true,
-        tag: { $in: [tag] },
+        tag: { $in: tags },
+        $where: "this.tag.length <= 1",
       }).sort({ createdAt: -1 });
+
       return diaries;
     } catch (error) {
       console.error(error);
