@@ -21,10 +21,10 @@ db.on("error", (error) =>
   console.error("\nMongoDB 연결에 실패하였습니다...\n" + DB_URL + "\n" + error)
 );
 
+app.use(express.static("public")); // 정적 파일 서비스
 app.use(cors());
 app.use(express.json()); // JSON 요청 바디 파싱
 app.use(express.urlencoded({ extended: true })); // URL-encoded 요청 바디 파싱
-app.use("/image", express.static("public")); // 정적 파일 서비스
 
 // Passport 초기화
 app.use(passport.initialize());
