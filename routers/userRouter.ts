@@ -8,7 +8,7 @@ const userController = new UserController();
 
 // 유저 정보 가져오기 API
 router.get("/", authAccess, userController.getUserById);
-// 유저 업데이트하기 API
+// 유저 정보 업데이트하기 API
 router.patch("/", authAccess, userController.updateUserById);
 // 유저 이름 찾기 API
 router.get("/:_id", userController.getNameById);
@@ -42,5 +42,7 @@ router.delete(
 );
 // 유저 회원 탈퇴 API
 router.delete("/delete", authAccess, userController.deleteUser);
+// 유저 뱃지 추가 API
+router.get("/badges/badge", authAccess, userController.getBadge);
 
 export default router;

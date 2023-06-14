@@ -63,7 +63,7 @@ const UserSchema: Schema<IUser> = new Schema<IUser>(
     checkedBadge: {
       type: String,
       default: "신규",
-      enum: ["최초", "연속", "신규", "텀블", "교통", "버켓", "커뮤"],
+      enum: ["최초", "꾸준", "신규", "텀블", "교통", "버켓", "기록왕"],
     },
     postNum: {
       // 3회 이상 연속작성, 커뮤니티 포스팅 10회
