@@ -21,6 +21,7 @@ const questionController = {
         title,
         content,
       );
+
       res.status(201).json(question);
     } catch (error) {
       if (error instanceof Error) {

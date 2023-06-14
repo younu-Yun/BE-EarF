@@ -1,6 +1,7 @@
 import mongoose, { Schema, Types } from "mongoose";
 import Question from "../models/schemas/question";
 import Comment from "../models/schemas/comment";
+import User from "../models/schemas/user";
 
 const questionService = {
   // 커뮤니티 질문 생성
@@ -24,8 +25,17 @@ const questionService = {
         commentIds: [],
       });
       await question.save();
+
+      const user = await User.findOne({ id: id });
+      if (!user) {
+        throw new Error("사용자를 찾을 수 없습니다.");
+      }
+      user.postNum++;
+      await user.save();
+
       return question;
     } catch (error) {
+      console.error(error);
       throw new Error("커뮤니티 질문 생성에 실패하였습니다.");
     }
   },
