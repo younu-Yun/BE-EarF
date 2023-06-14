@@ -36,8 +36,8 @@ export default class UserController {
         phoneNumber
       );
       sendResponse(res, 201, "회원가입이 정상적으로 이루어졌습니다.", user);
-    } catch (error) {
-      sendResponse(res, 500, (error as Error).message);
+    } catch (error: any) {
+      sendResponse(res, 500, error.message);
     }
   };
 
@@ -63,13 +63,17 @@ export default class UserController {
         id,
         password
       );
-      res
-        .status(201)
-        .json({
-          message: "로그인에 성공하였습니다.",
-          accessToken,
-          refreshToken,
-        });
+      // res
+      //   .status(201)
+      //   .json({
+      //     message: "로그인에 성공하였습니다.",
+      //     accessToken,
+      //     refreshToken,
+      //   });
+      sendResponse(res, 201, "로그인에 성공하였습니다.", {
+        accessToken,
+        refreshToken,
+      });
     } catch (error) {
       sendResponse(res, 500, (error as Error).message);
     }
