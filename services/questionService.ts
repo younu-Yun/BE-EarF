@@ -277,6 +277,7 @@ const questionService = {
       }
 
       const result = {
+        _id: question._id,
         title: question.title,
         comment: latestComment.comment,
       };
