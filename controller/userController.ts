@@ -21,8 +21,12 @@ export default class UserController {
     try {
       const { id, password, name, email, phoneNumber } = req.body;
       const registeredId = await this.userService.getUserByloginId(id);
+      const registeredEmail = await this.userService.getUserByEmail(email);
       if (registeredId) {
         return sendResponse(res, 409, "이미 등록된 아이디입니다.");
+      }
+      if (registeredEmail) {
+        return sendResponse(res, 409, "이미 등록된 email입니다.");
       }
       const user = await this.userService.registerUser(
         id,
