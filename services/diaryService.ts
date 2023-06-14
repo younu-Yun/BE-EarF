@@ -117,14 +117,6 @@ const updateDiary: UpdateDiary = async (
     if (diaryToUpdate) {
       const previousFilePath = `public/${diaryToUpdate.imageUrl.split("/")[3]}`;
       deleteDiaryImage(previousFilePath);
-
-      if (diaryToUpdate.tag.includes("텀블러")) {
-        await User.updateOne({ id }, { $inc: { tumblerNum: -1 } });
-      } else if (diaryToUpdate.tag.includes("대중교통")) {
-        await User.updateOne({ id }, { $inc: { transportNum: -1 } });
-      } else if (diaryToUpdate.tag.includes("장바구니")) {
-        await User.updateOne({ id }, { $inc: { basketNum: -1 } });
-      }
     }
 
     if (tag.includes("텀블러")) {
@@ -217,18 +209,6 @@ const diaryService = {
   //diary 삭제
   async deleteDiary(id: string, date: Date) {
     try {
-      const diaryToDelete = await Diary.findOne({ id, date });
-
-      if (diaryToDelete) {
-        if (diaryToDelete.tag.includes("텀블러")) {
-          await User.updateOne({ id }, { $inc: { tumblerNum: -1 } });
-        } else if (diaryToDelete.tag.includes("대중교통")) {
-          await User.updateOne({ id }, { $inc: { transportNum: -1 } });
-        } else if (diaryToDelete.tag.includes("장바구니")) {
-          await User.updateOne({ id }, { $inc: { basketNum: -1 } });
-        }
-      }
-
       const deletedDiary = await Diary.findOneAndDelete({ id, date });
       const filePath = `public/images/${deletedDiary?.imageUrl.split("/")[3]}`;
       deleteDiaryImage(filePath);
