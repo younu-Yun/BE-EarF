@@ -37,7 +37,7 @@ export default class UserController {
       );
       sendResponse(res, 201, "회원가입이 정상적으로 이루어졌습니다.", user);
     } catch (error) {
-      sendResponse(res, 400, (error as Error).message);
+      sendResponse(res, 500, (error as Error).message);
     }
   };
 
@@ -51,7 +51,7 @@ export default class UserController {
       }
       sendResponse(res, 200, "사용 가능한 아이디입니다.");
     } catch (error) {
-      sendResponse(res, 400, (error as Error).message);
+      sendResponse(res, 500, (error as Error).message);
     }
   };
 
@@ -63,12 +63,15 @@ export default class UserController {
         id,
         password
       );
-      sendResponse(res, 201, "로그인에 성공하였습니다.", {
-        accessToken,
-        refreshToken,
-      });
+      res
+        .status(201)
+        .json({
+          message: "로그인에 성공하였습니다.",
+          accessToken,
+          refreshToken,
+        });
     } catch (error) {
-      sendResponse(res, 400, (error as Error).message);
+      sendResponse(res, 500, (error as Error).message);
     }
   };
 
@@ -83,7 +86,7 @@ export default class UserController {
         res.status(400).json({ error: "사용자를 식별할 수 없습니다." });
       }
     } catch (error) {
-      res.status(500).json({ error: (error as Error).message });
+      sendResponse(res, 500, (error as Error).message);
     }
   };
 
@@ -94,7 +97,7 @@ export default class UserController {
       const user = await this.userService.getUserById(_id);
       res.json(user);
     } catch (error) {
-      res.status(500).json({ error: "유저정보를 불러오는데 실패하였습니다." });
+      sendResponse(res, 500, "유저정보를 불러오는데 실패하였습니다.");
     }
   };
 
@@ -105,7 +108,7 @@ export default class UserController {
       const user = await this.userService.getUserById(_id);
       res.json(user?.name);
     } catch (error) {
-      res.status(500).json({ error: "유저정보를 불러오는데 실패하였습니다." });
+      sendResponse(res, 500, "유저정보를 불러오는데 실패하였습니다.");
     }
   };
 
@@ -115,9 +118,7 @@ export default class UserController {
       const users = await this.userService.getAllUsers();
       res.json(users);
     } catch (error) {
-      res
-        .status(500)
-        .json({ error: "전체유저정보를 불러오는데 실패하였습니다." });
+      sendResponse(res, 500, "전체 유저정보를 불러오는데 실패하였습니다.");
     }
   };
 
