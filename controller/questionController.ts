@@ -197,10 +197,6 @@ const questionController = {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
 
-      if (!keyword) {
-        return res.status(400).json({ error: "검색 키워드를 입력하세요." });
-      }
-
       const questions = await questionService.searchQuestionsByKeyword(
         keyword as string,
         page,

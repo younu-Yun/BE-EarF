@@ -299,14 +299,23 @@ const questionService = {
     try {
       const skip = (page - 1) * limit;
 
+      let matchCondition = {};
+      if (keyword) {
+        matchCondition = {
+          $or: [
+            { title: { $regex: keyword, $options: "i" } },
+            { content: { $regex: keyword, $options: "i" } },
+          ],
+        };
+        const matchedCount = await Question.countDocuments(matchCondition);
+        if (matchedCount === 0) {
+          throw new Error("검색 결과가 없습니다.");
+        }
+      }
+
       const questions = await Question.aggregate([
         {
-          $match: {
-            $or: [
-              { title: { $regex: keyword, $options: "i" } },
-              { content: { $regex: keyword, $options: "i" } },
-            ],
-          },
+          $match: matchCondition,
         },
         {
           $addFields: {
@@ -330,7 +339,7 @@ const questionService = {
       if (error instanceof mongoose.Error) {
         throw new Error("데이터베이스 조회에 실패하였습니다.");
       }
-      throw new Error("키워드로 커뮤니티 질문을 검색하는데 실패하였습니다.");
+      throw error;
     }
   },
 
