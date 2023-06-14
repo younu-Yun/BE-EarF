@@ -284,7 +284,7 @@ export default class UserController {
       }
 
       // 꾸준, 기록왕 뱃지
-      checkAndAddBadge(user, "꾸준", user.postNum >= 3);
+      checkAndAddBadge(user, "꾸준", user.postNum >= 5);
       checkAndAddBadge(user, "기록왕", user.postNum >= 10);
       // 최초 뱃지
       checkAndAddBadge(
