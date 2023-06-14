@@ -3,9 +3,8 @@ import diaryService from "../services/diaryService";
 import { IUser } from "../models";
 import dotenv from "dotenv";
 import { Path } from "typescript";
+import sendResponse from "../utils/sendResponse";
 dotenv.config();
-
-// const Domain = 'http://34.64.216.86/images/';
 
 const diaryController = {
   async getAllDiariesByMonth(req: Request, res: Response) {
@@ -16,9 +15,9 @@ const diaryController = {
         id,
         month
       );
-      res.status(200).json(allDiariesByMonth);
+      sendResponse(res, 200, "Success", allDiariesByMonth);
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      sendResponse(res, 500, error.message);
     }
   },
   async getAllDiariesTagByMonth(req: Request, res: Response) {
@@ -29,9 +28,9 @@ const diaryController = {
         id,
         month
       );
-      res.status(200).json(allDiariesTagByMonth);
+      sendResponse(res, 200, "Success", allDiariesTagByMonth);
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      sendResponse(res, 500, error.message);
     }
   },
   async createDiary(req: Request, res: Response) {
@@ -53,10 +52,10 @@ const diaryController = {
         likeIds,
         imageUrl
       );
-      res.status(200).json(createDiary);
+      sendResponse(res, 200, "Diary created", createDiary);
     } catch (error: any) {
       console.log(error);
-      res.status(500).json({ error: error.message });
+      sendResponse(res, 500, error.message);
     }
   },
   async updateDiary(req: Request, res: Response) {
@@ -78,9 +77,9 @@ const diaryController = {
         likeIds,
         imageUrl
       );
-      res.json(updatedDiary);
+      sendResponse(res, 200, "Diary updated", updatedDiary);
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      sendResponse(res, 500, error.message);
     }
   },
   async deleteDiary(req: Request, res: Response) {
@@ -91,9 +90,9 @@ const diaryController = {
         id,
         new Date(date as string)
       );
-      res.json(deletedDiary);
+      sendResponse(res, 200, "Diary deleted", deletedDiary);
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      sendResponse(res, 500, error.message);
     }
   },
   async getDiary(req: Request, res: Response) {
@@ -104,9 +103,9 @@ const diaryController = {
         id,
         new Date(date as string)
       );
-      res.json(getDiary);
+      sendResponse(res, 200, "Success", getDiary);
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      sendResponse(res, 500, error.message);
     }
   },
 };

@@ -59,13 +59,13 @@ const createDiary: CreateDiary = async (
 
     if (diaryToCreate) {
       throw new Error(
-        Error_Message.createDiaryError + "이미 해당 일자의 Diary가 존재합니다."
+        `${Error_Message.createDiaryError} + 이미 해당 일자의 Diary가 존재합니다.`
       );
     }
 
     if (imageUrl === "undefined") {
       throw new Error(
-        Error_Message.createDiaryError + "이미지 파일 등록에 실패했습니다."
+        `${Error_Message.createDiaryError} + 이미지 파일 등록에 실패했습니다.`
       );
     }
 

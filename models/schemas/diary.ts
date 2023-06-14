@@ -1,5 +1,5 @@
 import { Schema, Document, Model, model } from "mongoose";
-import User, { IUser } from "../schemas/user";
+import { IUser } from "../schemas/user";
 
 interface ILike {
   _id: string;
@@ -69,7 +69,6 @@ const diarySchema: Schema<IDiary> = new Schema<IDiary>(
       default: false,
     },
     likeIds: [LikeSchema],
-
     date: {
       type: Date,
       required: true,
