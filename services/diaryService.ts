@@ -85,9 +85,11 @@ const createDiary: CreateDiary = async (
 
     if (tag.includes("텀블러")) {
       await User.updateOne({ id }, { $inc: { tumblerNum: 1 } });
-    } else if (tag.includes("대중교통")) {
+    }
+    if (tag.includes("대중교통")) {
       await User.updateOne({ id }, { $inc: { transportNum: 1 } });
-    } else if (tag.includes("장바구니")) {
+    }
+    if (tag.includes("장바구니")) {
       await User.updateOne({ id }, { $inc: { basketNum: 1 } });
     }
 
