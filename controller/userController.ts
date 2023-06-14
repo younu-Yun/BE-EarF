@@ -1,4 +1,4 @@
-import { Request, RequestHandler, Response } from "express";
+import { Request, Response } from "express";
 import UserService from "../services/userService";
 import { setUserToken } from "../utils/jwt";
 import { IUser, User } from "../models";
@@ -22,7 +22,7 @@ export default class UserController {
       const { id, password, name, email, phoneNumber } = req.body;
       const registeredId = await this.userService.getUserByloginId(id);
       if (registeredId) {
-        return sendResponse(res, 400, "이미 등록된 아이디입니다.");
+        return sendResponse(res, 409, "이미 등록된 아이디입니다.");
       }
       const user = await this.userService.registerUser(
         id,
@@ -31,12 +31,9 @@ export default class UserController {
         email,
         phoneNumber
       );
-      sendResponse(res, 200, "회원가입이 정상적으로 이루어졌습니다.", user);
-      // res
-      //   .status(200)
-      //   .json({ message: "회원가입이 정상적으로 이루어졌습니다.", user });
+      sendResponse(res, 201, "회원가입이 정상적으로 이루어졌습니다.", user);
     } catch (error) {
-      res.status(500).json({ error: (error as Error).message });
+      sendResponse(res, 400, (error as Error).message);
     }
   };
 
@@ -46,11 +43,11 @@ export default class UserController {
       const { id } = req.body;
       const registeredId = await this.userService.getUserByloginId(id);
       if (registeredId) {
-        sendResponse(res, 200, "이미 등록된 아이디입니다.");
+        sendResponse(res, 409, "이미 등록된 아이디입니다.");
       }
-      sendResponse(res, 201, "사용 가능한 아이디입니다.");
+      sendResponse(res, 200, "사용 가능한 아이디입니다.");
     } catch (error) {
-      sendResponse(res, 400, "유저가 찾아지지 않습니다.");
+      sendResponse(res, 400, (error as Error).message);
     }
   };
 
@@ -62,13 +59,12 @@ export default class UserController {
         id,
         password
       );
-      res.status(200).json({
-        message: "로그인에 성공하였습니다.",
+      sendResponse(res, 201, "로그인에 성공하였습니다.", {
         accessToken,
         refreshToken,
       });
     } catch (error) {
-      res.status(401).json({ error: (error as Error).message });
+      sendResponse(res, 400, (error as Error).message);
     }
   };
 
@@ -262,6 +258,50 @@ export default class UserController {
         profileImage
       );
       res.send(defaultImage);
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
+  };
+
+  // 유저 뱃지 추가
+  public getBadge = async (req: Request, res: Response) => {
+    const checkAndAddBadge = async (
+      user: IUser,
+      badgeName: string,
+      condition: boolean
+    ) => {
+      if (condition && !user.badges.includes(badgeName)) {
+        user.badges.push(badgeName);
+        await this.userService.updateUser(user._id, user);
+      }
+    };
+    try {
+      const { _id } = req.user as IUser;
+      const user = await this.userService.getUserById(_id);
+
+      if (!user) {
+        throw new Error("로그인을 다시 하세요!");
+      }
+
+      // 꾸준, 기록왕 뱃지
+      checkAndAddBadge(user, "꾸준", user.postNum >= 3);
+      checkAndAddBadge(user, "기록왕", user.postNum >= 10);
+      // 최초 뱃지
+      checkAndAddBadge(
+        user,
+        "최초",
+        user.tumblerNum + user.transportNum + user.basketNum > 0
+      );
+      // 텀블, 교통, 버켓 뱃지
+      checkAndAddBadge(user, "텀블", user.tumblerNum >= 3);
+      checkAndAddBadge(user, "교통", user.transportNum >= 3);
+      checkAndAddBadge(user, "버켓", user.basketNum >= 3);
+
+      sendResponse(
+        res,
+        200,
+        "뱃지 획득에 성공하였습니다. 지구를 지켜주셔서 감사합니다!"
+      );
     } catch (error) {
       res.status(500).json({ error: (error as Error).message });
     }

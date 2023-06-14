@@ -234,4 +234,18 @@ export default class UserService {
       throw new Error("회원 탈퇴에 실패했습니다.");
     }
   };
+
+  public updateUser = async (
+    id: string,
+    updates: IUser
+  ): Promise<IUser | null> => {
+    try {
+      const updatedUser = (await User.findByIdAndUpdate(id, updates, {
+        new: true,
+      })) as IUser;
+      return updatedUser;
+    } catch (error) {
+      throw new Error("Failed to update user");
+    }
+  };
 }
