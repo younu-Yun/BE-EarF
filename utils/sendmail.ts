@@ -41,7 +41,7 @@ const setMailOption = (
         <!-- Header -->
         <mj-image
           width="150px"
-          src="https://user-images.githubusercontent.com/20244536/148511699-e4d03a86-7b71-40c4-9cda-975e64687ff0.png"
+          src=${process.env.IMAGEDOMAIN}logoImage.png
         ></mj-image>
         <mj-spacer height="20px"></mj-spacer>
 
@@ -63,17 +63,17 @@ const setMailOption = (
 
         <mj-text align="center" font-size="12px" line-height="1.75">
           <a
-            href="https://www.peterkimzz.com"
+            href="http://34.64.216.86"
             target="_blank"
             rel="noopener noreferrer nofollow"
             >웹사이트</a
           >
           <span>·</span>
           <a
-            href="https://www.instagram.com/peterkimzz"
+            href="http://34.64.216.86"
             target="_blank"
             rel="noopener noreferrer nofollow"
-            >인스타그램</a
+            >지구지키기</a
           >
         </mj-text>
 
