@@ -20,7 +20,7 @@ const setMailOption = (
 ): Promise<string | undefined> => {
   const { html } = mjml2html(
     `
-<mjml>
+    <mjml>
   <mj-head>
     <mj-font
       name="Pretendard"
@@ -32,31 +32,37 @@ const setMailOption = (
     </mj-attributes>
 
     <mj-style>
-      * { word-break: keep-all; } a { color: #2563eb !important; }
+
+      
+       * { word-break: keep-all; text-align: center; margin: 0 auto;} a { color: #2563eb !important; text-decoration: none;}
+      div {text-align: center !important;}
     </mj-style>
   </mj-head>
-  <mj-body>
-    <mj-section>
-      <mj-column>
+ <mj-body>
+    <mj-section 
+   >
+      <mj-column   margin= "0 auto"
+    width="100%"
+    padding=" 30px 0"
+    border= "10px solid #9ed292"
+    border-radius= "30px" 
+ >
+
+
         <!-- Header -->
-        <mj-image
-          width="150px"
-          src=${process.env.IMAGEDOMAIN}logoImage.png
-        ></mj-image>
-        <mj-spacer height="20px"></mj-spacer>
+        <mj-image width="150px"  src=${process.env.IMAGEDOMAIN}logoImage.png ></mj-image>
+        
 
         <!-- Main -->
-        <mj-text font-size="16px" line-height="1.5">
-          안녕하세요 EarF입니다!
+
+        <mj-text  display="block"  font-size="20px" line-height="1.5">
+          임시비밀번호 
         </mj-text>
 
-        <mj-text font-size="16px" line-height="1.5">
-          임시 비밀번호를 발급해드리겠습니다! <br>
-          ${text} <br>
-          ${contentMessage}
-        </mj-text>
 
-        <mj-text font-size="16px" line-height="1.5"> 지구를 지키자! EarF </mj-text>
+        <mj-text  display="block" width="100%" padding="100px" font-size="32px" font-weight="700" line-height="1.5" text-align= "center">${text}</mj-text>
+
+        <mj-text font-size="16px" line-height="1.5"> 지구를 위한 우리들의 지속가능한 행동 EarF</mj-text>
 
         <!-- Footer -->
         <mj-divider border-color="#E5E7EB" border-width="1px"></mj-divider>
@@ -66,14 +72,7 @@ const setMailOption = (
             href="http://34.64.216.86"
             target="_blank"
             rel="noopener noreferrer nofollow"
-            >웹사이트</a
-          >
-          <span>·</span>
-          <a
-            href="http://34.64.216.86"
-            target="_blank"
-            rel="noopener noreferrer nofollow"
-            >지구지키기</a
+            >웹사이트 이동하기</a
           >
         </mj-text>
 
@@ -83,7 +82,7 @@ const setMailOption = (
           font-size="12px"
           line-height="1"
         >
-          © Peter Kim. All Rights Reserved.
+          © EarF. All Rights Reserved.
         </mj-text>
       </mj-column>
     </mj-section>
