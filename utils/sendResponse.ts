@@ -6,17 +6,7 @@ const sendResponse = (
   message?: string,
   data?: any
 ) => {
-  const response: any = { status };
-
-  if (message) {
-    response.message = message;
-  }
-
-  if (data) {
-    response.data = data;
-  }
-
-  res.status(status).json(response);
+  res.status(status).json({ message, ...data });
 };
 
 export default sendResponse;
