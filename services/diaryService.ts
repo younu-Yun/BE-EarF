@@ -7,7 +7,7 @@ dotenv.config();
 
 interface CreateDiary {
   (
-    _id: string,
+    id: string,
     name: string,
     profileImage: string,
     checkedBadge: string,
@@ -23,7 +23,7 @@ interface CreateDiary {
 
 interface UpdateDiary {
   (
-    _id: string,
+    id: string,
     name: string,
     profileImage: string,
     checkedBadge: string,
@@ -45,7 +45,7 @@ const Error_Message = {
 };
 
 const createDiary: CreateDiary = async (
-  _id,
+  id,
   name,
   profileImage,
   checkedBadge,
@@ -58,7 +58,7 @@ const createDiary: CreateDiary = async (
   imageUrl
 ) => {
   try {
-    const diaryToCreate = await Diary.findOne({ _id, date });
+    const diaryToCreate = await Diary.findOne({ id, date });
 
     if (diaryToCreate) {
       throw new Error(
@@ -73,7 +73,7 @@ const createDiary: CreateDiary = async (
     }
 
     const createDiary = await Diary.create({
-      _id,
+      id,
       name,
       profileImage,
       checkedBadge,
@@ -87,13 +87,13 @@ const createDiary: CreateDiary = async (
     });
 
     if (tag.includes("텀블러")) {
-      await User.updateOne({ _id }, { $inc: { tumblerNum: 1 } });
+      await User.updateOne({ id }, { $inc: { tumblerNum: 1 } });
     }
     if (tag.includes("대중교통")) {
-      await User.updateOne({ _id }, { $inc: { transportNum: 1 } });
+      await User.updateOne({ id }, { $inc: { transportNum: 1 } });
     }
     if (tag.includes("장바구니")) {
-      await User.updateOne({ _id }, { $inc: { basketNum: 1 } });
+      await User.updateOne({ id }, { $inc: { basketNum: 1 } });
     }
 
     return createDiary;
@@ -104,7 +104,7 @@ const createDiary: CreateDiary = async (
 };
 
 const updateDiary: UpdateDiary = async (
-  _id,
+  id,
   name,
   profileImage,
   checkedBadge,
@@ -116,16 +116,16 @@ const updateDiary: UpdateDiary = async (
   likeIds,
   imageUrl
 ) => {
+  const updateToDiary = await Diary.findOne({ id, date });
+
+  if (imageUrl !== updateToDiary?.imageUrl) {
+    const filePath = updateToDiary?.imageUrl;
+    deleteDiaryImage(filePath);
+  }
+
   try {
-    const diaryToUpdate = await Diary.findOne({ _id, date });
-
-    if (diaryToUpdate) {
-      const previousFilePath = `public/${diaryToUpdate.imageUrl.split("/")[3]}`;
-      deleteDiaryImage(previousFilePath);
-    }
-
     const updatedDiary = await Diary.findOneAndUpdate(
-      { _id, date },
+      { id, date },
       {
         name,
         profileImage,
@@ -147,12 +147,12 @@ const updateDiary: UpdateDiary = async (
 
 const diaryService = {
   //월간 diary 조회
-  async getAllDiariesByMonth(_id: string, month: string) {
+  async getAllDiariesByMonth(id: string, month: string) {
     try {
       const startDate = new Date(`${month}-01`);
       const endDate = new Date(`${month}-31`);
       const allDiariesByMonth = await Diary.find({
-        _id,
+        id,
         date: { $gte: new Date(startDate), $lte: new Date(endDate) },
       }).select("date tag");
 
@@ -167,12 +167,12 @@ const diaryService = {
     }
   },
   //월간 diary 태그 조회
-  async getAllDiariesTagByMonth(_id: string, month: string) {
+  async getAllDiariesTagByMonth(id: string, month: string) {
     try {
       const startDate = new Date(`${month}-01`);
       const endDate = new Date(`${month}-31`);
       const allDiariesByMonth = await Diary.find({
-        _id,
+        id,
         date: { $gte: new Date(startDate), $lte: new Date(endDate) },
       }).select("tag");
 
@@ -204,10 +204,10 @@ const diaryService = {
   //diary 수정
   updateDiary,
   //diary 삭제
-  async deleteDiary(_id: string, date: Date) {
+  async deleteDiary(id: string, date: Date) {
     try {
-      const deletedDiary = await Diary.findOneAndDelete({ _id, date });
-      const filePath = `public/images/${deletedDiary?.imageUrl.split("/")[3]}`;
+      const deletedDiary = await Diary.findOneAndDelete({ id, date });
+      const filePath = deletedDiary?.imageUrl;
       deleteDiaryImage(filePath);
       console.log(`${date} 다이어리 삭제`);
     } catch (error) {
@@ -215,9 +215,9 @@ const diaryService = {
     }
   },
   //diary 조회
-  async getDiary(_id: string, date: Date) {
+  async getDiary(id: string, date: Date) {
     try {
-      const getDiary = await Diary.findOne({ _id, date });
+      const getDiary = await Diary.findOne({ id, date });
       return getDiary;
     } catch (error) {
       throw new Error(Error_Message.getDiaryError);
