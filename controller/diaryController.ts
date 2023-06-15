@@ -10,9 +10,9 @@ const diaryController = {
   async getAllDiariesByMonth(req: Request, res: Response) {
     try {
       const { month } = req.params;
-      const { id } = req.user as IUser;
+      const { _id } = req.user as IUser;
       const allDiariesByMonth = await diaryService.getAllDiariesByMonth(
-        id,
+        _id,
         month
       );
       sendResponse(res, 200, "Success", allDiariesByMonth);
@@ -23,9 +23,9 @@ const diaryController = {
   async getAllDiariesTagByMonth(req: Request, res: Response) {
     try {
       const { month } = req.params;
-      const { id } = req.user as IUser;
+      const { _id } = req.user as IUser;
       const allDiariesTagByMonth = await diaryService.getAllDiariesTagByMonth(
-        id,
+        _id,
         month
       );
       sendResponse(res, 200, "Success", allDiariesTagByMonth);
@@ -37,10 +37,10 @@ const diaryController = {
     try {
       const { tag, title, content, shareStatus, likeIds } = req.body;
       const { date } = req.params;
-      const { id, name, profileImage, checkedBadge } = req.user as IUser;
+      const { _id, name, profileImage, checkedBadge } = req.user as IUser;
       const imageUrl = (process.env.IMAGEDOMAIN as Path) + req.file?.filename;
       const createDiary = await diaryService.createDiary(
-        id,
+        _id,
         name,
         profileImage,
         checkedBadge,
@@ -62,10 +62,10 @@ const diaryController = {
     try {
       const { tag, title, content, shareStatus, likeIds } = req.body;
       const { date } = req.params;
-      const { id, name, profileImage, checkedBadge } = req.user as IUser;
+      const { _id, name, profileImage, checkedBadge } = req.user as IUser;
       const imageUrl = (process.env.IMAGEDOMAIN as Path) + req.file?.filename;
       const updatedDiary = await diaryService.updateDiary(
-        id,
+        _id,
         name,
         profileImage,
         checkedBadge,
@@ -85,9 +85,9 @@ const diaryController = {
   async deleteDiary(req: Request, res: Response) {
     try {
       const { date } = req.params;
-      const { id } = req.user as IUser;
+      const { _id } = req.user as IUser;
       const deletedDiary = await diaryService.deleteDiary(
-        id,
+        _id,
         new Date(date as string)
       );
       sendResponse(res, 200, "Diary deleted", deletedDiary);
@@ -98,9 +98,9 @@ const diaryController = {
   async getDiary(req: Request, res: Response) {
     try {
       const { date } = req.params;
-      const { id } = req.user as IUser;
+      const { _id } = req.user as IUser;
       const getDiary = await diaryService.getDiary(
-        id,
+        _id,
         new Date(date as string)
       );
       sendResponse(res, 200, "Success", getDiary);
