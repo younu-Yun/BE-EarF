@@ -109,12 +109,12 @@ const updateDiary: UpdateDiary = async (
   likeIds,
   imageUrl
 ) => {
-  const diaryToUpdate = await Diary.findOne({ id, date });
+  // const diaryToUpdate = await Diary.findOne({ id, date });
 
-  if (imageUrl !== diaryToUpdate?.imageUrl) {
-    const filePath = diaryToUpdate?.imageUrl;
-    deleteDiaryImage(filePath);
-  }
+  // if (imageUrl !== diaryToUpdate?.imageUrl) {
+  //   const filePath = diaryToUpdate?.imageUrl;
+  //   deleteDiaryImage(filePath);
+  // }
 
   try {
     const updatedDiary = await Diary.findOneAndUpdate(
@@ -128,7 +128,7 @@ const updateDiary: UpdateDiary = async (
         content,
         shareStatus,
         likeIds,
-        imageUrl,
+        imageUrl
       },
       { new: true }
     );

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import diaryService from "../services/diaryService";
+import { Diary } from "../models/schemas/diary";
 import { IUser } from "../models";
 import dotenv from "dotenv";
 import { Path } from "typescript";
@@ -62,7 +63,15 @@ const diaryController = {
       const { tag, title, content, shareStatus, likeIds } = req.body;
       const { date } = req.params;
       const { id, name, profileImage, checkedBadge } = req.user as IUser;
-      const imageUrl = (process.env.IMAGEDOMAIN as Path) + req.file?.filename;
+      const diaryToUpdate = await Diary.findOne({ id, date });
+      let imageUrl: string | undefined;
+
+      if (req.file?.filename === undefined) {
+        imageUrl = diaryToUpdate?.imageUrl;
+      } else {
+        imageUrl = (process.env.IMAGEDOMAIN as Path) + req.file?.filename;
+      }
+
       const updatedDiary = await diaryService.updateDiary(
         id,
         name,
@@ -74,7 +83,7 @@ const diaryController = {
         content,
         shareStatus,
         likeIds,
-        imageUrl
+        imageUrl as string
       );
       res.status(200).json(updatedDiary);
     } catch (error: any) {
