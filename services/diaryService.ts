@@ -2,7 +2,6 @@ import { Diary } from "../models/schemas/diary";
 import { User } from "../models";
 import { deleteDiaryImage } from "../utils/multer";
 import dotenv from "dotenv";
-import { Path } from "typescript";
 dotenv.config();
 
 interface CreateDiary {
@@ -66,12 +65,6 @@ const createDiary: CreateDiary = async (
       );
     }
 
-    if (imageUrl = (process.env.IMAGEDOMAIN as Path) + undefined) {
-      throw new Error(
-        `${Error_Message.createDiaryError} + 이미지 파일 등록에 실패했습니다.`
-      );
-    }
-
     const createDiary = await Diary.create({
       id,
       name,
@@ -116,10 +109,10 @@ const updateDiary: UpdateDiary = async (
   likeIds,
   imageUrl
 ) => {
-  const updateToDiary = await Diary.findOne({ id, date });
+  const diaryToUpdate = await Diary.findOne({ id, date });
 
-  if (imageUrl !== updateToDiary?.imageUrl) {
-    const filePath = updateToDiary?.imageUrl;
+  if (imageUrl !== diaryToUpdate?.imageUrl) {
+    const filePath = diaryToUpdate?.imageUrl;
     deleteDiaryImage(filePath);
   }
 

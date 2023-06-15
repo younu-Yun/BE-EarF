@@ -9,9 +9,9 @@ const diaryController = {
   async getAllDiariesByMonth(req: Request, res: Response) {
     try {
       const { month } = req.params;
-      const { _id } = req.user as IUser;
+      const { id } = req.user as IUser;
       const allDiariesByMonth = await diaryService.getAllDiariesByMonth(
-        _id,
+        id,
         month
       );
       res.status(200).json(allDiariesByMonth);
@@ -22,12 +22,12 @@ const diaryController = {
   async getAllDiariesTagByMonth(req: Request, res: Response) {
     try {
       const { month } = req.params;
-      const { _id } = req.user as IUser;
+      const { id } = req.user as IUser;
       const allDiariesTagByMonth = await diaryService.getAllDiariesTagByMonth(
-        _id,
+        id,
         month
       );
-      res.status(200).json(allDiariesTagByMonth)
+      res.status(200).json(allDiariesTagByMonth);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
@@ -36,10 +36,10 @@ const diaryController = {
     try {
       const { tag, title, content, shareStatus, likeIds } = req.body;
       const { date } = req.params;
-      const { _id, name, profileImage, checkedBadge } = req.user as IUser;
+      const { id, name, profileImage, checkedBadge } = req.user as IUser;
       const imageUrl = (process.env.IMAGEDOMAIN as Path) + req.file?.filename;
       const createDiary = await diaryService.createDiary(
-        _id,
+        id,
         name,
         profileImage,
         checkedBadge,
@@ -61,10 +61,10 @@ const diaryController = {
     try {
       const { tag, title, content, shareStatus, likeIds } = req.body;
       const { date } = req.params;
-      const { _id, name, profileImage, checkedBadge } = req.user as IUser;
+      const { id, name, profileImage, checkedBadge } = req.user as IUser;
       const imageUrl = (process.env.IMAGEDOMAIN as Path) + req.file?.filename;
       const updatedDiary = await diaryService.updateDiary(
-        _id,
+        id,
         name,
         profileImage,
         checkedBadge,
@@ -84,9 +84,9 @@ const diaryController = {
   async deleteDiary(req: Request, res: Response) {
     try {
       const { date } = req.params;
-      const { _id } = req.user as IUser;
+      const { id } = req.user as IUser;
       const deletedDiary = await diaryService.deleteDiary(
-        _id,
+        id,
         new Date(date as string)
       );
       res.status(200).json(deletedDiary);
@@ -97,9 +97,9 @@ const diaryController = {
   async getDiary(req: Request, res: Response) {
     try {
       const { date } = req.params;
-      const { _id } = req.user as IUser;
+      const { id } = req.user as IUser;
       const getDiary = await diaryService.getDiary(
-        _id,
+        id,
         new Date(date as string)
       );
       res.status(200).json(getDiary);

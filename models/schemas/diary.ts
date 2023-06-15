@@ -7,7 +7,7 @@ interface ILike {
 }
 
 interface IDiary extends Document {
-  id: IUser["_id"];
+  id: IUser["id"];
   name: IUser["name"];
   profileImage: IUser["profileImage"];
   checkedBadge: IUser["checkedBadge"];
