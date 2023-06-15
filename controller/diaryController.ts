@@ -3,7 +3,6 @@ import diaryService from "../services/diaryService";
 import { IUser } from "../models";
 import dotenv from "dotenv";
 import { Path } from "typescript";
-import sendResponse from "../utils/sendResponse";
 dotenv.config();
 
 const diaryController = {
