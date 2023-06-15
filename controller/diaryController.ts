@@ -15,9 +15,9 @@ const diaryController = {
         _id,
         month
       );
-      sendResponse(res, 200, "Success", allDiariesByMonth);
+      res.status(200).json(allDiariesByMonth);
     } catch (error: any) {
-      sendResponse(res, 500, error.message);
+      res.status(500).json({ error: error.message });
     }
   },
   async getAllDiariesTagByMonth(req: Request, res: Response) {
@@ -28,9 +28,9 @@ const diaryController = {
         _id,
         month
       );
-      sendResponse(res, 200, "Success", allDiariesTagByMonth);
+      res.status(200).json(allDiariesTagByMonth)
     } catch (error: any) {
-      sendResponse(res, 500, error.message);
+      res.status(500).json({ error: error.message });
     }
   },
   async createDiary(req: Request, res: Response) {
@@ -52,10 +52,10 @@ const diaryController = {
         likeIds,
         imageUrl
       );
-      sendResponse(res, 200, "Diary created", createDiary);
+      res.status(200).json(createDiary);
     } catch (error: any) {
       console.log(error);
-      sendResponse(res, 500, error.message);
+      res.status(500).json({ error: error.message });
     }
   },
   async updateDiary(req: Request, res: Response) {
@@ -77,9 +77,9 @@ const diaryController = {
         likeIds,
         imageUrl
       );
-      sendResponse(res, 200, "Diary updated", updatedDiary);
+      res.status(200).json(updatedDiary);
     } catch (error: any) {
-      sendResponse(res, 500, error.message);
+      res.status(500).json({ error: error.message });
     }
   },
   async deleteDiary(req: Request, res: Response) {
@@ -90,9 +90,9 @@ const diaryController = {
         _id,
         new Date(date as string)
       );
-      sendResponse(res, 200, "Diary deleted", deletedDiary);
+      res.status(200).json(deletedDiary);
     } catch (error: any) {
-      sendResponse(res, 500, error.message);
+      res.status(500).json({ error: error.message });
     }
   },
   async getDiary(req: Request, res: Response) {
@@ -103,9 +103,9 @@ const diaryController = {
         _id,
         new Date(date as string)
       );
-      sendResponse(res, 200, "Success", getDiary);
+      res.status(200).json(getDiary);
     } catch (error: any) {
-      sendResponse(res, 500, error.message);
+      res.status(500).json({ error: error.message });
     }
   },
 };
