@@ -7,7 +7,7 @@ interface ILike {
 }
 
 interface IDiary extends Document {
-  _id: IUser["_id"];
+  id: IUser["_id"];
   name: IUser["name"];
   profileImage: IUser["profileImage"];
   checkedBadge: IUser["checkedBadge"];
@@ -29,7 +29,7 @@ const LikeSchema = new Schema<ILike>({
 
 const diarySchema: Schema<IDiary> = new Schema<IDiary>(
   {
-    _id: {
+    id: {
       type: String,
       ref: "User",
       required: true,
