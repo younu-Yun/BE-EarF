@@ -11,7 +11,7 @@ const questionService = {
     profileImage: string,
     checkedBadge: string,
     title: string,
-    content: string,
+    content: string
   ) {
     try {
       const question = new Question({
@@ -45,7 +45,7 @@ const questionService = {
     userId: string,
     questionId: string,
     title: string,
-    content: string,
+    content: string
   ) {
     try {
       const question = await Question.findById(questionId);
@@ -136,7 +136,7 @@ const questionService = {
   async readAllQuestionsWithSort(
     sort: string = "latest",
     page: number = 1,
-    limit: number = 10,
+    limit: number = 10
   ) {
     try {
       const skip = (page - 1) * limit;
@@ -232,7 +232,7 @@ const questionService = {
         throw new Error("데이터베이스 조회에 실패했습니다.");
       }
       throw new Error(
-        "댓글이 없는 가장 오래된 질문을 불러오는데 실패하였습니다.",
+        "댓글이 없는 가장 오래된 질문을 불러오는데 실패하였습니다."
       );
     }
   },
@@ -286,7 +286,7 @@ const questionService = {
     } catch (error) {
       console.error(error);
       throw new Error(
-        "가장 최근에 댓글이 달린 게시글을 불러오는데 실패하였습니다.",
+        "가장 최근에 댓글이 달린 게시글을 불러오는데 실패하였습니다."
       );
     }
   },
@@ -295,7 +295,7 @@ const questionService = {
   async searchQuestionsByKeyword(
     keyword: string,
     page: number = 1,
-    limit: number = 10,
+    limit: number = 10
   ) {
     try {
       const skip = (page - 1) * limit;
@@ -370,7 +370,7 @@ const questionService = {
         throw new Error("질문을 찾을 수 없습니다.");
       }
 
-      const likeIndex = question.likeIds.findIndex(like => like._id == _id);
+      const likeIndex = question.likeIds.findIndex((like) => like._id == _id);
       if (likeIndex === -1) {
         question.likeIds.push({ _id, name });
       } else {
@@ -387,14 +387,14 @@ const questionService = {
   // 커뮤니티 질문에 댓글 ID 추가
   async addCommentToQuestion(
     questionId: string,
-    commentId: Schema.Types.ObjectId,
+    commentId: Schema.Types.ObjectId
   ) {
     try {
       //게시글 찾아서 댓글 추가
       const question = await Question.findByIdAndUpdate(
         questionId,
         { $push: { commentIds: commentId } },
-        { new: true, useFindAndModify: false },
+        { new: true, useFindAndModify: false }
       );
 
       if (!question) {
