@@ -18,6 +18,7 @@ export interface IUser extends Document {
   basketNum: number;
   refreshToken: string;
   isTempPassword: boolean;
+  isAdmin: boolean;
 }
 
 export interface IBadge extends Document {
@@ -90,6 +91,10 @@ const UserSchema: Schema<IUser> = new Schema<IUser>(
       default: "",
     },
     isTempPassword: {
+      type: Boolean,
+      default: false,
+    },
+    isAdmin: {
       type: Boolean,
       default: false,
     },
