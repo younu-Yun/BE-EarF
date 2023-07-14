@@ -2,6 +2,7 @@ import { Request, Response, NextFunction, Router } from "express";
 // ↓↓↓↓↓ 추가적인 router를 import 하세요! ↓↓↓↓↓ EX) import userRouter from "./user";
 import userRouter from "./userRouter";
 import authRouter from "./authRouter";
+import adminUserRouter from "./adminUserRouter";
 import questionRouter from "./questionRouter";
 import commentRouter from "./commentRouter";
 import boastRouter from "./boastRouter";
@@ -17,6 +18,7 @@ router.get("/", (req: Request, res: Response, next: NextFunction) => {
 // ↓↓↓↓↓ 추가적인 router를 고유 endpoint로 설정하세요 ↓↓↓↓↓ EX) router.use("/user", userRouter);
 router.use("/user", userRouter);
 router.use("/auth", authRouter);
+router.use("/admin", adminUserRouter);
 router.use("/community", questionRouter);
 router.use("/community", commentRouter);
 router.use("/community", boastRouter);

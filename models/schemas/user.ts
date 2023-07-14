@@ -1,4 +1,4 @@
-import { Schema, Document, model } from "mongoose";
+import { Schema, Document, model, ObjectId } from "mongoose";
 import { Path } from "typescript";
 import dotenv from "dotenv";
 dotenv.config();

@@ -6,7 +6,7 @@ const authAdmin = async (req: Request, res: Response, next: NextFunction) => {
   const user = await User.findOne({ _id });
 
   if (!user || !user.isAdmin) {
-    res.status(400).json({
+    res.status(403).json({
       message:
         "관리자 접근 권한이 필요합니다. 관리자 계정으로 다시 로그인해주세요",
     });
