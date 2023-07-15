@@ -10,12 +10,17 @@ const adminUserController = new AdminUserController();
 router.get("/", authAccess, authAdmin, adminUserController.getUserAll);
 
 // admin 이름으로 유저 검색
-router.post("/", authAdmin, adminUserController.getUserByName);
+router.post("/", authAccess, authAdmin, adminUserController.getUserByName);
 
 // admin 유저 정보 수정
-router.patch("/:_id", authAdmin, adminUserController.updateUserById);
+router.patch(
+  "/:_id",
+  authAccess,
+  authAdmin,
+  adminUserController.updateUserById
+);
 
 // admin 유저 정보 삭제
-router.delete("/_id", authAdmin, adminUserController.deleteUser);
+router.delete("/:_id", authAccess, authAdmin, adminUserController.deleteUser);
 
 export default router;

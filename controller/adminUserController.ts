@@ -1,17 +1,17 @@
 import { Request, Response } from "express";
-import AdminService from "../services/adminUserService";
+import AdminUserService from "../services/adminUserService";
 
 export default class AdminUserController {
-  private adminService: AdminService;
+  private adminUserService: AdminUserService;
 
   constructor() {
-    this.adminService = new AdminService();
+    this.adminUserService = new AdminUserService();
   }
 
   public getUserAll = async (req: Request, res: Response) => {
     try {
       const page = Number(req.query.page || 1);
-      const userlist = await this.adminService.adminReadUser(page);
+      const userlist = await this.adminUserService.adminReadUser(page);
       res.json(userlist);
     } catch (error) {
       res.status(500).json({ error: (error as Error).message });
@@ -20,16 +20,38 @@ export default class AdminUserController {
 
   public getUserByName = async (req: Request, res: Response) => {
     try {
-    } catch (error) {}
+      const { name } = req.body;
+      const searchedUser = await this.adminUserService.adminReadUserByName(
+        name
+      );
+      res.json(searchedUser);
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
   };
 
   public updateUserById = async (req: Request, res: Response) => {
     try {
-    } catch (error) {}
+      const { _id } = req.params;
+      const { name, email, phoneNumber } = req.body;
+      const updatedUser = await this.adminUserService.adminUpdateUser(_id, {
+        name,
+        email,
+        phoneNumber,
+      });
+      res.json(updatedUser);
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
   };
 
   public deleteUser = async (req: Request, res: Response) => {
     try {
-    } catch (error) {}
+      const { _id } = req.params;
+      const deletedUser = await this.adminUserService.adminDeletedUser(_id);
+      res.json(deletedUser);
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
   };
 }
